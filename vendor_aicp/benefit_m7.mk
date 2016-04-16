@@ -7,7 +7,7 @@ $(call inherit-product, device/ark/benefit/full_benefit_m7.mk)
 PRODUCT_RELEASE_NAME := Ark Benefit M7
 PRODUCT_NAME := aicp_benefit_m7
 
-PRODUCT_GMS_CLIENTID_BASE := android-benefit
+PRODUCT_GMS_CLIENTID_BASE := android-benefit_m7
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
     PRODUCT_NAME=benefit_m7
