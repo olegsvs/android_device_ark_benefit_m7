@@ -2,7 +2,7 @@
 $(call inherit-product, vendor/aicp/configs/common.mk)
 
 # Inherit device configuration
-$(call inherit-product, device/ark/benefit/full_benefit_m7.mk)
+$(call inherit-product, device/ark/benefit_m7/full_benefit_m7.mk)
 
 PRODUCT_RELEASE_NAME := Ark Benefit M7
 PRODUCT_NAME := aicp_benefit_m7
