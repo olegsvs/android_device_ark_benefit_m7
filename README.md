@@ -17,4 +17,3 @@ Currently broken features:
  * Cheshkin
  * Hyperion70
  * vo-1
-# aicp_device_ark_benefit_m7
