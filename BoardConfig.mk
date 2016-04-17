@@ -145,14 +145,11 @@ BLOCK_BASED_OTA := true
 #PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
 # recovery
 #TARGET_RECOVERY_INITRC := device/elephone/p8000/recovery/init.mt6753.rc
-TARGET_RECOVERY_FSTAB := device/ark/benefit_m7/recovery/root/fstab.mt6753
-<<<<<<< HEAD
-=======
+TARGET_RECOVERY_FSTAB := device/ark/benefit_m7/recovery/root/fstab.mt6735
 PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
 # recovery
 #TARGET_RECOVERY_INITRC := device/elephone/p8000/recovery/init.mt6753.rc
 TARGET_RECOVERY_FSTAB := device/ark/benefit_m7/recovery/root/fstab.mt6735
->>>>>>> 095e557868980dacfeff13a4f898b30a88e96cea
 TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness\"
 
 # SELinux
