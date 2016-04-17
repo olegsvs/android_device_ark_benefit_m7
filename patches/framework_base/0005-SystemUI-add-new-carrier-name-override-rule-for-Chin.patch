@@ -1,0 +1,34 @@
+From d8b6e534436f25e441d188eb5a5a7661ffd7a509 Mon Sep 17 00:00:00 2001
+From: Wang Xuerui <idontknw.wang@gmail.com>
+Date: Sat, 3 Oct 2015 20:05:53 +0800
+Subject: [PATCH 5/5] SystemUI: add new carrier name override rule for China
+ Unicom
+
+Change-Id: I4bb9db78315ef9302d57dc5aab93b0d5419a3e01
+---
+ core/res/res/values/config.xml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
+index 31ad7aa..deb265e 100755
+--- a/core/res/res/values/config.xml
++++ b/core/res/res/values/config.xml
+@@ -2181,6 +2181,7 @@
+         <item>CHINA\u0020\u0020MOBILE</item>
+         <item>CMCC</item>
+         <item>CHN-UNICOM</item>
++        <item>UNICOM</item>
+         <item>China Mobile</item>
+         <item>China Unicom</item>
+         <item>China Telecom</item>
+@@ -2197,6 +2198,7 @@
+         <item>China_Mobile</item>
+         <item>China_Mobile</item>
+         <item>China_Unicom</item>
++        <item>China_Unicom</item>
+         <item>China_Mobile</item>
+         <item>China_Unicom</item>
+         <item>China_Telecom</item>
+-- 
+1.9.1
+
