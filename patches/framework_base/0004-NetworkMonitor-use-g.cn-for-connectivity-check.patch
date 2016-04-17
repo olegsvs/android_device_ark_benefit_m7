@@ -1,0 +1,31 @@
+From f08fd69ceb8d4c85d9d69577a42c3d32cf615c25 Mon Sep 17 00:00:00 2001
+From: Wang Xuerui <idontknw.wang@gmail.com>
+Date: Tue, 29 Sep 2015 10:50:46 +0800
+Subject: [PATCH 4/5] NetworkMonitor: use g.cn for connectivity check
+
+This is mainly for Chinese users who has limited connectivity to
+Google's primary connectivity check server, but it presumably wouldn't
+do harm to non-Chinese users apart from maybe introducing some latency
+that may or may not be noticeable.
+
+Change-Id: I4916b83aa7300e6580fef9f298ed5be30b7f441c
+---
+ services/core/java/com/android/server/connectivity/NetworkMonitor.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/services/core/java/com/android/server/connectivity/NetworkMonitor.java b/services/core/java/com/android/server/connectivity/NetworkMonitor.java
+index 87f78c1..c989be6 100644
+--- a/services/core/java/com/android/server/connectivity/NetworkMonitor.java
++++ b/services/core/java/com/android/server/connectivity/NetworkMonitor.java
+@@ -69,7 +69,7 @@ import java.util.Random;
+ public class NetworkMonitor extends StateMachine {
+     private static final boolean DBG = true;
+     private static final String TAG = "NetworkMonitor";
+-    private static final String DEFAULT_SERVER = "connectivitycheck.android.com";
++    private static final String DEFAULT_SERVER = "g.cn";
+     private static final int SOCKET_TIMEOUT_MS = 10000;
+     public static final String ACTION_NETWORK_CONDITIONS_MEASURED =
+             "android.net.conn.NETWORK_CONDITIONS_MEASURED";
+-- 
+1.9.1
+
