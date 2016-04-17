@@ -142,17 +142,14 @@ BOARD_EGL_WORKAROUND_BUG_10194508 := true
 #Block based ota
 #http://review.cyanogenmod.org/#/c/78849/1/core/Makefile
 BLOCK_BASED_OTA := true
-<<<<<<< HEAD
 #PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
 # recovery
 #TARGET_RECOVERY_INITRC := device/elephone/p8000/recovery/init.mt6753.rc
 TARGET_RECOVERY_FSTAB := device/ark/benefit_m7/recovery/root/fstab.mt6753
-=======
 PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
 # recovery
 #TARGET_RECOVERY_INITRC := device/elephone/p8000/recovery/init.mt6753.rc
 TARGET_RECOVERY_FSTAB := device/ark/benefit_m7/recovery/root/fstab.mt6735
->>>>>>> build
 TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness\"
 
 # SELinux
