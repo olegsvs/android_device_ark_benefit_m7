@@ -33,7 +33,7 @@ PRODUCT_COPY_FILES += \
 	device/ark/benefit_m7/rootdir/init.aee.rc:root/init.aee.rc \
 	device/ark/benefit_m7/rootdir/init.project.rc:root/init.project.rc \
 	device/ark/benefit_m7/rootdir/init.modem.rc:root/init.modem.rc \
-	device/ark/benefit_m7/recovery/root/fstab.mt6753:root/fstab.mt6735  \
+	device/ark/benefit_m7/recovery/root/fstab.mt6735:root/fstab.mt6735  \
 	device/ark/benefit_m7/rootdir/ueventd.mt6735.rc:root/ueventd.mt6735.rc \
 	device/ark/benefit_m7/rootdir/factory_init.rc:root/factory_init.rc \
 	device/ark/benefit_m7/rootdir/factory_init.project.rc:root/factory_init.project.rc \
