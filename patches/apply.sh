@@ -1,7 +1,7 @@
 #!/bin/bash
 cd ../../../../frameworks/av
 git apply -v ../../device/ark/benefit_m7/patches/framework_av/0001-libmedia-stub-out-MTK-specific-bits-audio-working.patch
-git apply -v ../../device/ark/benefit_m7/patches/framework_av/0002-camera.patch
+#git apply -v ../../device/ark/benefit_m7/patches/framework_av/0002-#camera.patch
 cd ../..
 cd frameworks/base
 git apply -v ../../device/ark/benefit_m7/patches/framework_base/0001-location-support-GNSS-extension-presumably-from-MTK.patch
@@ -9,10 +9,9 @@ git apply -v ../../device/ark/benefit_m7/patches/framework_base/0002-location-ad
 git apply -v ../../device/ark/benefit_m7/patches/framework_base/0003-location-style-fix.patch
 git apply -v ../../device/ark/benefit_m7/patches/framework_base/0006-add-com.mediatek-for-build.patch
 git apply -v ../../device/ark/benefit_m7/patches/framework_base/0007-Update-for-mtk.patch
-cd ../webview
-git apply -v ../../device/ark/benefit_m7/patches/framework_webview/0001-Add-prebuilt-chromium.patch
 cd ../opt/telephony
 git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0001-Update-for-mtk.patch
+git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0002_mobile_data_patch_mt6753.patch
 cd ../../..
 cd packages/services/Telephony
 git apply -v ../../../device/ark/benefit_m7/patches/packages_services_Telephony/0001-Update-for-mtk.patch
