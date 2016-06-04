@@ -8,10 +8,9 @@ $(call inherit-product, vendor/cm/config/common_full_phone.mk)
 $(call inherit-product, device/ark/benefit_m7/device_benefit_m7.mk)
 
 # Configure dalvik heap
-$(call inherit-product, frameworks/native/build/phone-xxxhdpi-3072-dalvik-heap.mk)
+$(call inherit-product, frameworks/native/build/phone-xhdpi-2048-dalvik-heap.mk)
 
-# Configure hwui memory
-$(call inherit-product, frameworks/native/build/phone-xxxhdpi-3072-hwui-memory.mk)
+
 
 TARGET_SCREEN_HEIGHT := 1280	
 TARGET_SCREEN_WIDTH := 720

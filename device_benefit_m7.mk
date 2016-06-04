@@ -10,11 +10,15 @@ $(call inherit-product, vendor/ark/benefit_m7/benefit_m7-vendor.mk)
 DEVICE_PACKAGE_OVERLAYS += device/ark/benefit_m7/overlay
 
 # Device uses high-density artwork where available
-PRODUCT_AAPT_CONFIG := normal xhdpi xxhdpi
-PRODUCT_AAPT_PREF_CONFIG := xxhdpi
+PRODUCT_AAPT_CONFIG := normal xhdpi
+PRODUCT_AAPT_PREF_CONFIG := xhdpi
+
+# Set default player to AwesomePlayer
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.media.use-awesome=true
 
 # Recovery allowed devices
-#TARGET_OTA_ASSERT_DEVICE := 
+TARGET_OTA_ASSERT_DEVICE :=   ARK,yk602_emmc_fdd_65u,benefit_m7
 
 ifeq ($(TARGET_PREBUILT_KERNEL),)
 	LOCAL_KERNEL := device/ark/benefit_m7/prebuilt/kernel
