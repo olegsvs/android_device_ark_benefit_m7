@@ -209,4 +209,6 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
 	ro.adb.secure=0 \
 	persist.service.acm.enable=0 \
 	ro.oem_unlock_supported=1 \
-	persist.sys.usb.config=mtp
+	persist.sys.usb.config=mtp \
+	cm.updater.type=plain \
+	cm.updater.uri=https://raw.githubusercontent.com/olegsvs/API_CMUpdater/master/API
