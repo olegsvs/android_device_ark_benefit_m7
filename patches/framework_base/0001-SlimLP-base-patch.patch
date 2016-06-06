@@ -803,6 +803,7 @@ index 8183321..6ac1a99 100644
      // but continue to allow the rest of the GPS interface to work.
 -    if (sGpsXtraInterface && sGpsXtraInterface->init(&sGpsXtraCallbacks) != 0)
 -        sGpsXtraInterface = NULL;
++ }
 +    if (sGpsXtraInterface) {
 +        ret = sGpsXtraInterface->init(&sGpsXtraCallbacks);
 +        ALOGV("init: sGpsXtraInterface->init() ret=%d", ret);
