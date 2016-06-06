@@ -1,35 +1,882 @@
-From f4b0c7903dd5cacd929e1c006cb9467ec647e7fa Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?=E7=A7=8B=E5=8F=B6=E9=9A=8F=E9=A3=8Eivan?=
- <yanziily@gmail.com>
-Date: Sun, 3 Jan 2016 21:29:16 +0800
-Subject: [PATCH 2/2] Update for mtk
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From 0dbc8ce6191251e062acda5aa8b5413566a6b439 Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Mon, 6 Jun 2016 17:52:52 -0400
+Subject: [PATCH] SlimLP base patch
 
-Change-Id: I0318ed975caeb595db3efd1dd4b87a9729167bcd
-Signed-off-by: 秋叶随风ivan <yanziily@gmail.com>
+Change-Id: I6b02b2e61edb67e6c819495afde0e04f01f36aef
 ---
- .../java/android/telephony/PhoneNumberUtils.java   | 280 ++++++++++++++++++
+ core/java/com/mediatek/xlog/BLog.java              |  62 ++++
+ core/java/com/mediatek/xlog/BLogPacker.java        | 111 +++++++
+ core/java/com/mediatek/xlog/SXlog.java             |  82 ++++++
+ core/java/com/mediatek/xlog/Xlog.java              | 125 ++++++++
+ location/java/android/location/GpsStatus.java      |  36 +++
+ .../java/android/location/IGpsStatusListener.aidl  |   5 +
+ .../java/android/location/LocationManager.java     |  24 ++
+ .../server/location/GpsLocationProvider.java       |  88 +++++-
+ .../server/location/GpsStatusListenerHelper.java   |  26 +-
+ ...android_server_location_GpsLocationProvider.cpp | 103 ++++++-
+ .../java/android/telephony/PhoneNumberUtils.java   | 276 +++++++++++++++++-
  .../java/android/telephony/PhoneRatFamily.aidl     |  19 ++
  .../java/android/telephony/PhoneRatFamily.java     | 114 ++++++++
- telephony/java/android/telephony/ServiceState.java | 190 +++++++++++-
+ telephony/java/android/telephony/ServiceState.java | 185 +++++++++++-
  .../internal/telephony/IccCardConstants.java       |  12 +
- .../android/internal/telephony/RILConstants.java   | 324 ++++++++++++++++++++-
- .../internal/telephony/TelephonyIntents.java       | 255 ++++++++++++++++
- .../internal/telephony/TelephonyProperties.java    |  35 +++
- 8 files changed, 1226 insertions(+), 3 deletions(-)
+ .../android/internal/telephony/RILConstants.java   | 322 ++++++++++++++++++++-
+ .../internal/telephony/TelephonyIntents.java       | 256 ++++++++++++++++
+ .../internal/telephony/TelephonyProperties.java    |  34 +++
+ 18 files changed, 1857 insertions(+), 23 deletions(-)
+ create mode 100755 core/java/com/mediatek/xlog/BLog.java
+ create mode 100755 core/java/com/mediatek/xlog/BLogPacker.java
+ create mode 100755 core/java/com/mediatek/xlog/SXlog.java
+ create mode 100755 core/java/com/mediatek/xlog/Xlog.java
  create mode 100755 telephony/java/android/telephony/PhoneRatFamily.aidl
  create mode 100755 telephony/java/android/telephony/PhoneRatFamily.java
 
+diff --git a/core/java/com/mediatek/xlog/BLog.java b/core/java/com/mediatek/xlog/BLog.java
+new file mode 100755
+index 0000000..ea8c450
+--- /dev/null
++++ b/core/java/com/mediatek/xlog/BLog.java
+@@ -0,0 +1,62 @@
++/* Copyright Statement:
++ *
++ * This software/firmware and related documentation ("MediaTek Software") are
++ * protected under relevant copyright laws. The information contained herein is
++ * confidential and proprietary to MediaTek Inc. and/or its licensors. Without
++ * the prior written permission of MediaTek inc. and/or its licensors, any
++ * reproduction, modification, use or disclosure of MediaTek Software, and
++ * information contained herein, in whole or in part, shall be strictly
++ * prohibited.
++ *
++ * MediaTek Inc. (C) 2010. All rights reserved.
++ *
++ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
++ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
++ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER
++ * ON AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL
++ * WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR
++ * NONINFRINGEMENT. NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH
++ * RESPECT TO THE SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY,
++ * INCORPORATED IN, OR SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES
++ * TO LOOK ONLY TO SUCH THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO.
++ * RECEIVER EXPRESSLY ACKNOWLEDGES THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO
++ * OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES CONTAINED IN MEDIATEK
++ * SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK SOFTWARE
++ * RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
++ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S
++ * ENTIRE AND CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE
++ * RELEASED HEREUNDER WILL BE, AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE
++ * MEDIATEK SOFTWARE AT ISSUE, OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE
++ * CHARGE PAID BY RECEIVER TO MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
++ *
++ * The following software/firmware and/or related documentation ("MediaTek
++ * Software") have been modified by MediaTek Inc. All revisions are subject to
++ * any receiver's applicable license agreements with MediaTek Inc.
++ */
++
++package com.mediatek.xlog;
++
++public class BLog {
++
++    /** @hide */ public static native int v(String tag, int hashValue);
++
++    /** @hide */ public static native int d(String tag, int hashValue);
++
++    /** @hide */ public static native int i(String tag, int hashValue);
++
++    /** @hide */ public static native int w(String tag, int hashValue);
++
++    /** @hide */ public static native int e(String tag, int hashValue);
++
++    /** @hide */ public static native int v(String tag, int hashValue, BLogPacker packer);
++
++    /** @hide */ public static native int d(String tag, int hashValue, BLogPacker packer);
++
++    /** @hide */ public static native int i(String tag, int hashValue, BLogPacker packer);
++
++    /** @hide */ public static native int w(String tag, int hashValue, BLogPacker packer);
++
++    /** @hide */ public static native int e(String tag, int hashValue, BLogPacker packer);
++
++};
+diff --git a/core/java/com/mediatek/xlog/BLogPacker.java b/core/java/com/mediatek/xlog/BLogPacker.java
+new file mode 100755
+index 0000000..e1033fd
+--- /dev/null
++++ b/core/java/com/mediatek/xlog/BLogPacker.java
+@@ -0,0 +1,111 @@
++/* Copyright Statement:
++ *
++ * This software/firmware and related documentation ("MediaTek Software") are
++ * protected under relevant copyright laws. The information contained herein is
++ * confidential and proprietary to MediaTek Inc. and/or its licensors. Without
++ * the prior written permission of MediaTek inc. and/or its licensors, any
++ * reproduction, modification, use or disclosure of MediaTek Software, and
++ * information contained herein, in whole or in part, shall be strictly
++ * prohibited.
++ *
++ * MediaTek Inc. (C) 2010. All rights reserved.
++ *
++ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
++ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
++ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER
++ * ON AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL
++ * WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR
++ * NONINFRINGEMENT. NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH
++ * RESPECT TO THE SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY,
++ * INCORPORATED IN, OR SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES
++ * TO LOOK ONLY TO SUCH THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO.
++ * RECEIVER EXPRESSLY ACKNOWLEDGES THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO
++ * OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES CONTAINED IN MEDIATEK
++ * SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK SOFTWARE
++ * RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
++ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S
++ * ENTIRE AND CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE
++ * RELEASED HEREUNDER WILL BE, AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE
++ * MEDIATEK SOFTWARE AT ISSUE, OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE
++ * CHARGE PAID BY RECEIVER TO MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
++ *
++ * The following software/firmware and/or related documentation ("MediaTek
++ * Software") have been modified by MediaTek Inc. All revisions are subject to
++ * any receiver's applicable license agreements with MediaTek Inc.
++ */
++
++package com.mediatek.xlog;
++
++public class BLogPacker {
++
++    private long binBuf;
++
++    private int index;
++
++    public BLogPacker() {
++    binBuf = initBinaryBuffer();
++    index = 0;
++    }
++
++    public BLogPacker append(boolean b) {
++    index = writeBoolean(binBuf, index, b);
++    return this;
++    }
++
++    public BLogPacker append(char cValue) {
++    index = writeChar(binBuf, index, cValue);
++    return this;
++    }
++
++    public BLogPacker append(double dValue) {
++    index = writeDouble(binBuf, index, dValue);
++    return this;
++    }
++
++    public BLogPacker append(float fValue) {
++    index = writeDouble(binBuf, index, fValue);
++    return this;
++    }
++
++    public BLogPacker append(int intValue) {
++    index = writeInt(binBuf, index, intValue);
++    return this;
++    }
++
++    public BLogPacker append(long lng) {
++    index = writeLong(binBuf, index, lng);
++    return this;
++    }
++
++    public BLogPacker append(String s) {
++    index = writeString(binBuf, index, s);
++    return this;
++    }
++
++    public BLogPacker append(Object o) {
++    if (o != null) {
++        index = writeString(binBuf, index, o.toString());
++    }
++    else {
++        index = writeString(binBuf, index, "null");
++    }
++    return this;
++    }
++
++    protected native void finalize();
++
++    private static native long initBinaryBuffer();
++
++    private static native int writeBoolean(long binBuf, int index, boolean value);
++
++    private static native int writeChar(long binBuf, int index, char value);
++
++    private static native int writeInt(long binBuf, int index, int value);
++
++    private static native int writeLong(long binBuf, int index, long value);
++
++    private static native int writeString(long binBuf, int ndex, String value);
++
++    private static native int writeDouble(long binBuf, int index, double value);
++}
+diff --git a/core/java/com/mediatek/xlog/SXlog.java b/core/java/com/mediatek/xlog/SXlog.java
+new file mode 100755
+index 0000000..0d29865
+--- /dev/null
++++ b/core/java/com/mediatek/xlog/SXlog.java
+@@ -0,0 +1,82 @@
++/* Copyright Statement:
++ *
++ * This software/firmware and related documentation ("MediaTek Software") are
++ * protected under relevant copyright laws. The information contained herein is
++ * confidential and proprietary to MediaTek Inc. and/or its licensors. Without
++ * the prior written permission of MediaTek inc. and/or its licensors, any
++ * reproduction, modification, use or disclosure of MediaTek Software, and
++ * information contained herein, in whole or in part, shall be strictly
++ * prohibited.
++ * 
++ * MediaTek Inc. (C) 2010. All rights reserved.
++ * 
++ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
++ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
++ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER
++ * ON AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL
++ * WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR
++ * NONINFRINGEMENT. NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH
++ * RESPECT TO THE SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY,
++ * INCORPORATED IN, OR SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES
++ * TO LOOK ONLY TO SUCH THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO.
++ * RECEIVER EXPRESSLY ACKNOWLEDGES THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO
++ * OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES CONTAINED IN MEDIATEK
++ * SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK SOFTWARE
++ * RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
++ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S
++ * ENTIRE AND CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE
++ * RELEASED HEREUNDER WILL BE, AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE
++ * MEDIATEK SOFTWARE AT ISSUE, OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE
++ * CHARGE PAID BY RECEIVER TO MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
++ *
++ * The following software/firmware and/or related documentation ("MediaTek
++ * Software") have been modified by MediaTek Inc. All revisions are subject to
++ * any receiver's applicable license agreements with MediaTek Inc.
++ */
++
++package com.mediatek.xlog;
++
++import android.util.Log;
++
++public final class SXlog {
++    public static int v(String tag, String msg) {
++        return Xlog.println_native(Log.LOG_ID_SYSTEM, Log.VERBOSE, tag, msg);
++    }
++
++    public static int v(String tag, String msg, Throwable tr) {
++        return Xlog.println_native(Log.LOG_ID_SYSTEM, Log.VERBOSE, tag, msg + '\n' + Log.getStackTraceString(tr));
++    }
++
++    public static int d(String tag, String msg) {
++        return Xlog.println_native(Log.LOG_ID_SYSTEM, Log.DEBUG, tag, msg);
++    }
++
++    public static int d(String tag, String msg, Throwable tr) {
++        return Xlog.println_native(Log.LOG_ID_SYSTEM, Log.DEBUG, tag, msg + '\n' + Log.getStackTraceString(tr));
++    }
++
++    public static int i(String tag, String msg) {
++        return Xlog.println_native(Log.LOG_ID_SYSTEM, Log.INFO, tag, msg);
++    }
++
++    public static int i(String tag, String msg, Throwable tr) {
++        return Xlog.println_native(Log.LOG_ID_SYSTEM, Log.INFO, tag, msg + '\n' + Log.getStackTraceString(tr));
++    }
++
++    public static int w(String tag, String msg) {
++        return Xlog.println_native(Log.LOG_ID_SYSTEM, Log.WARN, tag, msg);
++    }
++
++    public static int w(String tag, String msg, Throwable tr) {
++        return Xlog.println_native(Log.LOG_ID_SYSTEM, Log.WARN, tag, msg + '\n' + Log.getStackTraceString(tr));
++    }
++
++    public static int e(String tag, String msg) {
++        return Xlog.println_native(Log.LOG_ID_SYSTEM, Log.ERROR, tag, msg);
++    }
++
++    public static int e(String tag, String msg, Throwable tr) {
++        return Xlog.println_native(Log.LOG_ID_SYSTEM, Log.ERROR, tag, msg + '\n' + Log.getStackTraceString(tr));
++    }
++}
+diff --git a/core/java/com/mediatek/xlog/Xlog.java b/core/java/com/mediatek/xlog/Xlog.java
+new file mode 100755
+index 0000000..effcef7
+--- /dev/null
++++ b/core/java/com/mediatek/xlog/Xlog.java
+@@ -0,0 +1,125 @@
++/* Copyright Statement:
++ *
++ * This software/firmware and related documentation ("MediaTek Software") are
++ * protected under relevant copyright laws. The information contained herein is
++ * confidential and proprietary to MediaTek Inc. and/or its licensors. Without
++ * the prior written permission of MediaTek inc. and/or its licensors, any
++ * reproduction, modification, use or disclosure of MediaTek Software, and
++ * information contained herein, in whole or in part, shall be strictly
++ * prohibited.
++ * 
++ * MediaTek Inc. (C) 2010. All rights reserved.
++ * 
++ * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
++ * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
++ * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER
++ * ON AN "AS-IS" BASIS ONLY. MEDIATEK EXPRESSLY DISCLAIMS ANY AND ALL
++ * WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR
++ * NONINFRINGEMENT. NEITHER DOES MEDIATEK PROVIDE ANY WARRANTY WHATSOEVER WITH
++ * RESPECT TO THE SOFTWARE OF ANY THIRD PARTY WHICH MAY BE USED BY,
++ * INCORPORATED IN, OR SUPPLIED WITH THE MEDIATEK SOFTWARE, AND RECEIVER AGREES
++ * TO LOOK ONLY TO SUCH THIRD PARTY FOR ANY WARRANTY CLAIM RELATING THERETO.
++ * RECEIVER EXPRESSLY ACKNOWLEDGES THAT IT IS RECEIVER'S SOLE RESPONSIBILITY TO
++ * OBTAIN FROM ANY THIRD PARTY ALL PROPER LICENSES CONTAINED IN MEDIATEK
++ * SOFTWARE. MEDIATEK SHALL ALSO NOT BE RESPONSIBLE FOR ANY MEDIATEK SOFTWARE
++ * RELEASES MADE TO RECEIVER'S SPECIFICATION OR TO CONFORM TO A PARTICULAR
++ * STANDARD OR OPEN FORUM. RECEIVER'S SOLE AND EXCLUSIVE REMEDY AND MEDIATEK'S
++ * ENTIRE AND CUMULATIVE LIABILITY WITH RESPECT TO THE MEDIATEK SOFTWARE
++ * RELEASED HEREUNDER WILL BE, AT MEDIATEK'S OPTION, TO REVISE OR REPLACE THE
++ * MEDIATEK SOFTWARE AT ISSUE, OR REFUND ANY SOFTWARE LICENSE FEES OR SERVICE
++ * CHARGE PAID BY RECEIVER TO MEDIATEK FOR SUCH MEDIATEK SOFTWARE AT ISSUE.
++ *
++ * The following software/firmware and/or related documentation ("MediaTek
++ * Software") have been modified by MediaTek Inc. All revisions are subject to
++ * any receiver's applicable license agreements with MediaTek Inc.
++ */
++
++package com.mediatek.xlog;
++
++import android.util.Log;
++
++public final class Xlog {
++		/**
++			* API for verbose log.
++			* @internal
++			*/
++    public static int v(String tag, String msg) {
++        return println_native(Log.LOG_ID_MAIN, Log.VERBOSE, tag, msg);
++    }
++
++    /**
++			* API for verbose log.
++			* @internal
++			*/
++    public static int v(String tag, String msg, Throwable tr) {
++        return println_native(Log.LOG_ID_MAIN, Log.VERBOSE, tag, msg + '\n' + Log.getStackTraceString(tr));
++    }
++
++    /**
++			* API for debug log.
++			* @internal
++			*/
++    public static int d(String tag, String msg) {
++        return println_native(Log.LOG_ID_MAIN, Log.DEBUG, tag, msg);
++    }
++
++    /**
++			* API for debug log.
++			* @internal
++			*/
++    public static int d(String tag, String msg, Throwable tr) {
++        return println_native(Log.LOG_ID_MAIN, Log.DEBUG, tag, msg + '\n' + Log.getStackTraceString(tr));
++    }
++
++    /**
++			* API for info log.
++			* @internal
++			*/
++    public static int i(String tag, String msg) {
++        return println_native(Log.LOG_ID_MAIN, Log.INFO, tag, msg);
++    }
++
++    /**
++			* API for info log.
++			* @internal
++			*/
++    public static int i(String tag, String msg, Throwable tr) {
++        return println_native(Log.LOG_ID_MAIN, Log.INFO, tag, msg + '\n' + Log.getStackTraceString(tr));
++    }
++
++    /**
++			* API for info log.
++			* @internal
++			*/
++    public static int w(String tag, String msg) {
++        return println_native(Log.LOG_ID_MAIN, Log.WARN, tag, msg);
++    }
++
++    /**
++			* API for warning log.
++			* @internal
++			*/
++    public static int w(String tag, String msg, Throwable tr) {
++        return println_native(Log.LOG_ID_MAIN, Log.WARN, tag, msg + '\n' + Log.getStackTraceString(tr));
++    }
++
++    /**
++			* API for warning log.
++			* @internal
++			*/
++    public static int e(String tag, String msg) {
++        return println_native(Log.LOG_ID_MAIN, Log.ERROR, tag, msg);
++    }
++
++    /**
++			* API for verbose log.
++			* @internal
++			*/
++    public static int e(String tag, String msg, Throwable tr) {
++        return println_native(Log.LOG_ID_MAIN, Log.ERROR, tag, msg + '\n' + Log.getStackTraceString(tr));
++    }
++
++    /** @hide */ public static native int println_native(int bufID,
++            int priority, String tag, String msg);
++}
+diff --git a/location/java/android/location/GpsStatus.java b/location/java/android/location/GpsStatus.java
+index 4af55a6..e8151f6 100644
+--- a/location/java/android/location/GpsStatus.java
++++ b/location/java/android/location/GpsStatus.java
+@@ -165,6 +165,42 @@ public final class GpsStatus {
+     }
+ 
+     /**
++     * Used internally within {@link LocationManager} to copy GPS status
++     * data from the Location Manager Service to its cached GpsStatus instance.
++     * Is synchronized to ensure that GPS status updates are atomic.
++     *
++     * This is modified to become aware of explicit GNSS support of &gt;32
++     * satellites.
++     */
++    synchronized void setStatusFromGnss(int gnssSvCount, int[] prns, float[] snrs,
++            float[] elevations, float[] azimuths,
++            boolean[] ephemerisPresences,
++            boolean[] almanacPresences,
++            boolean[] usedInFix) {
++        int i;
++
++        for (i = 0; i < mSatellites.length; i++) {
++            mSatellites[i].mValid = false;
++        }
++
++        for (i = 0; i < gnssSvCount; i++) {
++            int prn = prns[i] - 1;
++
++            if (prn >= 0 && prn < mSatellites.length) {
++                GpsSatellite satellite = mSatellites[prn];
++
++                satellite.mValid = true;
++                satellite.mSnr = snrs[i];
++                satellite.mElevation = elevations[i];
++                satellite.mAzimuth = azimuths[i];
++                satellite.mHasEphemeris = ephemerisPresences[i];
++                satellite.mHasAlmanac = almanacPresences[i];
++                satellite.mUsedInFix = usedInFix[i];
++           }
++        }
++    }
++
++    /**
+      * Used by {@link LocationManager#getGpsStatus} to copy LocationManager's
+      * cached GpsStatus instance to the client's copy.
+      * Since this method is only used within {@link LocationManager#getGpsStatus},
+diff --git a/location/java/android/location/IGpsStatusListener.aidl b/location/java/android/location/IGpsStatusListener.aidl
+index 62b1c6b..52865b7 100644
+--- a/location/java/android/location/IGpsStatusListener.aidl
++++ b/location/java/android/location/IGpsStatusListener.aidl
+@@ -29,5 +29,10 @@ oneway interface IGpsStatusListener
+     void onSvStatusChanged(int svCount, in int[] prns, in float[] snrs, 
+             in float[] elevations, in float[] azimuths, 
+             int ephemerisMask, int almanacMask, int usedInFixMask);
++    void onGnssSvStatusChanged(int gnssSvCount, in int[] prns, in float[] snrs,
++            in float[] elevations, in float[] azimuths,
++            in boolean[] ephemerisPresences,
++            in boolean[] almanacPresences,
++            in boolean[] usedInFix);
+     void onNmeaReceived(long timestamp, String nmea);
+ }
+diff --git a/location/java/android/location/LocationManager.java b/location/java/android/location/LocationManager.java
+index 0eb4fdc..30a7711 100644
+--- a/location/java/android/location/LocationManager.java
++++ b/location/java/android/location/LocationManager.java
+@@ -1446,6 +1446,30 @@ public class LocationManager {
+                 mGpsHandler.sendMessage(msg);
+             }
+         }
++ 			@Override
++        public void onGnssSvStatusChanged(int gnssSvCount, int[] prns, float[] snrs,
++                float[] elevations, float[] azimuths,
++                boolean[] ephemerisPresences,
++                boolean[] almanacPresences,
++                boolean[] usedInFix) {
++            if (mListener != null) {
++                mGpsStatus.setStatusFromGnss(
++                        gnssSvCount,
++                        prns,
++                       snrs,
++                        elevations,
++                        azimuths,
++                        ephemerisPresences,
++                        almanacPresences,
++                        usedInFix);
++
++                Message msg = Message.obtain();
++                msg.what = GpsStatus.GPS_EVENT_SATELLITE_STATUS;
++                // remove any SV status messages already in the queue
++                mGpsHandler.removeMessages(GpsStatus.GPS_EVENT_SATELLITE_STATUS);
++                mGpsHandler.sendMessage(msg);
++            }
++        }
+ 
+         @Override
+         public void onNmeaReceived(long timestamp, String nmea) {
+diff --git a/services/core/java/com/android/server/location/GpsLocationProvider.java b/services/core/java/com/android/server/location/GpsLocationProvider.java
+index 2a4fbb1..0474bcb 100644
+--- a/services/core/java/com/android/server/location/GpsLocationProvider.java
++++ b/services/core/java/com/android/server/location/GpsLocationProvider.java
+@@ -1705,6 +1705,76 @@ public class GpsLocationProvider implements LocationProviderInterface {
+     }
+ 
+     /**
++     * Count number of GNSS satellites used in fix.
++     *
++     * We could not rely on Integer.bitCount as GNSS used-in-fix info is not
++     * represented as a bit-mask.
++     */
++    private int countGnssSvUsedInFix(final int gnssSvCount) {
++        int result = 0;
++
++        for (int i = 0; i < gnssSvCount; i++) {
++            if (mSvUsedInFix[i]) {
++                result++;
++            }
++        }
++
++        return result;
++    }
++
++    /**
++     * called from native code to update GNSS SV info
++     */
++    private void reportGnssSvStatus() {
++        final int svCount = native_read_gnss_sv_status(
++                mSvs,
++                mSnrs,
++                mSvElevations,
++                mSvAzimuths,
++                mSvEphemerisPresences,
++                mSvAlmanacPresences,
++                mSvUsedInFix);
++        mListenerHelper.onGnssSvStatusChanged(
++                svCount,
++                mSvs,
++                mSnrs,
++                mSvElevations,
++                mSvAzimuths,
++                mSvEphemerisPresences,
++                mSvAlmanacPresences,
++                mSvUsedInFix);
++
++        if (VERBOSE) {
++            Log.v(TAG, "GNSS SV count: " + svCount);
++            for (int i = 0; i < svCount; i++) {
++                Log.v(TAG, "sv: " + mSvs[i] +
++                        " snr: " + mSnrs[i]/10 +
++                        " elev: " + mSvElevations[i] +
++                        " azimuth: " + mSvAzimuths[i] +
++                        (!mSvEphemerisPresences[i] ? "  " : " E") +
++                        (!mSvAlmanacPresences[i] ? "  " : " A") +
++                        (!mSvUsedInFix[i] ? "" : "U"));
++            }
++        }
++
++        // return number of sets used in fix instead of total
++        updateStatus(mStatus, countGnssSvUsedInFix(svCount));
++
++        if (mNavigating && mStatus == LocationProvider.AVAILABLE && mLastFixTime > 0 &&
++            System.currentTimeMillis() - mLastFixTime > RECENT_FIX_TIMEOUT) {
++            // send an intent to notify that the GPS is no longer receiving fixes.
++            Intent intent = new Intent(LocationManager.GPS_FIX_CHANGE_ACTION);
++            intent.putExtra(LocationManager.EXTRA_GPS_ENABLED, false);
++            mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
++            updateStatus(LocationProvider.TEMPORARILY_UNAVAILABLE, mSvCount);
++        }
++    }
++
++    /**
++     * called from native code to update AGPS status
++     */
++
++    /**
+      * called from native code to update AGPS status
+      */
+     private void reportAGpsStatus(int type, int status, byte[] ipaddr) {
+@@ -2339,11 +2409,15 @@ public class GpsLocationProvider implements LocationProviderInterface {
+     private static final int USED_FOR_FIX_MASK = 2;
+ 
+     // preallocated arrays, to avoid memory allocation in reportStatus()
+-    private int mSvs[] = new int[MAX_SVS];
+-    private float mSnrs[] = new float[MAX_SVS];
+-    private float mSvElevations[] = new float[MAX_SVS];
+-    private float mSvAzimuths[] = new float[MAX_SVS];
++
++    private int mSvs[] = new int[MAX_GNSS_SVS];
++    private float mSnrs[] = new float[MAX_GNSS_SVS];
++    private float mSvElevations[] = new float[MAX_GNSS_SVS];
++    private float mSvAzimuths[] = new float[MAX_GNSS_SVS];
+     private int mSvMasks[] = new int[3];
++    private boolean mSvEphemerisPresences[] = new boolean[MAX_GNSS_SVS];
++    private boolean mSvAlmanacPresences[] = new boolean[MAX_GNSS_SVS];
++    private boolean mSvUsedInFix[] = new boolean[MAX_GNSS_SVS];
+     private int mSvCount;
+     // preallocated to avoid memory allocation in reportNmea()
+     private byte[] mNmeaBuffer = new byte[120];
+@@ -2363,6 +2437,12 @@ public class GpsLocationProvider implements LocationProviderInterface {
+     // mask[0] is ephemeris mask and mask[1] is almanac mask
+     private native int native_read_sv_status(int[] svs, float[] snrs,
+             float[] elevations, float[] azimuths, int[] masks);
++    // returns number of GNSS SVs
++    private native int native_read_gnss_sv_status(int[] svs, float[] snrs,
++            float[] elevations, float[] azimuths,
++            boolean[] ephemerisPresences,
++            boolean[] almanacPresences,
++            boolean[] usedInFix);
+     private native int native_read_nmea(byte[] buffer, int bufferSize);
+     private native void native_inject_location(double latitude, double longitude, float accuracy);
+ 
+diff --git a/services/core/java/com/android/server/location/GpsStatusListenerHelper.java b/services/core/java/com/android/server/location/GpsStatusListenerHelper.java
+index 376b4a5..ac4bf8a 100644
+--- a/services/core/java/com/android/server/location/GpsStatusListenerHelper.java
++++ b/services/core/java/com/android/server/location/GpsStatusListenerHelper.java
+@@ -103,7 +103,31 @@ abstract class GpsStatusListenerHelper extends RemoteListenerHelper<IGpsStatusLi
+         };
+         foreach(operation);
+     }
+-
++    public void onGnssSvStatusChanged(
++            final int svCount,
++            final int[] prns,
++            final float[] snrs,
++            final float[] elevations,
++            final float[] azimuths,
++            final boolean[] ephemerisPresences,
++            final boolean[] almanacPresences,
++            final boolean[] usedInFix) {
++        Operation operation = new Operation() {
++            @Override
++            public void execute(IGpsStatusListener listener) throws RemoteException {
++                listener.onGnssSvStatusChanged(
++                        svCount,
++                        prns,
++                        snrs,
++                        elevations,
++                        azimuths,
++                        ephemerisPresences,
++                        almanacPresences,
++                        usedInFix);
++            }
++        };
++        foreach(operation);
++    }
+     public void onNmeaReceived(final long timestamp, final String nmea) {
+         Operation operation = new Operation() {
+             @Override
+diff --git a/services/core/jni/com_android_server_location_GpsLocationProvider.cpp b/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
+index 8183321..6ac1a99 100644
+--- a/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
++++ b/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
+@@ -55,11 +55,12 @@ static jmethodID method_reportGeofencePauseStatus;
+ static jmethodID method_reportGeofenceResumeStatus;
+ static jmethodID method_reportMeasurementData;
+ static jmethodID method_reportNavigationMessages;
+-
++static jmethodID method_reportGnssSvStatus;
+ static const GpsInterface* sGpsInterface = NULL;
+ static const GpsXtraInterface* sGpsXtraInterface = NULL;
+ static const AGpsInterface* sAGpsInterface = NULL;
+ static const GpsNiInterface* sGpsNiInterface = NULL;
++static GnssSvStatus  sGnssSvStatus;
+ static const GpsDebugInterface* sGpsDebugInterface = NULL;
+ static const AGpsRilInterface* sAGpsRilInterface = NULL;
+ static const GpsGeofencingInterface* sGpsGeofencingInterface = NULL;
+@@ -110,6 +111,15 @@ static void sv_status_callback(GpsSvStatus* sv_status)
+     checkAndClearExceptionFromCallback(env, __FUNCTION__);
+ }
+ 
++ 
++static void gnss_sv_status_callback(GnssSvStatus* sv_status)
++{
++    JNIEnv* env = AndroidRuntime::getJNIEnv();
++    memcpy(&sGnssSvStatus, sv_status, sizeof(sGnssSvStatus));
++    env->CallVoidMethod(mCallbacksObj, method_reportGnssSvStatus);
++    checkAndClearExceptionFromCallback(env, __FUNCTION__);
++}
++
+ static void nmea_callback(GpsUtcTime timestamp, const char* nmea, int length)
+ {
+     JNIEnv* env = AndroidRuntime::getJNIEnv();
+@@ -156,6 +166,7 @@ GpsCallbacks sGpsCallbacks = {
+     location_callback,
+     status_callback,
+     sv_status_callback,
++	gnss_sv_status_callback,
+     nmea_callback,
+     set_capabilities_callback,
+     acquire_wakelock_callback,
+@@ -446,6 +457,7 @@ static void android_location_GpsLocationProvider_class_init_native(JNIEnv* env,
+     method_reportLocation = env->GetMethodID(clazz, "reportLocation", "(IDDDFFFJ)V");
+     method_reportStatus = env->GetMethodID(clazz, "reportStatus", "(I)V");
+     method_reportSvStatus = env->GetMethodID(clazz, "reportSvStatus", "()V");
++	method_reportGnssSvStatus = env->GetMethodID(clazz, "reportGnssSvStatus", "()V");
+     method_reportAGpsStatus = env->GetMethodID(clazz, "reportAGpsStatus", "(II[B)V");
+     method_reportNmea = env->GetMethodID(clazz, "reportNmea", "(J)V");
+     method_setEngineCapabilities = env->GetMethodID(clazz, "setEngineCapabilities", "(I)V");
+@@ -477,14 +489,17 @@ static void android_location_GpsLocationProvider_class_init_native(JNIEnv* env,
+             "(Landroid/location/GpsNavigationMessageEvent;)V");
+ 
+     err = hw_get_module(GPS_HARDWARE_MODULE_ID, (hw_module_t const**)&module);
+-    if (err == 0) {
+-        hw_device_t* device;
+-        err = module->methods->open(module, GPS_HARDWARE_MODULE_ID, &device);
+-        if (err == 0) {
+-            gps_device_t* gps_device = (gps_device_t *)device;
+-            sGpsInterface = gps_device->get_gps_interface(gps_device);
+-        }
+-    }
++    ALOGV("hw_get_module err=%d module=%p", err, module);
++     if (err == 0) {
++         hw_device_t* device;
++         err = module->methods->open(module, GPS_HARDWARE_MODULE_ID, &device);
++        ALOGV("module->methods->open err=%d device=%p", err, device);
++         if (err == 0) {
++             gps_device_t* gps_device = (gps_device_t *)device;
++             sGpsInterface = gps_device->get_gps_interface(gps_device);
++            ALOGV("gps_device->get_gps_interface() = %p", sGpsInterface);
++         }
++     }
+     if (sGpsInterface) {
+         sGpsXtraInterface =
+             (const GpsXtraInterface*)sGpsInterface->get_extension(GPS_XTRA_INTERFACE);
+@@ -507,6 +522,16 @@ static void android_location_GpsLocationProvider_class_init_native(JNIEnv* env,
+             (const GnssConfigurationInterface*)sGpsInterface->get_extension(
+                     GNSS_CONFIGURATION_INTERFACE);
+     }
++
++    ALOGV("sGpsXtraInterface = %p", sGpsXtraInterface);
++    ALOGV("sAGpsInterface = %p", sAGpsInterface);
++    ALOGV("sGpsNiInterface = %p", sGpsNiInterface);
++    ALOGV("sGpsDebugInterface = %p", sGpsDebugInterface);
++    ALOGV("sAGpsRilInterface = %p", sAGpsRilInterface);
++    ALOGV("sGpsGeofencingInterface = %p", sGpsGeofencingInterface);
++    ALOGV("sGpsMeasurementInterface = %p", sGpsMeasurementInterface);
++    ALOGV("sGpsNavigationMessageInterface = %p", sGpsNavigationMessageInterface);
++    ALOGV("sGnssConfigurationInterface = %p", sGnssConfigurationInterface);
+ }
+ 
+ static jboolean android_location_GpsLocationProvider_is_supported(JNIEnv* env, jclass clazz) {
+@@ -519,18 +544,33 @@ static jboolean android_location_GpsLocationProvider_is_supported(JNIEnv* env, j
+ 
+ static jboolean android_location_GpsLocationProvider_init(JNIEnv* env, jobject obj)
+ {
++	ALOGV("GpsLocationProvider_init");
+     // this must be set before calling into the HAL library
+     if (!mCallbacksObj)
+         mCallbacksObj = env->NewGlobalRef(obj);
+ 
+     // fail if the main interface fails to initialize
+-    if (!sGpsInterface || sGpsInterface->init(&sGpsCallbacks) != 0)
++    int ret;
++
++    ALOGV("init: sGpsInterface=%p sGpsXtraInterface=%p", sGpsInterface, sGpsXtraInterface);
++    if (sGpsInterface) {
++        ret = sGpsInterface->init(&sGpsCallbacks);
++        ALOGV("init: sGpsInterface->init() ret=%d", ret);
++        if (ret != 0) {
++            return JNI_FALSE;
++        }
++    } else {
+         return JNI_FALSE;
+ 
+     // if XTRA initialization fails we will disable it by sGpsXtraInterface to NULL,
+     // but continue to allow the rest of the GPS interface to work.
+-    if (sGpsXtraInterface && sGpsXtraInterface->init(&sGpsXtraCallbacks) != 0)
+-        sGpsXtraInterface = NULL;
++    if (sGpsXtraInterface) {
++        ret = sGpsXtraInterface->init(&sGpsXtraCallbacks);
++        ALOGV("init: sGpsXtraInterface->init() ret=%d", ret);
++        if (ret != 0) {
++            sGpsXtraInterface = NULL;
++        }
++    }
+     if (sAGpsInterface)
+         sAGpsInterface->init(&sAGpsCallbacks);
+     if (sGpsNiInterface)
+@@ -626,7 +666,43 @@ static jint android_location_GpsLocationProvider_read_sv_status(JNIEnv* env, job
+     env->ReleaseIntArrayElements(maskArray, mask, 0);
+     return (jint) num_svs;
+ }
++static jint android_location_GpsLocationProvider_read_gnss_sv_status(JNIEnv* env, jobject obj,
++        jintArray prnArray, jfloatArray snrArray, jfloatArray elevArray, jfloatArray azumArray,
++        jbooleanArray ephemerisPresencesArray,
++        jbooleanArray almanacPresencesArray,
++        jbooleanArray usedInFixArray)
++{
++    // this should only be called from within a call to reportGnssSvStatus
++
++    jint* prns = env->GetIntArrayElements(prnArray, 0);
++    jfloat* snrs = env->GetFloatArrayElements(snrArray, 0);
++    jfloat* elev = env->GetFloatArrayElements(elevArray, 0);
++    jfloat* azim = env->GetFloatArrayElements(azumArray, 0);
++    jboolean* ephemeris_presences = env->GetBooleanArrayElements(ephemerisPresencesArray, 0);
++    jboolean* almanac_presences = env->GetBooleanArrayElements(almanacPresencesArray, 0);
++    jboolean* used_in_fix = env->GetBooleanArrayElements(usedInFixArray, 0);
++
++    int num_svs = sGnssSvStatus.num_svs;
++    for (int i = 0; i < num_svs; i++) {
++        prns[i] = sGnssSvStatus.sv_list[i].prn;
++        snrs[i] = sGnssSvStatus.sv_list[i].snr;
++        elev[i] = sGnssSvStatus.sv_list[i].elevation;
++        azim[i] = sGnssSvStatus.sv_list[i].azimuth;
+ 
++        ephemeris_presences[i] = sGnssSvStatus.sv_list[i].has_ephemeris ? 1 : 0;
++        almanac_presences[i] = sGnssSvStatus.sv_list[i].has_almanac ? 1 : 0;
++        used_in_fix[i] = sGnssSvStatus.sv_list[i].used_in_fix ? 1 : 0;
++    }
++
++    env->ReleaseIntArrayElements(prnArray, prns, 0);
++    env->ReleaseFloatArrayElements(snrArray, snrs, 0);
++    env->ReleaseFloatArrayElements(elevArray, elev, 0);
++    env->ReleaseFloatArrayElements(azumArray, azim, 0);
++    env->ReleaseBooleanArrayElements(ephemerisPresencesArray, ephemeris_presences, 0);
++    env->ReleaseBooleanArrayElements(almanacPresencesArray, almanac_presences, 0);
++    env->ReleaseBooleanArrayElements(usedInFixArray, used_in_fix, 0);
++    return (jint) num_svs;
++}
+ static void android_location_GpsLocationProvider_agps_set_reference_location_cellid(JNIEnv* env,
+         jobject obj, jint type, jint mcc, jint mnc, jint lac, jint cid)
+ {
+@@ -1441,6 +1517,9 @@ static JNINativeMethod sMethods[] = {
+     {"native_read_sv_status",
+             "([I[F[F[F[I)I",
+             (void*)android_location_GpsLocationProvider_read_sv_status},
++    {"native_read_gnss_sv_status",
++            "([I[F[F[F[Z[Z[Z)I",
++            (void*)android_location_GpsLocationProvider_read_gnss_sv_status},
+     {"native_read_nmea", "([BI)I", (void*)android_location_GpsLocationProvider_read_nmea},
+     {"native_inject_time", "(JJI)V", (void*)android_location_GpsLocationProvider_inject_time},
+     {"native_inject_location",
 diff --git a/telephony/java/android/telephony/PhoneNumberUtils.java b/telephony/java/android/telephony/PhoneNumberUtils.java
-index 3d0a553..8bd60b0 100644
+index 173437d..1cae477 100644
 --- a/telephony/java/android/telephony/PhoneNumberUtils.java
 +++ b/telephony/java/android/telephony/PhoneNumberUtils.java
-@@ -47,6 +47,14 @@ import java.util.Locale;
- import java.util.regex.Matcher;
- import java.util.regex.Pattern;
+@@ -15,7 +15,14 @@
+  */
  
+ package android.telephony;
+-
++ 
 +import java.util.ArrayList;
 +import java.util.HashMap;
 +import org.xmlpull.v1.XmlPullParser;
@@ -37,15 +884,14 @@ index 3d0a553..8bd60b0 100644
 +import org.xmlpull.v1.XmlPullParserFactory;
 +import java.io.FileReader;
 +import java.io.IOException;
-+
- /**
-  * Various utilities for dealing with phone number strings.
-  */
-@@ -89,6 +97,78 @@ public class PhoneNumberUtils
+ import com.android.i18n.phonenumbers.NumberParseException;
+ import com.android.i18n.phonenumbers.PhoneNumberUtil;
+ import com.android.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+@@ -87,6 +94,77 @@ public class PhoneNumberUtils
+      */
      private static final Pattern GLOBAL_PHONE_NUMBER_PATTERN =
              Pattern.compile("[\\+]?[0-9.-]+");
- 
-+    // MTK
++  // MTK
 +
 +    /** @hide */
 +    public static class EccEntry {
@@ -116,24 +962,22 @@ index 3d0a553..8bd60b0 100644
 +        parseEccList();
 +        mHashMapForNetworkEccCategory = new HashMap<String, Integer>();
 +    }
-+
+ 
      /** True if c is ISO-LATIN characters 0-9 */
      public static boolean
-     isISODigit (char c) {
-@@ -1855,6 +1935,8 @@ public class PhoneNumberUtils
+@@ -1805,6 +1883,7 @@ public class PhoneNumberUtils
      private static boolean isEmergencyNumberInternal(int subId, String number,
                                                       String defaultCountryIso,
                                                       boolean useExactMatch) {
-+        boolean bSIMInserted = false;
-+
++		boolean bSIMInserted = false;
          // If the number passed in is null, just return false:
          if (number == null) return false;
  
-@@ -1876,6 +1958,28 @@ public class PhoneNumberUtils
+@@ -1825,6 +1904,27 @@ public class PhoneNumberUtils
+ 
          Rlog.d(LOG_TAG, "subId:" + subId + ", number: " +  number + ", defaultCountryIso:" +
                  ((defaultCountryIso == null) ? "NULL" : defaultCountryIso));
- 
-+        // MTK
++ 		// MTK
 +        // 1. Check ECCs updated by network
 +        mHashMapForNetworkEccCategory.clear();
 +        String strEccCategoryList = SystemProperties.get("ril.ecc.service.category.list");
@@ -154,22 +998,21 @@ index 3d0a553..8bd60b0 100644
 +                return true;
 +            }
 +        }
-+
+ 
          String emergencyNumbers = "";
          int slotId = SubscriptionManager.getSlotId(subId);
- 
-@@ -1885,6 +1989,7 @@ public class PhoneNumberUtils
+@@ -1835,6 +1935,7 @@ public class PhoneNumberUtils
              String ecclist = (slotId == 0) ? "ril.ecclist" : ("ril.ecclist" + slotId);
  
              emergencyNumbers = SystemProperties.get(ecclist, "");
-+            bSIMInserted = true;
++			bSIMInserted = true;
          }
  
          Rlog.d(LOG_TAG, "slotId:" + slotId + ", emergencyNumbers: " +  emergencyNumbers);
-@@ -1914,6 +2019,36 @@ public class PhoneNumberUtils
+@@ -1863,6 +1964,35 @@ public class PhoneNumberUtils
+             // no matches found against the list!
              return false;
          }
- 
 +        // MTK
 +        // 3. Check ECCs customized by user
 +        if (bSIMInserted) {
@@ -199,16 +1042,14 @@ index 3d0a553..8bd60b0 100644
 +                }
 +            }
 +        }
-+
+ 
          Rlog.d(LOG_TAG, "System property doesn't provide any emergency numbers."
                  + " Use embedded logic for determining ones.");
- 
-@@ -2961,4 +3096,149 @@ public class PhoneNumberUtils
+@@ -2880,4 +3010,148 @@ public class PhoneNumberUtils
          return SubscriptionManager.getDefaultVoiceSubId();
      }
      //==== End of utility methods used only in compareStrictly() =====
-+
-+    // MTK
++  // MTK
 +
 +    /**
 +     * Parse Ecc List From XML File
@@ -500,14 +1341,14 @@ index 0000000..158dcca
 +}
 +
 diff --git a/telephony/java/android/telephony/ServiceState.java b/telephony/java/android/telephony/ServiceState.java
-index 2d72c2b..5f5377f 100644
+index 2d72c2b..78022a7 100644
 --- a/telephony/java/android/telephony/ServiceState.java
 +++ b/telephony/java/android/telephony/ServiceState.java
-@@ -154,6 +154,30 @@ public class ServiceState implements Parcelable {
+@@ -154,6 +154,29 @@ public class ServiceState implements Parcelable {
       * @hide
       */
      public static final int RIL_RADIO_TECHNOLOGY_IWLAN = 18;
-+    // MTK-specific HSPAP radio technologies
++ 	// MTK-specific HSPAP radio technologies
 +    /** @hide */
 +    public static final int RIL_RADIO_TECHNOLOGY_MTK = 128;
 +    /** @hide */
@@ -530,15 +1371,15 @@ index 2d72c2b..5f5377f 100644
 +    public static final int RIL_RADIO_TECHNOLOGY_DC_HSDPAP_DPA = RIL_RADIO_TECHNOLOGY_MTK + 9;
 +    /** @hide */
 +    public static final int RIL_RADIO_TECHNOLOGY_DC_HSPAP = RIL_RADIO_TECHNOLOGY_MTK + 10;
-+
      /**
       * Available registration states for GSM, UMTS and CDMA.
       */
-@@ -221,6 +245,25 @@ public class ServiceState implements Parcelable {
+@@ -220,7 +243,24 @@ public class ServiceState implements Parcelable {
+     private int mCdmaDefaultRoamingIndicator;
      private int mCdmaEriIconIndex = 1; //EriInfo.ROAMING_INDICATOR_OFF;;
      private int mCdmaEriIconMode;
- 
-+    // MTK
+-
++  	// MTK
 +    private int mRilVoiceRegState = REGISTRATION_STATE_NOT_REGISTERED_AND_NOT_SEARCHING;
 +    private int mRilDataRegState  = REGISTRATION_STATE_NOT_REGISTERED_AND_NOT_SEARCHING;
 +    //[ALPS01675318] -START
@@ -556,16 +1397,23 @@ index 2d72c2b..5f5377f 100644
 +    public static final int RIL_CDMA_NETWORK_MODE_1X_EVDO   = 8;
 +    /** @hide */
 +    protected int mCdmaNetWorkMode = RIL_CDMA_NETWORK_MODE_UNKOWN;
-+
      /**
       * get String description of roaming type
       * @hide
-@@ -298,6 +341,12 @@ public class ServiceState implements Parcelable {
+@@ -289,7 +329,7 @@ public class ServiceState implements Parcelable {
+         mDataOperatorNumeric = s.mDataOperatorNumeric;
+         mIsManualNetworkSelection = s.mIsManualNetworkSelection;
+         mRilVoiceRadioTechnology = s.mRilVoiceRadioTechnology;
+-        mRilDataRadioTechnology = s.mRilDataRadioTechnology;
++        mRilDataRadioTechnology = fs.mRilDataRadioTechnology;
+         mCssIndicator = s.mCssIndicator;
+         mNetworkId = s.mNetworkId;
+         mSystemId = s.mSystemId;
+@@ -298,6 +338,11 @@ public class ServiceState implements Parcelable {
          mCdmaEriIconIndex = s.mCdmaEriIconIndex;
          mCdmaEriIconMode = s.mCdmaEriIconMode;
          mIsEmergencyOnly = s.mIsEmergencyOnly;
-+
-+        // MTK
++ 		// MTK
 +        mRilVoiceRegState = s.mRilVoiceRegState;
 +        mRilDataRegState = s.mRilDataRegState;
 +        mProprietaryDataRadioTechnology = s.mProprietaryDataRadioTechnology;
@@ -573,7 +1421,7 @@ index 2d72c2b..5f5377f 100644
      }
  
      /**
-@@ -325,6 +374,12 @@ public class ServiceState implements Parcelable {
+@@ -325,6 +370,12 @@ public class ServiceState implements Parcelable {
          mCdmaEriIconIndex = in.readInt();
          mCdmaEriIconMode = in.readInt();
          mIsEmergencyOnly = in.readInt() != 0;
@@ -586,7 +1434,7 @@ index 2d72c2b..5f5377f 100644
      }
  
      public void writeToParcel(Parcel out, int flags) {
-@@ -349,6 +404,12 @@ public class ServiceState implements Parcelable {
+@@ -349,6 +400,12 @@ public class ServiceState implements Parcelable {
          out.writeInt(mCdmaEriIconIndex);
          out.writeInt(mCdmaEriIconMode);
          out.writeInt(mIsEmergencyOnly ? 1 : 0);
@@ -599,7 +1447,7 @@ index 2d72c2b..5f5377f 100644
      }
  
      public int describeContents() {
-@@ -636,7 +697,12 @@ public class ServiceState implements Parcelable {
+@@ -636,7 +693,12 @@ public class ServiceState implements Parcelable {
                  && equalsHandlesNulls(mCdmaRoamingIndicator, s.mCdmaRoamingIndicator)
                  && equalsHandlesNulls(mCdmaDefaultRoamingIndicator,
                          s.mCdmaDefaultRoamingIndicator)
@@ -613,36 +1461,22 @@ index 2d72c2b..5f5377f 100644
      }
  
      /**
-@@ -740,7 +806,12 @@ public class ServiceState implements Parcelable {
-                 + " " + mSystemId
-                 + " RoamInd=" + mCdmaRoamingIndicator
-                 + " DefRoamInd=" + mCdmaDefaultRoamingIndicator
--                + " EmergOnly=" + mIsEmergencyOnly);
-+                + " EmergOnly=" + mIsEmergencyOnly
-+                // MTK
-+                + " RilVoiceRegState=" + mRilVoiceRegState
-+                + " RilDataRegState=" + mRilDataRegState
-+                + " ProprietaryDataRadioTechnology=" + mProprietaryDataRadioTechnology
-+                + " CdmaNetWorkMode=" + mCdmaNetWorkMode);
-     }
- 
-     private void setNullState(int state) {
-@@ -766,6 +837,11 @@ public class ServiceState implements Parcelable {
+@@ -766,6 +828,10 @@ public class ServiceState implements Parcelable {
          mCdmaEriIconIndex = -1;
          mCdmaEriIconMode = -1;
          mIsEmergencyOnly = false;
-+
-+        // MTK
++          // MTK
 +        mRilVoiceRegState = REGISTRATION_STATE_NOT_REGISTERED_AND_NOT_SEARCHING;
 +        mRilDataRegState  = REGISTRATION_STATE_NOT_REGISTERED_AND_NOT_SEARCHING;
 +        mProprietaryDataRadioTechnology = 0;
      }
  
      public void setStateOutOfService() {
-@@ -938,6 +1014,12 @@ public class ServiceState implements Parcelable {
+@@ -938,6 +1004,13 @@ public class ServiceState implements Parcelable {
          mCdmaRoamingIndicator = m.getInt("cdmaRoamingIndicator");
          mCdmaDefaultRoamingIndicator = m.getInt("cdmaDefaultRoamingIndicator");
          mIsEmergencyOnly = m.getBoolean("emergencyOnly");
++
 +
 +        // MTK
 +        mRilVoiceRegState = m.getInt("RilVoiceRegState");
@@ -652,7 +1486,7 @@ index 2d72c2b..5f5377f 100644
      }
  
      /**
-@@ -966,6 +1048,12 @@ public class ServiceState implements Parcelable {
+@@ -966,6 +1039,12 @@ public class ServiceState implements Parcelable {
          m.putInt("cdmaRoamingIndicator", mCdmaRoamingIndicator);
          m.putInt("cdmaDefaultRoamingIndicator", mCdmaDefaultRoamingIndicator);
          m.putBoolean("emergencyOnly", Boolean.valueOf(mIsEmergencyOnly));
@@ -665,10 +1499,12 @@ index 2d72c2b..5f5377f 100644
      }
  
      /** @hide */
-@@ -975,6 +1063,15 @@ public class ServiceState implements Parcelable {
+@@ -974,7 +1053,16 @@ public class ServiceState implements Parcelable {
+     }
  
      /** @hide */
-     public void setRilDataRadioTechnology(int rt) {
+-    public void setRilDataRadioTechnology(int rt) {
++     public void setRilDataRadioTechnology(int rt) {
 +        // redirect MTK-specific RATs
 +        if (rt > ServiceState.RIL_RADIO_TECHNOLOGY_MTK) {
 +            if (DBG) Rlog.d(LOG_TAG, "[ServiceState] setDataRadioTechnology mProprietaryDataRadioTechnology=" + rt);
@@ -681,10 +1517,11 @@ index 2d72c2b..5f5377f 100644
          this.mRilDataRadioTechnology = rt;
          if (DBG) Rlog.d(LOG_TAG, "[ServiceState] setDataRadioTechnology=" + mRilDataRadioTechnology);
      }
-@@ -1128,4 +1225,93 @@ public class ServiceState implements Parcelable {
+@@ -1127,5 +1215,94 @@ public class ServiceState implements Parcelable {
+         newSs.mIsEmergencyOnly = false; // only get here if voice is IN_SERVICE
  
          return newSs;
-     }
++  }
 +
 +    // MTK
 +
@@ -773,10 +1610,10 @@ index 2d72c2b..5f5377f 100644
 +     */
 +    public void setCdmaNetworkMode(int networkMode) {
 +        mCdmaNetWorkMode = networkMode;
-+    }
+     }
  }
 diff --git a/telephony/java/com/android/internal/telephony/IccCardConstants.java b/telephony/java/com/android/internal/telephony/IccCardConstants.java
-index e24664b..79063f5 100644
+index 606dd31..e8522bb 100644
 --- a/telephony/java/com/android/internal/telephony/IccCardConstants.java
 +++ b/telephony/java/com/android/internal/telephony/IccCardConstants.java
 @@ -51,6 +51,18 @@ public class IccCardConstants {
@@ -799,25 +1636,23 @@ index e24664b..79063f5 100644
       * This is combination of IccCardStatus.CardState and IccCardApplicationStatus.AppState
       * for external apps (like PhoneApp) to use
 diff --git a/telephony/java/com/android/internal/telephony/RILConstants.java b/telephony/java/com/android/internal/telephony/RILConstants.java
-index b87cfac..d9f6323 100644
+index 0764805..a1e1e0e 100644
 --- a/telephony/java/com/android/internal/telephony/RILConstants.java
 +++ b/telephony/java/com/android/internal/telephony/RILConstants.java
-@@ -323,7 +323,8 @@ cat include/telephony/ril.h | \
-     int RIL_REQUEST_GET_RADIO_CAPABILITY = 130;
-     int RIL_REQUEST_SET_RADIO_CAPABILITY = 131;
-     int RIL_REQUEST_GET_DATA_CALL_PROFILE = 132;
--    int RIL_REQUEST_SIM_GET_ATR = 133;
-+    // MTK please
-+    // int RIL_REQUEST_SIM_GET_ATR = 133;
+@@ -321,7 +321,7 @@ cat include/telephony/ril.h | \
+     int RIL_REQUEST_SET_DATA_PROFILE = 128;
+     int RIL_REQUEST_SHUTDOWN = 129;
+     int RIL_REQUEST_GET_DATA_CALL_PROFILE = 130;
+-    int RIL_REQUEST_SIM_GET_ATR = 131;
++   // int RIL_REQUEST_SIM_GET_ATR = 131;
+     int RIL_REQUEST_GET_3G_CAPABILITY = 130;
+     int RIL_REQUEST_SET_3G_CAPABILITY = 131;
  
-     int RIL_UNSOL_RESPONSE_BASE = 1000;
-     int RIL_UNSOL_RESPONSE_RADIO_STATE_CHANGED = 1000;
-@@ -373,4 +374,325 @@ cat include/telephony/ril.h | \
-     int RIL_UNSOL_STK_CC_ALPHA_NOTIFY = 1044;
- 
+@@ -370,4 +370,324 @@ cat include/telephony/ril.h | \
+     int RIL_UNSOL_ON_SS = 1042;
+     int RIL_UNSOL_STK_CC_ALPHA_NOTIFY = 1043;
      int RIL_UNSOL_STK_SEND_SMS_RESULT = 11002; /* Samsung STK */
-+
-+    // MediaTek Custom States
++  // MediaTek Custom States
 +    // oh no
 +    static final int RIL_REQUEST_GET_PHONE_RAT_FAMILY = 130;
 +    static final int RIL_REQUEST_SET_PHONE_RAT_FAMILY = 131;
@@ -1139,13 +1974,14 @@ index b87cfac..d9f6323 100644
 +    /* M: Add C2K proprietary end */
  }
 diff --git a/telephony/java/com/android/internal/telephony/TelephonyIntents.java b/telephony/java/com/android/internal/telephony/TelephonyIntents.java
-index 99f262a..4f07228 100644
+index 99f262a..89bf8f7 100644
 --- a/telephony/java/com/android/internal/telephony/TelephonyIntents.java
 +++ b/telephony/java/com/android/internal/telephony/TelephonyIntents.java
-@@ -424,4 +424,259 @@ public class TelephonyIntents {
+@@ -424,4 +424,260 @@ public class TelephonyIntents {
      public static final String ACTION_CAPABILITY_SWITCH_DONE
              = "com.android.phone.ACTION_CAPABILITY_SWITCH_DONE";
  
++
 +    // MTK additions
 +
 +    /**
@@ -1403,15 +2239,14 @@ index 99f262a..4f07228 100644
 +    /// @}
  }
 diff --git a/telephony/java/com/android/internal/telephony/TelephonyProperties.java b/telephony/java/com/android/internal/telephony/TelephonyProperties.java
-index db84d59..ec79f9c 100644
+index db84d59..cc48580 100644
 --- a/telephony/java/com/android/internal/telephony/TelephonyProperties.java
 +++ b/telephony/java/com/android/internal/telephony/TelephonyProperties.java
-@@ -248,4 +248,39 @@ public interface TelephonyProperties
+@@ -248,4 +248,38 @@ public interface TelephonyProperties
       *     or Earpiece, based on the default audio routing strategy.
       */
      static final String PROPERTY_IMS_AUDIO_OUTPUT = "persist.radio.ims.audio.output";
-+
-+    // MTK additions
++ // MTK additions
 +
 +    // Added by M begin
 +    /** The IMSI of the SIM

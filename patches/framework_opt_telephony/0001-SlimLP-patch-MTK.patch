@@ -1,48 +1,43 @@
-From 8163ec618f05d7fabe9b1bfae1e2c7575ed27a0a Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?=E7=A7=8B=E5=8F=B6=E9=9A=8F=E9=A3=8Eivan?=
- <yanziily@gmail.com>
-Date: Sun, 3 Jan 2016 21:28:59 +0800
-Subject: [PATCH] Update for mtk
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From e145cc4d533f5a31083fbc4b844de870d48eefae Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Mon, 6 Jun 2016 17:26:14 -0400
+Subject: [PATCH] SlimLP patch MTK
 
-Change-Id: I3d9ff9bcb8c7ee46b5820d9ba1be0406236c09fb
-Signed-off-by: 秋叶随风ivan <yanziily@gmail.com>
+Change-Id: Ibd4d993973bbc06d450e8414848dbf203dd68819
 ---
- .../android/internal/telephony/BaseCommands.java   |  209 ++
+ .../android/internal/telephony/BaseCommands.java   |  212 +-
  .../internal/telephony/CommandsInterface.java      |  250 +++
  .../android/internal/telephony/HardwareConfig.java |    2 +
  .../com/android/internal/telephony/IccCard.java    |   89 +
  .../android/internal/telephony/MediaTekRIL.java    | 2259 ++++++++++++++++++++
  src/java/com/android/internal/telephony/Phone.java |   35 +
- .../com/android/internal/telephony/PhoneBase.java  |   62 +-
- .../android/internal/telephony/PhoneFactory.java   |   20 +
+ .../com/android/internal/telephony/PhoneBase.java  |  140 +-
+ .../android/internal/telephony/PhoneFactory.java   |   19 +-
  .../com/android/internal/telephony/PhoneProxy.java |   23 +
- src/java/com/android/internal/telephony/RIL.java   |  527 ++++-
- .../internal/telephony/ServiceStateTracker.java    |   22 +
+ src/java/com/android/internal/telephony/RIL.java   |  530 ++++-
+ .../internal/telephony/ServiceStateTracker.java    |   22 +-
  .../telephony/SubscriptionInfoUpdater.java         |    2 +-
  .../cdma/CdmaSubscriptionSourceManager.java        |    2 +-
- .../telephony/dataconnection/ApnSetting.java       |   30 +-
- .../telephony/dataconnection/DcTracker.java        |   10 +
+ .../telephony/dataconnection/ApnSetting.java       |   32 +-
+ .../telephony/dataconnection/DcTracker.java        |   11 +-
  .../telephony/dataconnection/DcTrackerBase.java    |    6 +-
- .../android/internal/telephony/gsm/GSMPhone.java   |   85 +-
- .../android/internal/telephony/gsm/GsmMmiCode.java |  102 +-
- .../telephony/gsm/GsmServiceStateTracker.java      |   43 +-
- .../internal/telephony/imsphone/ImsPhone.java      |   18 +
- .../imsphone/ImsPhoneCommandInterface.java         |   47 +
+ .../android/internal/telephony/gsm/GSMPhone.java   |   65 +-
+ .../android/internal/telephony/gsm/GsmMmiCode.java |   90 +-
+ .../telephony/gsm/GsmServiceStateTracker.java      |   38 +-
+ .../internal/telephony/imsphone/ImsPhone.java      |   14 +-
+ .../imsphone/ImsPhoneCommandInterface.java         |   46 +
  .../telephony/imsphone/ImsPhoneMmiCode.java        |   21 +
- .../telephony/sip/SipCommandInterface.java         |   47 +
- .../internal/telephony/test/SimulatedCommands.java |   33 +
- .../internal/telephony/uicc/IccCardProxy.java      |  209 +-
+ .../telephony/sip/SipCommandInterface.java         |   46 +
+ .../internal/telephony/test/SimulatedCommands.java |   32 +
+ .../internal/telephony/uicc/IccCardProxy.java      |  203 +-
  .../internal/telephony/uicc/IccConstants.java      |   30 +
- .../internal/telephony/uicc/IccFileHandler.java    |  219 +-
- .../internal/telephony/uicc/RuimRecords.java       |   10 +-
- .../internal/telephony/uicc/SIMRecords.java        |   10 +-
- .../android/internal/telephony/uicc/UiccCard.java  |  107 +
- .../telephony/uicc/UiccCardApplication.java        |  163 ++
- .../internal/telephony/uicc/UiccController.java    |  421 +++-
- .../internal/telephony/uicc/UsimFileHandler.java   |    7 +
+ .../internal/telephony/uicc/IccFileHandler.java    |  221 +-
+ .../internal/telephony/uicc/RuimRecords.java       |   11 +-
+ .../internal/telephony/uicc/SIMRecords.java        |   11 +-
+ .../android/internal/telephony/uicc/UiccCard.java  |  106 +-
+ .../telephony/uicc/UiccCardApplication.java        |  158 ++
+ .../internal/telephony/uicc/UiccController.java    |  427 +++-
+ .../internal/telephony/uicc/UsimFileHandler.java   |   15 +-
  .../internal/telephony/EtwsNotification.java       |   42 +
  .../com/mediatek/internal/telephony/EtwsUtils.java |   31 +
  .../mediatek/internal/telephony/FemtoCellInfo.aidl |   19 +
@@ -58,7 +53,7 @@ Signed-off-by: 秋叶随风ivan <yanziily@gmail.com>
  .../telephony/worldphone/WorldPhoneOm.java         |  912 ++++++++
  .../telephony/worldphone/WorldPhoneUtil.java       |  246 +++
  .../telephony/worldphone/WorldPhoneWrapper.java    |   86 +
- 48 files changed, 8359 insertions(+), 61 deletions(-)
+ 48 files changed, 8379 insertions(+), 89 deletions(-)
  create mode 100644 src/java/com/android/internal/telephony/MediaTekRIL.java
  create mode 100644 src/java/com/mediatek/internal/telephony/EtwsNotification.java
  create mode 100644 src/java/com/mediatek/internal/telephony/EtwsUtils.java
@@ -77,9 +72,18 @@ Signed-off-by: 秋叶随风ivan <yanziily@gmail.com>
  create mode 100755 src/java/com/mediatek/internal/telephony/worldphone/WorldPhoneWrapper.java
 
 diff --git a/src/java/com/android/internal/telephony/BaseCommands.java b/src/java/com/android/internal/telephony/BaseCommands.java
-index 3b5cb4e..9d4bee8 100644
+index 3b5cb4e..37dc7eb 100644
 --- a/src/java/com/android/internal/telephony/BaseCommands.java
 +++ b/src/java/com/android/internal/telephony/BaseCommands.java
+@@ -88,7 +88,7 @@ public abstract class BaseCommands implements CommandsInterface {
+     protected Registrant mCatProCmdRegistrant;
+     protected Registrant mCatEventRegistrant;
+     protected Registrant mCatCallSetUpRegistrant;
+-    protected Registrant mCatSendSmsResultRegistrant;
++    protected Registrant mCatSendSFmsResultRegistrant;
+     protected Registrant mIccSmsFullRegistrant;
+     protected Registrant mEmergencyCallbackModeRegistrant;
+     protected Registrant mRingRegistrant;
 @@ -97,6 +97,25 @@ public abstract class BaseCommands implements CommandsInterface {
      protected Registrant mCatCcAlphaRegistrant;
      protected Registrant mSsRegistrant;
@@ -119,10 +123,11 @@ index 3b5cb4e..9d4bee8 100644
      public BaseCommands(Context context) {
          mContext = context;  // May be null (if so we won't log statistics)
      }
-@@ -936,4 +961,188 @@ public abstract class BaseCommands implements CommandsInterface {
+@@ -936,4 +961,189 @@ public abstract class BaseCommands implements CommandsInterface {
          return TelephonyManager.getLteOnGsmModeStatic();
      }
  
++
 +    // MTK additions
 +
 +    //MTK-START Support Multi-Application
@@ -2972,10 +2977,10 @@ index 0000000..947fc3f
 +    */
 +}
 diff --git a/src/java/com/android/internal/telephony/Phone.java b/src/java/com/android/internal/telephony/Phone.java
-index b412f2b..6b8ba87 100644
+index 620b622..ead5397 100644
 --- a/src/java/com/android/internal/telephony/Phone.java
 +++ b/src/java/com/android/internal/telephony/Phone.java
-@@ -2064,4 +2064,39 @@ public interface Phone {
+@@ -2075,4 +2075,39 @@ public interface Phone {
       * @return true if IMS is Registered
       */
      public boolean isImsRegistered();
@@ -3016,23 +3021,23 @@ index b412f2b..6b8ba87 100644
 +    public void unregisterForPhoneRatFamilyChanged(Handler h);
  }
 diff --git a/src/java/com/android/internal/telephony/PhoneBase.java b/src/java/com/android/internal/telephony/PhoneBase.java
-index 5ef81eb..dfbe0c2 100644
+index 9e98f6f..a950116 100644
 --- a/src/java/com/android/internal/telephony/PhoneBase.java
 +++ b/src/java/com/android/internal/telephony/PhoneBase.java
-@@ -42,6 +42,7 @@ import android.telephony.CellIdentityCdma;
- import android.telephony.CellInfo;
- import android.telephony.CellInfoCdma;
- import android.telephony.DataConnectionRealTimeInfo;
+@@ -59,6 +59,7 @@ import com.android.internal.telephony.test.SimulatedRadioControl;
+ import com.android.internal.telephony.uicc.IccCardApplicationStatus.AppType;
+ import com.android.internal.telephony.uicc.IccFileHandler;
+ import com.android.internal.telephony.uicc.IccRecords;
 +import android.telephony.PhoneRatFamily;
- import android.telephony.VoLteServiceState;
- import android.telephony.Rlog;
- import android.telephony.ServiceState;
-@@ -179,7 +180,21 @@ public abstract class PhoneBase extends Handler implements Phone {
+ import com.android.internal.telephony.uicc.IsimRecords;
+ import com.android.internal.telephony.uicc.UiccCard;
+ import com.android.internal.telephony.uicc.UiccCardApplication;
+@@ -173,7 +174,21 @@ public abstract class PhoneBase extends Handler implements Phone {
      protected static final int EVENT_SET_CALL_FORWARD_TIMER_DONE    = 37;
      protected static final int EVENT_GET_CALL_FORWARD_TIMER_DONE    = 38;
      protected static final int EVENT_GET_CALLFORWARDING_STATUS      = 39;
 -    protected static final int EVENT_LAST                   = EVENT_GET_CALLFORWARDING_STATUS;
-+    // MTK
++ 	// MTK
 +    protected static final int EVENT_GET_PHONE_RAT_FAMILY              = 41;
 +    protected static final int EVENT_PHONE_RAT_FAMILY_CHANGED_NOTIFY   = 42;
 +    protected static final int EVENT_LAST                   = EVENT_PHONE_RAT_FAMILY_CHANGED_NOTIFY;
@@ -3050,7 +3055,7 @@ index 5ef81eb..dfbe0c2 100644
  
      // For shared prefs.
      private static final String GSM_ROAMING_LIST_OVERRIDE_PREFIX = "gsm_roaming_list_";
-@@ -252,6 +267,9 @@ public abstract class PhoneBase extends Handler implements Phone {
+@@ -246,6 +261,9 @@ public abstract class PhoneBase extends Handler implements Phone {
      private boolean mImsServiceReady = false;
      protected static ImsPhone mImsPhone = null;
  
@@ -3060,7 +3065,7 @@ index 5ef81eb..dfbe0c2 100644
      @Override
      public String getPhoneName() {
          return mName;
-@@ -349,6 +367,9 @@ public abstract class PhoneBase extends Handler implements Phone {
+@@ -343,6 +361,9 @@ public abstract class PhoneBase extends Handler implements Phone {
      protected final RegistrantList mVideoCapabilityChangedRegistrants
              = new RegistrantList();
  
@@ -3090,11 +3095,11 @@ index 5ef81eb..dfbe0c2 100644
              default:
                  throw new RuntimeException("unexpected event not handled");
          }
-@@ -2338,6 +2372,32 @@ public abstract class PhoneBase extends Handler implements Phone {
-                 + this);
+@@ -2418,4 +2452,108 @@ public abstract class PhoneBase extends Handler implements Phone {
+         pw.flush();
+         pw.println("++++++++++++++++++++++++++++++++");
      }
- 
-+    // MTK additions
++   // MTK additions
 +
 +    @Override
 +    public void setPhoneRatFamily(int ratFamily, Message response) {
@@ -3120,35 +3125,110 @@ index 5ef81eb..dfbe0c2 100644
 +        mCi.unregisterForPhoneRatFamilyChanged(this);
 +    }
 +
-     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
-         pw.println("PhoneBase: subId=" + getSubId());
-         pw.println(" mPhoneId=" + mPhoneId);
++    public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
++        pw.println("PhoneBase: subId=" + getSubId());
++        pw.println(" mPhoneId=" + mPhoneId);
++        pw.println(" mCi=" + mCi);
++        pw.println(" mDnsCheckDisabled=" + mDnsCheckDisabled);
++        pw.println(" mDcTracker=" + mDcTracker);
++        pw.println(" mDoesRilSendMultipleCallRing=" + mDoesRilSendMultipleCallRing);
++        pw.println(" mCallRingContinueToken=" + mCallRingContinueToken);
++        pw.println(" mCallRingDelay=" + mCallRingDelay);
++        pw.println(" mIsTheCurrentActivePhone=" + mIsTheCurrentActivePhone);
++        pw.println(" mIsVoiceCapable=" + mIsVoiceCapable);
++        pw.println(" mIccRecords=" + mIccRecords.get());
++        pw.println(" mUiccApplication=" + mUiccApplication.get());
++        pw.println(" mSmsStorageMonitor=" + mSmsStorageMonitor);
++        pw.println(" mSmsUsageMonitor=" + mSmsUsageMonitor);
++        pw.flush();
++        pw.println(" mLooper=" + mLooper);
++        pw.println(" mContext=" + mContext);
++        pw.println(" mNotifier=" + mNotifier);
++        pw.println(" mSimulatedRadioControl=" + mSimulatedRadioControl);
++        pw.println(" mUnitTestMode=" + mUnitTestMode);
++        pw.println(" isDnsCheckDisabled()=" + isDnsCheckDisabled());
++        pw.println(" getUnitTestMode()=" + getUnitTestMode());
++        pw.println(" getState()=" + getState());
++        pw.println(" getIccSerialNumber()=" + getIccSerialNumber());
++        pw.println(" getIccRecordsLoaded()=" + getIccRecordsLoaded());
++        pw.println(" getMessageWaitingIndicator()=" + getMessageWaitingIndicator());
++        pw.println(" getCallForwardingIndicator()=" + getCallForwardingIndicator());
++        pw.println(" isInEmergencyCall()=" + isInEmergencyCall());
++        pw.flush();
++        pw.println(" isInEcm()=" + isInEcm());
++        pw.println(" getPhoneName()=" + getPhoneName());
++        pw.println(" getPhoneType()=" + getPhoneType());
++        pw.println(" getVoiceMessageCount()=" + getVoiceMessageCount());
++        pw.println(" getActiveApnTypes()=" + getActiveApnTypes());
++        pw.println(" isDataConnectivityPossible()=" + isDataConnectivityPossible());
++        pw.println(" needsOtaServiceProvisioning=" + needsOtaServiceProvisioning());
++        pw.flush();
++        pw.println("++++++++++++++++++++++++++++++++");
++
++        try {
++            mDcTracker.dump(fd, pw, args);
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++        pw.flush();
++        pw.println("++++++++++++++++++++++++++++++++");
++
++        try {
++            getServiceStateTracker().dump(fd, pw, args);
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++        pw.flush();
++        pw.println("++++++++++++++++++++++++++++++++");
++
++        try {
++            getCallTracker().dump(fd, pw, args);
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++        pw.flush();
++        pw.println("++++++++++++++++++++++++++++++++");
++
++        try {
++            ((RIL)mCi).dump(fd, pw, args);
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++        pw.flush();
++        pw.println("++++++++++++++++++++++++++++++++");
++    }
++
++    @Override
++    public void addParticipant(String dialString, Message onComplete) throws CallStateException {
++        throw new CallStateException("addParticipant is not supported in this phone "
++                + this);
++    }
+ }
 diff --git a/src/java/com/android/internal/telephony/PhoneFactory.java b/src/java/com/android/internal/telephony/PhoneFactory.java
-index 08ea27c..9440e36 100644
+index e816767..3c12bd7 100644
 --- a/src/java/com/android/internal/telephony/PhoneFactory.java
 +++ b/src/java/com/android/internal/telephony/PhoneFactory.java
-@@ -42,6 +42,10 @@ import com.android.internal.telephony.sip.SipPhoneFactory;
- import com.android.internal.telephony.uicc.IccCardProxy;
- import com.android.internal.telephony.uicc.UiccController;
- 
+@@ -29,7 +29,9 @@ import android.provider.Settings.SettingNotFoundException;
+ import android.telephony.Rlog;
+ import android.telephony.SubscriptionManager;
+ import android.telephony.TelephonyManager;
+-
 +import com.mediatek.internal.telephony.worldphone.IWorldPhone;
 +import com.mediatek.internal.telephony.worldphone.WorldPhoneUtil;
 +import com.mediatek.internal.telephony.worldphone.WorldPhoneWrapper;
-+
- import java.io.FileDescriptor;
- import java.io.PrintWriter;
- import java.lang.reflect.Constructor;
-@@ -75,6 +79,9 @@ public class PhoneFactory {
-     static private PhoneNotifier sPhoneNotifier;
-     static private Context sContext;
+ import com.android.internal.telephony.cdma.CDMALTEPhone;
+ import com.android.internal.telephony.cdma.CDMAPhone;
+ import com.android.internal.telephony.cdma.CdmaSubscriptionSourceManager;
+@@ -73,6 +75,8 @@ public class PhoneFactory {
  
+     static private boolean sMadeDefaults = false;
+     static private PhoneNotifier sPhoneNotifier;
 +    // MTK
 +    static private IWorldPhone sWorldPhone = null;
-+
-     //***** Class Methods
+     static private Context sContext;
  
-     public static void makeDefaultPhones(Context context) {
-@@ -236,6 +243,11 @@ public class PhoneFactory {
+     //***** Class Methods
+@@ -236,6 +240,11 @@ public class PhoneFactory {
                  sSubInfoRecordUpdater = new SubscriptionInfoUpdater(context,
                          sProxyPhones, sCommandsInterfaces);
                  SubscriptionController.getInstance().updatePhonesAvailability(sProxyPhones);
@@ -3160,7 +3240,7 @@ index 08ea27c..9440e36 100644
              }
          }
      }
-@@ -257,6 +269,14 @@ public class PhoneFactory {
+@@ -257,6 +266,14 @@ public class PhoneFactory {
          }
      }
  
@@ -3176,10 +3256,10 @@ index 08ea27c..9440e36 100644
                        String sRILClassname, Context context, int networkMode, int cdmaSubscription, Integer instanceId)
                        throws Exception {
 diff --git a/src/java/com/android/internal/telephony/PhoneProxy.java b/src/java/com/android/internal/telephony/PhoneProxy.java
-index 8246d23..18b6e15 100644
+index f451761..0145883 100644
 --- a/src/java/com/android/internal/telephony/PhoneProxy.java
 +++ b/src/java/com/android/internal/telephony/PhoneProxy.java
-@@ -1589,4 +1589,27 @@ public class PhoneProxy extends Handler implements Phone {
+@@ -1593,4 +1593,27 @@ public class PhoneProxy extends Handler implements Phone {
          pw.flush();
          pw.println("++++++++++++++++++++++++++++++++");
      }
@@ -3208,21 +3288,23 @@ index 8246d23..18b6e15 100644
 +
  }
 diff --git a/src/java/com/android/internal/telephony/RIL.java b/src/java/com/android/internal/telephony/RIL.java
-index 330679e..be26c8f 100644
+index a012244..c8eb520 100644
 --- a/src/java/com/android/internal/telephony/RIL.java
 +++ b/src/java/com/android/internal/telephony/RIL.java
-@@ -55,6 +55,7 @@ import android.telephony.SignalStrength;
- import android.telephony.SmsManager;
- import android.telephony.SmsMessage;
- import android.telephony.SubscriptionManager;
+@@ -78,7 +78,7 @@ import com.android.internal.telephony.dataconnection.DataCallResponse;
+ import com.android.internal.telephony.dataconnection.DataProfile;
+ import com.android.internal.telephony.TelephonyDevController;
+ import com.android.internal.telephony.HardwareConfig;
+-
 +import android.telephony.TelephonyManager;
- import android.text.TextUtils;
- import android.util.SparseArray;
- import android.view.Display;
-@@ -289,6 +290,10 @@ public class RIL extends BaseCommands implements CommandsInterface {
+ import java.io.ByteArrayInputStream;
+ import java.io.DataInputStream;
+ import java.io.FileDescriptor;
+@@ -289,6 +289,11 @@ public class RIL extends BaseCommands implements CommandsInterface {
      // divide the response array without prior knowledge of the number of elements.
      protected int mQANElements = 4;
  
++
 +    // MTK
 +    // save the status of screen
 +    private boolean isScreenOn = true;
@@ -3230,7 +3312,7 @@ index 330679e..be26c8f 100644
      //***** Events
  
      static final int EVENT_SEND                 = 1;
-@@ -2483,6 +2488,9 @@ public class RIL extends BaseCommands implements CommandsInterface {
+@@ -2479,6 +2484,9 @@ public class RIL extends BaseCommands implements CommandsInterface {
      }
  
      protected void sendScreenState(boolean on) {
@@ -3240,8 +3322,12 @@ index 330679e..be26c8f 100644
          RILRequest rr = RILRequest.obtain(RIL_REQUEST_SCREEN_STATE, null);
          rr.mParcel.writeInt(1);
          rr.mParcel.writeInt(on ? 1 : 0);
-@@ -3387,12 +3395,19 @@ public class RIL extends BaseCommands implements CommandsInterface {
-             case RIL_UNSOL_RIL_CONNECTED: {
+@@ -3380,15 +3388,22 @@ public class RIL extends BaseCommands implements CommandsInterface {
+                 }
+                 break;
+ 
+-            case RIL_UNSOL_RIL_CONNECTED: {
++              case RIL_UNSOL_RIL_CONNECTED: {
                  if (RILJ_LOGD) unsljLogRet(response, ret);
  
 +                // Set ecc list before MO call
@@ -3261,7 +3347,7 @@ index 330679e..be26c8f 100644
                  break;
              }
              case RIL_UNSOL_CELL_INFO_LIST: {
-@@ -4378,6 +4393,10 @@ public class RIL extends BaseCommands implements CommandsInterface {
+@@ -4372,6 +4387,10 @@ public class RIL extends BaseCommands implements CommandsInterface {
              case RIL_REQUEST_SETUP_DATA_CALL: return "SETUP_DATA_CALL";
              case RIL_REQUEST_SIM_IO: return "SIM_IO";
              case RIL_REQUEST_SEND_USSD: return "SEND_USSD";
@@ -3272,19 +3358,19 @@ index 330679e..be26c8f 100644
              case RIL_REQUEST_CANCEL_USSD: return "CANCEL_USSD";
              case RIL_REQUEST_GET_CLIR: return "GET_CLIR";
              case RIL_REQUEST_SET_CLIR: return "SET_CLIR";
-@@ -4397,6 +4416,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
+@@ -4391,6 +4410,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
              case RIL_REQUEST_SET_NETWORK_SELECTION_AUTOMATIC: return "SET_NETWORK_SELECTION_AUTOMATIC";
              case RIL_REQUEST_SET_NETWORK_SELECTION_MANUAL: return "SET_NETWORK_SELECTION_MANUAL";
              case RIL_REQUEST_QUERY_AVAILABLE_NETWORKS : return "QUERY_AVAILABLE_NETWORKS ";
-+            case RIL_REQUEST_ABORT_QUERY_AVAILABLE_NETWORKS : return "ABORT_QUERY_AVAILABLE_NETWORKS";
++			case RIL_REQUEST_ABORT_QUERY_AVAILABLE_NETWORKS : return "ABORT_QUERY_AVAILABLE_NETWORKS";
              case RIL_REQUEST_DTMF_START: return "DTMF_START";
              case RIL_REQUEST_DTMF_STOP: return "DTMF_STOP";
              case RIL_REQUEST_BASEBAND_VERSION: return "BASEBAND_VERSION";
-@@ -4477,6 +4497,135 @@ public class RIL extends BaseCommands implements CommandsInterface {
+@@ -4471,6 +4491,135 @@ public class RIL extends BaseCommands implements CommandsInterface {
              case RIL_REQUEST_GET_HARDWARE_CONFIG: return "GET_HARDWARE_CONFIG";
              case RIL_REQUEST_SIM_AUTHENTICATION: return "RIL_REQUEST_SIM_AUTHENTICATION";
              case RIL_REQUEST_SHUTDOWN: return "RIL_REQUEST_SHUTDOWN";
-+            case RIL_REQUEST_SET_PHONE_RAT_FAMILY: return "RIL_REQUEST_SET_PHONE_RAT_FAMILY";
++case RIL_REQUEST_SET_PHONE_RAT_FAMILY: return "RIL_REQUEST_SET_PHONE_RAT_FAMILY";
 +            case RIL_REQUEST_GET_PHONE_RAT_FAMILY: return "RIL_REQUEST_GET_PHONE_RAT_FAMILY";
 +
 +            /* M: call control part start */
@@ -3416,14 +3502,14 @@ index 330679e..be26c8f 100644
              default: return "<unknown request>";
          }
      }
-@@ -4534,9 +4683,85 @@ public class RIL extends BaseCommands implements CommandsInterface {
+@@ -4528,9 +4677,85 @@ public class RIL extends BaseCommands implements CommandsInterface {
              case RIL_UNSOL_SRVCC_STATE_NOTIFY:
                      return "UNSOL_SRVCC_STATE_NOTIFY";
              case RIL_UNSOL_HARDWARE_CONFIG_CHANGED: return "RIL_UNSOL_HARDWARE_CONFIG_CHANGED";
 -            case RIL_UNSOL_ON_SS: return "UNSOL_ON_SS";
 -            case RIL_UNSOL_STK_CC_ALPHA_NOTIFY: return "UNSOL_STK_CC_ALPHA_NOTIFY";
 -            case RIL_UNSOL_STK_SEND_SMS_RESULT: return "RIL_UNSOL_STK_SEND_SMS_RESULT";
-+            case RIL_UNSOL_SET_PHONE_RAT_FAMILY_COMPLETE: return "RIL_UNSOL_SET_PHONE_RAT_FAMILY_COMPLETE";
++case RIL_UNSOL_SET_PHONE_RAT_FAMILY_COMPLETE: return "RIL_UNSOL_SET_PHONE_RAT_FAMILY_COMPLETE";
 +            /* M: call control part start */
 +            case RIL_UNSOL_CALL_FORWARDING: return "UNSOL_CALL_FORWARDING";
 +            case RIL_UNSOL_CRSS_NOTIFICATION: return "UNSOL_CRSS_NOTIFICATION";
@@ -3505,7 +3591,7 @@ index 330679e..be26c8f 100644
              default: return "<unknown response>";
          }
      }
-@@ -4878,6 +5103,13 @@ public class RIL extends BaseCommands implements CommandsInterface {
+@@ -4872,6 +5097,13 @@ public class RIL extends BaseCommands implements CommandsInterface {
          send(rr);
      }
  
@@ -3519,12 +3605,11 @@ index 330679e..be26c8f 100644
      public void setDataProfile(DataProfile[] dps, Message result) {
          if (RILJ_LOGD) riljLog("Set RIL_REQUEST_SET_DATA_PROFILE");
  
-@@ -5098,4 +5330,291 @@ public class RIL extends BaseCommands implements CommandsInterface {
+@@ -5092,4 +5324,290 @@ public class RIL extends BaseCommands implements CommandsInterface {
  
          send(rr);
      }
-+
-+    // MTK additions
++ // MTK additions
 +    //MTK-START Support Multi-Application
 +    @Override
 +    public void openIccApplication(int application, Message response) {
@@ -3812,14 +3897,15 @@ index 330679e..be26c8f 100644
 +    }
  }
 diff --git a/src/java/com/android/internal/telephony/ServiceStateTracker.java b/src/java/com/android/internal/telephony/ServiceStateTracker.java
-index 179d4a1..7630879 100644
+index c957633..456e992 100644
 --- a/src/java/com/android/internal/telephony/ServiceStateTracker.java
 +++ b/src/java/com/android/internal/telephony/ServiceStateTracker.java
-@@ -189,6 +189,28 @@ public abstract class ServiceStateTracker extends Handler {
+@@ -178,7 +178,27 @@ public abstract class ServiceStateTracker extends Handler {
+     protected static final int EVENT_CHANGE_IMS_STATE                  = 45;
      protected static final int EVENT_IMS_STATE_CHANGED                 = 46;
      protected static final int EVENT_IMS_STATE_DONE                    = 47;
- 
-+    // MTK events
+-
++ 	// MTK events
 +    protected static final int EVENT_DATA_CONNECTION_DETACHED = 100;
 +    protected static final int EVENT_INVALID_SIM_INFO = 101; //ALPS00248788
 +    protected static final int EVENT_PS_NETWORK_STATE_CHANGED = 102;
@@ -3840,12 +3926,11 @@ index 179d4a1..7630879 100644
 +    protected static final int EVENT_NETWORK_TYPE_CHANGED   = 202;
 +    protected static final int EVENT_ETS_DEV_CHANGED        = 203;
 +    protected static final int EVENT_SET_MDN_DONE           = 204;
-+
      protected static final String TIMEZONE_PROPERTY = "persist.sys.timezone";
  
      /**
 diff --git a/src/java/com/android/internal/telephony/SubscriptionInfoUpdater.java b/src/java/com/android/internal/telephony/SubscriptionInfoUpdater.java
-index 95f805e..a806374 100644
+index 7a62c07..8546803 100644
 --- a/src/java/com/android/internal/telephony/SubscriptionInfoUpdater.java
 +++ b/src/java/com/android/internal/telephony/SubscriptionInfoUpdater.java
 @@ -225,7 +225,7 @@ public class SubscriptionInfoUpdater extends Handler {
@@ -3871,13 +3956,14 @@ index f7b8936..059d24d 100644
      private static CdmaSubscriptionSourceManager sInstance;
      private static final Object sReferenceCountMonitor = new Object();
 diff --git a/src/java/com/android/internal/telephony/dataconnection/ApnSetting.java b/src/java/com/android/internal/telephony/dataconnection/ApnSetting.java
-index cf2c57c..c9963c7 100755
+index cf2c57c..58848cd 100755
 --- a/src/java/com/android/internal/telephony/dataconnection/ApnSetting.java
 +++ b/src/java/com/android/internal/telephony/dataconnection/ApnSetting.java
-@@ -111,23 +111,23 @@ public class ApnSetting {
+@@ -110,24 +110,24 @@ public class ApnSetting {
+             String protocol, String roamingProtocol, boolean carrierEnabled, int bearer,
              int profileId, boolean modemCognitive, int maxConns, int waitTime, int maxConnsTime,
              int mtu, String mvnoType, String mvnoMatchData) {
-         this.id = id;
+-        this.id = id;
 -        this.numeric = numeric;
 -        this.carrier = carrier;
 -        this.apn = apn;
@@ -3888,6 +3974,7 @@ index cf2c57c..c9963c7 100755
 -        this.mmsPort = mmsPort;
 -        this.user = user;
 -        this.password = password;
++         this.id = id;
 +        this.numeric = numeric == null ? "" : numeric;
 +        this.carrier = carrier == null ? "" : carrier;
 +        this.apn = apn == null ? "" : apn;
@@ -3923,61 +4010,73 @@ index cf2c57c..c9963c7 100755
      }
  
 diff --git a/src/java/com/android/internal/telephony/dataconnection/DcTracker.java b/src/java/com/android/internal/telephony/dataconnection/DcTracker.java
-index 91ac2c0..9e271f6 100755
+index f565298..8b5e47a 100755
 --- a/src/java/com/android/internal/telephony/dataconnection/DcTracker.java
 +++ b/src/java/com/android/internal/telephony/dataconnection/DcTracker.java
-@@ -88,6 +88,9 @@ import com.android.internal.telephony.uicc.IccUtils;
+@@ -87,7 +87,7 @@ import com.android.internal.telephony.uicc.UiccController;
+ import com.android.internal.telephony.uicc.IccUtils;
  import com.android.internal.util.AsyncChannel;
  import com.android.internal.util.ArrayUtils;
- 
-+// MTK
+-
 +import com.mediatek.internal.telephony.dataconnection.FdManager;
-+
  import java.io.FileDescriptor;
  import java.io.PrintWriter;
  import java.nio.ByteBuffer;
-@@ -185,6 +188,9 @@ public final class DcTracker extends DcTrackerBase {
+@@ -170,10 +170,7 @@ public final class DcTracker extends DcTrackerBase {
+             PhoneBase.PROPERTY_OOS_IS_DISCONNECT, true);
+ 
+     private boolean mCanSetPreferApn = false;
+-
+     private AtomicBoolean mAttached = new AtomicBoolean(false);
+-
+-    /** Watches for changes to the APN db. */
+     private ApnChangeObserver mApnObserver;
+ 
+     private final String mProvisionActionName;
+@@ -184,9 +181,12 @@ public final class DcTracker extends DcTrackerBase {
+ 
+     public boolean mImsRegistrationState = false;
+     private ApnContext mWaitCleanUpApnContext = null;
++
      private boolean mDeregistrationAlarmState = false;
      private PendingIntent mImsDeregistrationDelayIntent = null;
  
-+    // MTK
 +    protected FdManager mFdMgr;
 +
      /* IWLAN and WWAN co-exist flag */
      private boolean mWwanIwlanCoexistFlag = false;
- 
-@@ -254,6 +260,9 @@ public final class DcTracker extends DcTrackerBase {
+     private long mSubId;
+@@ -233,6 +233,8 @@ public final class DcTracker extends DcTrackerBase {
              mPhone.getContext().registerReceiver(mIntentReceiver, filter, null, mPhone);
          }
  
-+        // MTK Fast Dormancy
 +        mFdMgr = FdManager.getInstance(p);
 +
          // Add Emergency APN to APN setting list by default to support EPDN in sim absent cases
          initEmergencyApnSetting();
          addEmergencyApnSetting();
-@@ -869,6 +878,7 @@ public final class DcTracker extends DcTrackerBase {
+@@ -846,6 +848,7 @@ public final class DcTracker extends DcTrackerBase {
          IccRecords r = mIccRecords.get();
          boolean recordsLoaded = false;
          if (r != null) {
-+            log("isDataAllowed mIccRecords=IccRecords {" + r.toString() + "}");
++			log("isDataAllowed mIccRecords=IccRecords {" + r.toString() + "}");
              recordsLoaded = r.getRecordsLoaded();
              if (DBG) log("isDataAllowed getRecordsLoaded=" + recordsLoaded);
          }
 diff --git a/src/java/com/android/internal/telephony/dataconnection/DcTrackerBase.java b/src/java/com/android/internal/telephony/dataconnection/DcTrackerBase.java
-index c17a9ce..806c719 100644
+index b80e1b7..a513a54 100644
 --- a/src/java/com/android/internal/telephony/dataconnection/DcTrackerBase.java
 +++ b/src/java/com/android/internal/telephony/dataconnection/DcTrackerBase.java
-@@ -1806,7 +1806,7 @@ public abstract class DcTrackerBase extends Handler {
+@@ -1801,7 +1801,7 @@ public abstract class DcTrackerBase extends Handler {
+         ApnSetting defaultApnSetting = null;
          ApnSetting firstApnSetting = null;
-         String operator = (r != null) ? r.getOperatorNumeric(): "";
  
 -        log("setInitialApn: E mPreferredApn=" + mPreferredApn);
 +        log("setInitialApn: E operator=" + operator + " mPreferredApn=" + mPreferredApn);
  
-         if (apnList != null && !apnList.isEmpty()) {
-             firstApnSetting = apnList.get(0);
-@@ -1858,7 +1858,9 @@ public abstract class DcTrackerBase extends Handler {
+         if (mAllApnSettings != null && !mAllApnSettings.isEmpty()) {
+             firstApnSetting = mAllApnSettings.get(0);
+@@ -1853,7 +1853,9 @@ public abstract class DcTrackerBase extends Handler {
  
              mPhone.mCi.setInitialAttachApn(initialAttachApnSetting.apn,
                      initialAttachApnSetting.protocol, initialAttachApnSetting.authType,
@@ -3989,68 +4088,51 @@ index c17a9ce..806c719 100644
      }
  
 diff --git a/src/java/com/android/internal/telephony/gsm/GSMPhone.java b/src/java/com/android/internal/telephony/gsm/GSMPhone.java
-index 1b8ef2d..723c223 100644
+index a55091c..99f4bb9 100644
 --- a/src/java/com/android/internal/telephony/gsm/GSMPhone.java
 +++ b/src/java/com/android/internal/telephony/gsm/GSMPhone.java
 @@ -147,6 +147,8 @@ public class GSMPhone extends PhoneBase {
          }
      }
  
-+    public boolean mIsNetworkInitiatedUssd = false;
++	public boolean mIsNetworkInitiatedUssd = false;
 +
      // Constructors
  
      public
-@@ -977,6 +979,9 @@ public class GSMPhone extends PhoneBase {
+@@ -977,6 +979,7 @@ public class GSMPhone extends PhoneBase {
      @Override
      public void sendUssdResponse(String ussdMessge) {
          GsmMmiCode mmi = GsmMmiCode.newFromUssdUserInput(ussdMessge, this, mUiccApplication.get());
-+        /* M: SS part */
 +        Rlog.d(LOG_TAG, "[sendUssdResponse]mPendingMMIs.add(mmi) + " + mmi);
-+        /* M: SS part end */
          mPendingMMIs.add(mmi);
          mMmiRegistrants.notifyRegistrants(new AsyncResult(null, mmi, null));
          mmi.sendUssd(ussdMessge);
-@@ -1470,6 +1475,10 @@ public class GSMPhone extends PhoneBase {
+@@ -1462,17 +1465,20 @@ public class GSMPhone extends PhoneBase {
+      * Removes the given MMI from the pending list and notifies
+      * registrants that it is complete.
+      * @param mmi MMI that is done
++     * @param obj User object to deliver to application
+      */
+-    /*package*/ void
+-    onMMIDone(GsmMmiCode mmi) {
++    public void onMMIDone(GsmMmiCode mmi, Object obj) {
+         /* Only notify complete if it's on the pending list.
+          * Otherwise, it's already been handled (eg, previously canceled).
           * The exception is cancellation of an incoming USSD-REQUEST, which is
           * not on the list.
           */
-+
 +        /* M: SS part */
 +        Rlog.d(LOG_TAG, "mPendingMMIs.remove(mmi) - " + mmi);
 +        /* M: SS part end */
          if (mPendingMMIs.remove(mmi) || mmi.isUssdRequest() || mmi.isSsInfo()) {
              mMmiCompleteRegistrants.notifyRegistrants(
-                 new AsyncResult(null, mmi, null));
-@@ -1477,6 +1486,27 @@ public class GSMPhone extends PhoneBase {
+-                new AsyncResult(null, mmi, null));
++                    new AsyncResult(obj, mmi, null));
+         }
      }
  
-     /**
-+     * Removes the given MMI from the pending list and notifies
-+     * registrants that it is complete.
-+     * @param mmi MMI that is done
-+     * @param obj User object to deliver to application
-+     */
-+    public void onMMIDone(GsmMmiCode mmi, Object obj) {
-+        /* Only notify complete if it's on the pending list.
-+         * Otherwise, it's already been handled (eg, previously canceled).
-+         * The exception is cancellation of an incoming USSD-REQUEST, which is
-+         * not on the list.
-+         */
-+        /* M: SS part */
-+        Rlog.d(LOG_TAG, "mPendingMMIs.remove(mmi) - " + mmi);
-+        /* M: SS part end */
-+        if (mPendingMMIs.remove(mmi) || mmi.isUssdRequest() || mmi.isSsInfo()) {
-+            mMmiCompleteRegistrants.notifyRegistrants(
-+                    new AsyncResult(obj, mmi, null));
-+        }
-+    }
-+
-+    /**
-      * Used to check if Call Forwarding status is present on sim card. If not, a message is
-      * sent so we can check if the CF status is stored as a Shared Preference.
-      */
-@@ -1506,34 +1536,55 @@ public class GSMPhone extends PhoneBase {
+@@ -1506,23 +1512,37 @@ public class GSMPhone extends PhoneBase {
          boolean isUssdError;
          boolean isUssdRequest;
          boolean isUssdRelease;
@@ -4091,10 +4173,10 @@ index 1b8ef2d..723c223 100644
                  break;
              }
          }
- 
+@@ -1530,10 +1550,18 @@ public class GSMPhone extends PhoneBase {
          if (found != null) {
              // Complete pending USSD
--
+ 
 -            if (isUssdRelease) {
 +            /* M: SS part */
 +            //For ALPS01471897
@@ -4111,7 +4193,7 @@ index 1b8ef2d..723c223 100644
              } else {
                  found.onUssdFinished(ussdMessage, isUssdRequest);
              }
-@@ -1542,6 +1593,13 @@ public class GSMPhone extends PhoneBase {
+@@ -1542,6 +1570,13 @@ public class GSMPhone extends PhoneBase {
  
              // ignore everything that isnt a Notify or a Request
              // also, discard if there is no message to present
@@ -4125,12 +4207,11 @@ index 1b8ef2d..723c223 100644
              if (!isUssdError && ussdMessage != null) {
                  GsmMmiCode mmi;
                  mmi = GsmMmiCode.newNetworkInitiatedUssd(ussdMessage,
-@@ -1549,8 +1607,25 @@ public class GSMPhone extends PhoneBase {
+@@ -1549,8 +1584,24 @@ public class GSMPhone extends PhoneBase {
                                                     GSMPhone.this,
                                                     mUiccApplication.get());
                  onNetworkInitiatedUssd(mmi);
-+
-+            //MTK-START [mtk04070][111118][ALPS00093395]MTK added
++   //MTK-START [mtk04070][111118][ALPS00093395]MTK added
 +            } else if (isUssdError) {
 +                GsmMmiCode mmi;
 +                mmi = GsmMmiCode.newNetworkInitiatedUssdError(ussdMessage,
@@ -4152,33 +4233,27 @@ index 1b8ef2d..723c223 100644
  
      /**
 diff --git a/src/java/com/android/internal/telephony/gsm/GsmMmiCode.java b/src/java/com/android/internal/telephony/gsm/GsmMmiCode.java
-index c79c9f0..2db5c34 100644
+index c79c9f0..11998c8 100644
 --- a/src/java/com/android/internal/telephony/gsm/GsmMmiCode.java
 +++ b/src/java/com/android/internal/telephony/gsm/GsmMmiCode.java
-@@ -116,6 +116,12 @@ public final class GsmMmiCode extends Handler implements MmiCode {
+@@ -115,7 +115,7 @@ public final class GsmMmiCode extends Handler implements MmiCode {
+     static final int EVENT_QUERY_COMPLETE       = 5;
      static final int EVENT_SET_CFF_COMPLETE     = 6;
      static final int EVENT_USSD_CANCEL_COMPLETE = 7;
- 
-+    /* M: SS part */
-+    /// M: [mtk04070][111125][ALPS00093395]MTK added. @{
+-
 +    static final String USSD_HANDLED_BY_STK = "stk";
-+    /// @}
-+    /* M: SS part end */
-+
      //***** Instance Variables
  
      GSMPhone mPhone;
-@@ -140,6 +146,9 @@ public final class GsmMmiCode extends Handler implements MmiCode {
+@@ -139,6 +139,7 @@ public final class GsmMmiCode extends Handler implements MmiCode {
+     State mState = State.PENDING;
      CharSequence mMessage;
      private boolean mIsSsInfo = false;
++	private boolean mUserInitiatedMMI = false;
  
-+    //For ALPS01471897
-+    private boolean mUserInitiatedMMI = false;
-+    //end
  
      //***** Class Variables
- 
-@@ -573,10 +582,21 @@ public final class GsmMmiCode extends Handler implements MmiCode {
+@@ -573,10 +574,21 @@ public final class GsmMmiCode extends Handler implements MmiCode {
          return ((Phone) mPhone);
      }
  
@@ -4200,7 +4275,7 @@ index c79c9f0..2db5c34 100644
          // Complete or failed cannot be cancelled
          if (mState == State.COMPLETE || mState == State.FAILED) {
              return;
-@@ -779,6 +799,36 @@ public final class GsmMmiCode extends Handler implements MmiCode {
+@@ -779,6 +791,36 @@ public final class GsmMmiCode extends Handler implements MmiCode {
          return mIsSsInfo;
      }
  
@@ -4237,12 +4312,11 @@ index c79c9f0..2db5c34 100644
      /** Process a MMI code or short code...anything that isn't a dialing number */
      void
      processCode () {
-@@ -789,7 +839,13 @@ public final class GsmMmiCode extends Handler implements MmiCode {
+@@ -789,7 +831,12 @@ public final class GsmMmiCode extends Handler implements MmiCode {
                  sendUssd(mDialingNumber);
              } else if (mDialingNumber != null) {
                  // We should have no dialing numbers here
 -                throw new RuntimeException ("Invalid or Unsupported MMI Code");
-+
 +                /* M: SS part */
 +                /// M: [mtk04070][111125][ALPS00093395]MTK modified. @{
 +                Rlog.w(LOG_TAG, "Special USSD Support:" + mPoundString + mDialingNumber);
@@ -4252,7 +4326,7 @@ index c79c9f0..2db5c34 100644
              } else if (mSc != null && mSc.equals(SC_CLIP)) {
                  Rlog.d(LOG_TAG, "is CLIP");
                  if (isInterrogate()) {
-@@ -1007,7 +1063,10 @@ public final class GsmMmiCode extends Handler implements MmiCode {
+@@ -1007,7 +1054,10 @@ public final class GsmMmiCode extends Handler implements MmiCode {
      void
      onUssdFinished(String ussdMessage, boolean isUssdRequest) {
          if (mState == State.PENDING) {
@@ -4264,12 +4338,7 @@ index c79c9f0..2db5c34 100644
                  mMessage = mContext.getText(com.android.internal.R.string.mmiComplete);
              } else {
                  mMessage = ussdMessage;
-@@ -1017,11 +1076,28 @@ public final class GsmMmiCode extends Handler implements MmiCode {
-             if (!isUssdRequest) {
-                 mState = State.COMPLETE;
-             }
--
-             mPhone.onMMIDone(this);
+@@ -1022,6 +1072,24 @@ public final class GsmMmiCode extends Handler implements MmiCode {
          }
      }
  
@@ -4294,32 +4363,10 @@ index c79c9f0..2db5c34 100644
      /**
       * Called from GSMPhone
       *
-@@ -1033,11 +1109,11 @@ public final class GsmMmiCode extends Handler implements MmiCode {
-         if (mState == State.PENDING) {
-             mState = State.FAILED;
-             mMessage = mContext.getText(com.android.internal.R.string.mmiError);
--
-             mPhone.onMMIDone(this);
-         }
-     }
- 
-+
-     /**
-      * Called from GSMPhone
-      *
-@@ -1057,6 +1133,7 @@ public final class GsmMmiCode extends Handler implements MmiCode {
-         }
-     }
- 
-+
-     void sendUssd(String ussdMessage) {
-         // Treat this as a USSD string
-         mIsPendingUSSD = true;
-@@ -1616,4 +1693,21 @@ public final class GsmMmiCode extends Handler implements MmiCode {
+@@ -1616,4 +1684,20 @@ public final class GsmMmiCode extends Handler implements MmiCode {
          sb.append("}");
          return sb.toString();
      }
-+
 +    /* M: SS part */
 +    /// M: [mtk04070][111125][ALPS00093395]MTK proprietary methods. @{
 +    static GsmMmiCode
@@ -4338,10 +4385,10 @@ index c79c9f0..2db5c34 100644
 +    }
  }
 diff --git a/src/java/com/android/internal/telephony/gsm/GsmServiceStateTracker.java b/src/java/com/android/internal/telephony/gsm/GsmServiceStateTracker.java
-index 117d054..f2e3d18 100644
+index 3c03096..cef34ff 100644
 --- a/src/java/com/android/internal/telephony/gsm/GsmServiceStateTracker.java
 +++ b/src/java/com/android/internal/telephony/gsm/GsmServiceStateTracker.java
-@@ -224,6 +224,20 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
+@@ -230,6 +230,20 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
          mCi.setOnNITZTime(this, EVENT_NITZ_TIME, null);
          mCi.setOnRestrictedStateChanged(this, EVENT_RESTRICTED_STATE_CHANGED, null);
  
@@ -4362,19 +4409,15 @@ index 117d054..f2e3d18 100644
          // system setting property AIRPLANE_MODE_ON is set in Settings.
          int airplaneMode = Settings.Global.getInt(
                  phone.getContext().getContentResolver(),
-@@ -267,6 +281,11 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
+@@ -273,6 +287,7 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
          mCr.unregisterContentObserver(mAutoTimeObserver);
          mCr.unregisterContentObserver(mAutoTimeZoneObserver);
          mPhone.getContext().unregisterReceiver(mIntentReceiver);
-+
-+        // MTK
-+        // mCi.unregisterForIccRefresh(this);
 +        mCi.unregisterForPsNetworkStateChanged(this);
-+
          super.dispose();
      }
  
-@@ -327,6 +346,10 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
+@@ -333,6 +348,10 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
                  pollState();
                  break;
  
@@ -4385,11 +4428,10 @@ index 117d054..f2e3d18 100644
              case EVENT_GET_SIGNAL_STRENGTH:
                  // This callback is called when signal strength is polled
                  // all by itself
-@@ -720,6 +743,12 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
+@@ -750,6 +769,11 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
                                      psc = Integer.parseInt(states[14], 16);
                                  }
                              }
-+
 +                            log("EVENT_POLL_STATE_REGISTRATION mSS getRilVoiceRadioTechnology:" + mSS.getRilVoiceRadioTechnology() +
 +                                    ", regState:" + regState +
 +                                    ", NewSS RilVoiceRadioTechnology:" + mNewSS.getRilVoiceRadioTechnology() +
@@ -4398,7 +4440,7 @@ index 117d054..f2e3d18 100644
                          } catch (NumberFormatException ex) {
                              loge("error parsing RegistrationState: " + ex);
                          }
-@@ -783,12 +812,18 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
+@@ -813,12 +837,18 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
                              if (states.length >= 4 && states[3] != null) {
                                  type = Integer.parseInt(states[3]);
                              }
@@ -4422,28 +4464,23 @@ index 117d054..f2e3d18 100644
                          } catch (NumberFormatException ex) {
                              loge("error parsing GprsRegistrationState: " + ex);
 diff --git a/src/java/com/android/internal/telephony/imsphone/ImsPhone.java b/src/java/com/android/internal/telephony/imsphone/ImsPhone.java
-index b4c70d9..ac63ebf 100644
+index 58aa088..51601ba 100644
 --- a/src/java/com/android/internal/telephony/imsphone/ImsPhone.java
 +++ b/src/java/com/android/internal/telephony/imsphone/ImsPhone.java
-@@ -104,6 +104,14 @@ public class ImsPhone extends ImsPhoneBase {
+@@ -103,7 +103,7 @@ public class ImsPhone extends ImsPhoneBase {
+     private static final int EVENT_DEFAULT_PHONE_DATA_STATE_CHANGED  = EVENT_LAST + 7;
  
      public static final String CS_FALLBACK = "cs_fallback";
- 
-+    /// M: @{
-+    /**
-+     * Used as the message in CallStateException.
-+     * We don't support dialing a USSD number while there is an existing IMS call.
-+     */
-+    public static final String USSD_DURING_IMS_INCALL = "ussd_during_ims_incall";
-+    /// @}
-+
+-
++	public static final String USSD_DURING_IMS_INCALL = "ussd_during_ims_incall";
      static final int RESTART_ECM_TIMER = 0; // restart Ecm timer
      static final int CANCEL_ECM_TIMER = 1; // cancel Ecm timer
  
-@@ -532,6 +540,16 @@ public class ImsPhone extends ImsPhoneBase {
+@@ -532,6 +532,18 @@ public class ImsPhone extends ImsPhoneBase {
          return result;
      }
  
++ 
 +    /// M: for USSD over IMS workaround. @{
 +    private boolean isUssdDuringInCall(ImsPhoneMmiCode mmi) {
 +        if (mmi == null || !mmi.isUssdNumber()) {
@@ -4454,14 +4491,15 @@ index b4c70d9..ac63ebf 100644
 +    }
 +    /// @}
 +
++
      boolean isInCall() {
          ImsPhoneCall.State foregroundCallState = getForegroundCall().getState();
          ImsPhoneCall.State backgroundCallState = getBackgroundCall().getState();
 diff --git a/src/java/com/android/internal/telephony/imsphone/ImsPhoneCommandInterface.java b/src/java/com/android/internal/telephony/imsphone/ImsPhoneCommandInterface.java
-index 755e87c..9226a8b 100644
+index 755e87c..670b737 100644
 --- a/src/java/com/android/internal/telephony/imsphone/ImsPhoneCommandInterface.java
 +++ b/src/java/com/android/internal/telephony/imsphone/ImsPhoneCommandInterface.java
-@@ -586,5 +586,52 @@ class ImsPhoneCommandInterface extends BaseCommands implements CommandsInterface
+@@ -586,5 +586,51 @@ class ImsPhoneCommandInterface extends BaseCommands implements CommandsInterface
      public void requestShutdown(Message result) {
      }
  
@@ -4511,14 +4549,13 @@ index 755e87c..9226a8b 100644
 +    public void setInitialAttachApn(String apn, String protocol, int authType, String username,
 +            String password, String operatorNumeric, boolean canHandleIms, Message result) {
 +    }
-+
      public boolean needsOldRilFeature(String feature) { return false; }
  }
 diff --git a/src/java/com/android/internal/telephony/imsphone/ImsPhoneMmiCode.java b/src/java/com/android/internal/telephony/imsphone/ImsPhoneMmiCode.java
-index 18d94ad..2a9191c 100644
+index cda8043..ac34413 100644
 --- a/src/java/com/android/internal/telephony/imsphone/ImsPhoneMmiCode.java
 +++ b/src/java/com/android/internal/telephony/imsphone/ImsPhoneMmiCode.java
-@@ -1797,4 +1797,25 @@ public final class ImsPhoneMmiCode extends Handler implements MmiCode {
+@@ -1796,4 +1796,25 @@ public final class ImsPhoneMmiCode extends Handler implements MmiCode {
          sb.append("}");
          return sb.toString();
      }
@@ -4545,14 +4582,14 @@ index 18d94ad..2a9191c 100644
 +    /// @}
  }
 diff --git a/src/java/com/android/internal/telephony/sip/SipCommandInterface.java b/src/java/com/android/internal/telephony/sip/SipCommandInterface.java
-index 65c37ba..f14bf69 100644
+index 65c37ba..d4f577f 100644
 --- a/src/java/com/android/internal/telephony/sip/SipCommandInterface.java
 +++ b/src/java/com/android/internal/telephony/sip/SipCommandInterface.java
-@@ -589,5 +589,52 @@ class SipCommandInterface extends BaseCommands implements CommandsInterface {
+@@ -588,6 +588,52 @@ class SipCommandInterface extends BaseCommands implements CommandsInterface {
+     @Override
      public void requestShutdown(Message result) {
      }
- 
-+    // MTK
++  // MTK
 +
 +    @Override
 +    public void iccGetATR(Message response) {
@@ -4598,17 +4635,17 @@ index 65c37ba..f14bf69 100644
 +    public void setInitialAttachApn(String apn, String protocol, int authType, String username,
 +            String password, String operatorNumeric, boolean canHandleIms, Message result) {
 +    }
-+
+ 
      public boolean needsOldRilFeature(String feature) { return false; }
  }
 diff --git a/src/java/com/android/internal/telephony/test/SimulatedCommands.java b/src/java/com/android/internal/telephony/test/SimulatedCommands.java
-index 0181430..afddcdc 100644
+index 0181430..5765ead 100644
 --- a/src/java/com/android/internal/telephony/test/SimulatedCommands.java
 +++ b/src/java/com/android/internal/telephony/test/SimulatedCommands.java
-@@ -1776,5 +1776,38 @@ public final class SimulatedCommands extends BaseCommands
+@@ -1775,6 +1775,38 @@ public final class SimulatedCommands extends BaseCommands
+     public void requestShutdown(Message result) {
          setRadioState(RadioState.RADIO_UNAVAILABLE);
      }
- 
 +    // MTK additions
 +
 +    @Override
@@ -4641,26 +4678,27 @@ index 0181430..afddcdc 100644
 +    public void setInitialAttachApn(String apn, String protocol, int authType, String username,
 +            String password, String operatorNumeric, boolean canHandleIms, Message result) {
 +    }
-+
+ 
      public boolean needsOldRilFeature(String feature) { return false; }
  }
 diff --git a/src/java/com/android/internal/telephony/uicc/IccCardProxy.java b/src/java/com/android/internal/telephony/uicc/IccCardProxy.java
-index c4c55c6..ed7bab6 100755
+index 17bae02..7f5118d 100755
 --- a/src/java/com/android/internal/telephony/uicc/IccCardProxy.java
 +++ b/src/java/com/android/internal/telephony/uicc/IccCardProxy.java
-@@ -54,6 +54,8 @@ import com.android.internal.telephony.uicc.IccCardStatus.PinState;
+@@ -53,7 +53,7 @@ import com.android.internal.telephony.uicc.IccCardStatus.CardState;
+ import com.android.internal.telephony.uicc.IccCardStatus.PinState;
  import com.android.internal.telephony.uicc.UiccController;
  import com.android.internal.telephony.uicc.RuimRecords;
- 
+-
 +import com.mediatek.internal.telephony.uicc.IccCardProxyEx;
-+
  import java.io.FileDescriptor;
  import java.io.PrintWriter;
  
-@@ -103,6 +105,21 @@ public class IccCardProxy extends Handler implements IccCard {
+@@ -102,7 +102,20 @@ public class IccCardProxy extends Handler implements IccCard {
+     private static final int EVENT_SUBSCRIPTION_ACTIVATED = 501;
      private static final int EVENT_SUBSCRIPTION_DEACTIVATED = 502;
      private static final int EVENT_CARRIER_PRIVILIGES_LOADED = 503;
- 
+-
 +    // MTK
 +    private static final int EVENT_ICC_RECOVERY = 100;
 +    private static final int EVENT_ICC_FDN_CHANGED = 101;
@@ -4675,32 +4713,27 @@ index c4c55c6..ed7bab6 100755
 +    };
 +
 +    private static final String COMMON_SLOT_PROPERTY = "";
-+
      private Integer mPhoneId = null;
  
      private final Object mLock = new Object();
-@@ -113,6 +130,10 @@ public class IccCardProxy extends Handler implements IccCard {
+@@ -113,6 +126,9 @@ public class IccCardProxy extends Handler implements IccCard {
      private RegistrantList mPinLockedRegistrants = new RegistrantList();
      private RegistrantList mPersoLockedRegistrants = new RegistrantList();
  
-+    // MTK
 +    private RegistrantList mRecoveryRegistrants = new RegistrantList();
 +    private RegistrantList mFdnChangedRegistrants = new RegistrantList();
 +
      private int mCurrentAppType = UiccController.APP_FAM_3GPP; //default to 3gpp?
      private UiccController mUiccController = null;
      private UiccCard mUiccCard = null;
-@@ -127,6 +148,9 @@ public class IccCardProxy extends Handler implements IccCard {
+@@ -126,12 +142,13 @@ public class IccCardProxy extends Handler implements IccCard {
+     protected State mExternalState = State.UNKNOWN;
      private boolean mIsCardStatusAvailable = false;
      private PersoSubState mPersoSubState = PersoSubState.PERSOSUBSTATE_UNKNOWN;
- 
-+    // MTK
-+    private IccCardProxyEx mIccCardProxyEx;
-+
-     // Sim State events may be broadcasted before the siminfo table update has been
-     // completed. Due to this such events may be broadcasted with dummy subId for a
-     // particular slotId. Therefore, setExternalState once the siminfo table has been updated.
-@@ -145,6 +169,7 @@ public class IccCardProxy extends Handler implements IccCard {
+-
++	private IccCardProxyEx mIccCardProxyEx;
+     public IccCardProxy(Context context, CommandsInterface ci, int phoneId) {
+         if (DBG) log("ctor: ci=" + ci + " phoneId=" + phoneId);
          mContext = context;
          mCi = ci;
          mPhoneId = phoneId;
@@ -4708,7 +4741,7 @@ index c4c55c6..ed7bab6 100755
          mCdmaSSM = CdmaSubscriptionSourceManager.getInstance(context,
                  ci, this, EVENT_CDMA_SUBSCRIPTION_SOURCE_CHANGED, null);
          mUiccController = UiccController.getInstance();
-@@ -168,6 +193,7 @@ public class IccCardProxy extends Handler implements IccCard {
+@@ -151,6 +168,7 @@ public class IccCardProxy extends Handler implements IccCard {
              mCi.unregisterForOn(this);
              mCi.unregisterForOffOrNotAvailable(this);
              mCdmaSSM.dispose(this);
@@ -4716,7 +4749,7 @@ index c4c55c6..ed7bab6 100755
          }
      }
  
-@@ -288,6 +314,10 @@ public class IccCardProxy extends Handler implements IccCard {
+@@ -271,6 +289,10 @@ public class IccCardProxy extends Handler implements IccCard {
                      setExternalState(State.NOT_READY);
                  }
                  break;
@@ -4727,8 +4760,12 @@ index c4c55c6..ed7bab6 100755
              case EVENT_RADIO_ON:
                  mRadioOn = true;
                  if (!mInitialized) {
-@@ -302,9 +332,29 @@ public class IccCardProxy extends Handler implements IccCard {
-             case EVENT_ICC_CHANGED:
+@@ -282,9 +304,19 @@ public class IccCardProxy extends Handler implements IccCard {
+                 // be restored. Therefore, updateExternalState when the radio turns on.
+                 updateExternalState();
+                 break;
+-            case EVENT_ICC_CHANGED:
++             case EVENT_ICC_CHANGED:
                  mIsCardStatusAvailable = true;
                  if (mInitialized) {
 +                    AsyncResult ar = (AsyncResult) msg.obj;
@@ -4744,34 +4781,25 @@ index c4c55c6..ed7bab6 100755
                      updateIccAvailability();
                  }
                  break;
-+            case EVENT_ICC_RECOVERY: {
-+                AsyncResult ar = (AsyncResult) msg.obj;
-+                Integer index = (Integer) ar.result;
-+                log("handleMessage (EVENT_ICC_RECOVERY) , index = " + index);
-+                // if (index == mSlotId) {
-+                if (DBG) log("mRecoveryRegistrants notify");
-+                mRecoveryRegistrants.notifyRegistrants();
-+                // }
-+                break;
-+            }
-             case EVENT_ICC_ABSENT:
-                 mAbsentRegistrants.notifyRegistrants();
-                 setExternalState(State.ABSENT);
-@@ -386,6 +436,10 @@ public class IccCardProxy extends Handler implements IccCard {
+@@ -369,6 +401,12 @@ public class IccCardProxy extends Handler implements IccCard {
                  }
                  break;
  
++
 +            case EVENT_ICC_FDN_CHANGED:
 +                mFdnChangedRegistrants.notifyRegistrants();
 +                break;
 +
++
              case EVENT_CARRIER_PRIVILIGES_LOADED:
                  log("EVENT_CARRIER_PRIVILEGES_LOADED");
                  if (mUiccCard != null) {
-@@ -490,12 +544,19 @@ public class IccCardProxy extends Handler implements IccCard {
+@@ -472,13 +510,20 @@ public class IccCardProxy extends Handler implements IccCard {
+             case APPSTATE_PUK:
                  setExternalState(State.PUK_REQUIRED);
                  break;
-             case APPSTATE_SUBSCRIPTION_PERSO:
+-            case APPSTATE_SUBSCRIPTION_PERSO:
++             case APPSTATE_SUBSCRIPTION_PERSO:
 +                /*  [mtk02772][ALPS00437082]
 +                    mediatek platform will set network locked for all of subState (5 type of network locked)
 +                */
@@ -4788,7 +4816,7 @@ index c4c55c6..ed7bab6 100755
                  break;
              case APPSTATE_READY:
                  setExternalState(State.READY);
-@@ -655,7 +716,15 @@ public class IccCardProxy extends Handler implements IccCard {
+@@ -638,7 +683,15 @@ public class IccCardProxy extends Handler implements IccCard {
          switch (state) {
              case PIN_REQUIRED: return IccCardConstants.INTENT_VALUE_LOCKED_ON_PIN;
              case PUK_REQUIRED: return IccCardConstants.INTENT_VALUE_LOCKED_ON_PUK;
@@ -4805,7 +4833,7 @@ index c4c55c6..ed7bab6 100755
              case PERM_DISABLED: return IccCardConstants.INTENT_VALUE_ABSENT_ON_PERM_DISABLED;
              case CARD_IO_ERROR: return IccCardConstants.INTENT_VALUE_ICC_CARD_IO_ERROR;
              default: return null;
-@@ -990,4 +1059,142 @@ public class IccCardProxy extends Handler implements IccCard {
+@@ -973,4 +1026,142 @@ public class IccCardProxy extends Handler implements IccCard {
  
          pw.flush();
      }
@@ -4988,39 +5016,39 @@ index facc918..4b5b48f 100644
 +    static final int EF_ISIM_GBANL = 0x6fd7;
  }
 diff --git a/src/java/com/android/internal/telephony/uicc/IccFileHandler.java b/src/java/com/android/internal/telephony/uicc/IccFileHandler.java
-index 24d948c..e1f524b 100644
+index 24d948c..c5e8013 100644
 --- a/src/java/com/android/internal/telephony/uicc/IccFileHandler.java
 +++ b/src/java/com/android/internal/telephony/uicc/IccFileHandler.java
-@@ -18,6 +18,7 @@ package com.android.internal.telephony.uicc;
+@@ -18,7 +18,7 @@ package com.android.internal.telephony.uicc;
  
  import android.os.*;
  import com.android.internal.telephony.CommandsInterface;
+-
 +import com.android.internal.telephony.PhoneConstants;
- 
  import java.util.ArrayList;
  
-@@ -92,6 +93,9 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+ /**
+@@ -91,7 +91,7 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+     static protected final int EVENT_READ_ICON_DONE = 10;
      /** Finished retrieving size of record for EFimg now. */
      static protected final int EVENT_GET_RECORD_SIZE_IMG_DONE = 11;
- 
-+    // MTK
+-
 +    static protected final int EVENT_SELECT_EF_FILE = 100;
-+
       // member variables
      protected final CommandsInterface mCi;
      protected final UiccCardApplication mParentApp;
-@@ -104,6 +108,10 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+@@ -103,7 +103,9 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+         int mRecordNum, mRecordSize, mCountRecords;
          boolean mLoadAll;
          String mPath;
- 
+-
 +        // MTK
 +        int mChannel;
 +        int mMode;
-+
          // Variables used to load part records
          boolean mLoadPart;
          ArrayList<Integer> mRecordNums;
-@@ -120,6 +128,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+@@ -120,6 +122,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
              mLoadAll = false;
              mLoadPart = false;
              mPath = null;
@@ -5029,7 +5057,7 @@ index 24d948c..e1f524b 100644
          }
  
          LoadLinearFixedContext(int efid, int recordNum, String path, Message onLoaded) {
-@@ -129,6 +139,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+@@ -129,6 +133,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
              mLoadAll = false;
              mLoadPart = false;
              mPath = path;
@@ -5038,7 +5066,7 @@ index 24d948c..e1f524b 100644
          }
  
          LoadLinearFixedContext(int efid, String path, Message onLoaded) {
-@@ -138,6 +150,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+@@ -138,6 +144,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
              mLoadPart = false;
              mOnLoaded = onLoaded;
              mPath = path;
@@ -5047,7 +5075,7 @@ index 24d948c..e1f524b 100644
          }
  
          LoadLinearFixedContext(int efid, Message onLoaded) {
-@@ -147,6 +161,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+@@ -147,6 +155,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
              mLoadPart = false;
              mOnLoaded = onLoaded;
              mPath = null;
@@ -5056,14 +5084,13 @@ index 24d948c..e1f524b 100644
          }
  
          LoadLinearFixedContext(int efid, ArrayList<Integer> recordNums, String path,
-@@ -161,6 +177,31 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+@@ -161,8 +171,31 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
              mCountLoadrecords = recordNums.size();
              mOnLoaded = onLoaded;
              mPath = path;
-+            mChannel = 0;
++	        mChannel = 0;
 +            mMode = -1;
 +        }
-+
 +        // MTK
 +        LoadLinearFixedContext(int efid, int recordNum, Message onLoaded, int channel) {
 +            mEfid = efid;
@@ -5074,8 +5101,8 @@ index 24d948c..e1f524b 100644
 +            mPath = null;
 +            mChannel = channel;
 +            mMode = -1;
-+        }
-+
+         }
+ 
 +        LoadLinearFixedContext(int efid, Message onLoaded, int channel) {
 +            mEfid = efid;
 +            mRecordNum = 1;
@@ -5085,18 +5112,20 @@ index 24d948c..e1f524b 100644
 +            mPath = null;
 +            mChannel = channel;
 +            mMode = -1;
-         }
- 
++}
          private void initLCResults(int size) {
-@@ -496,6 +537,7 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+             this.results = new ArrayList<byte[]>(size);
+             byte[] data = new byte[this.mRecordSize];
+@@ -496,7 +529,7 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
          int fileid;
          int recordSize[];
          String path = null;
-+        int channel = 0;
- 
+-
++		int channel = 0;
          try {
              switch (msg.what) {
-@@ -591,12 +633,22 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+             case EVENT_GET_EF_LINEAR_RECORD_SIZE_DONE:
+@@ -591,12 +624,21 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
                   if (path == null) {
                       path = getEFPath(lc.mEfid);
                   }
@@ -5106,7 +5135,6 @@ index 24d948c..e1f524b 100644
 -                         lc.mRecordSize, null, null, mAid,
 -                         obtainMessage(EVENT_READ_RECORD_DONE, lc));
 -                 break;
-+
 +
 +                 if (lc.mMode != -1) {
 +                    mCi.iccIOForAppEx(COMMAND_READ_RECORD, lc.mEfid, getSmsEFPath(lc.mMode),
@@ -5125,15 +5153,18 @@ index 24d948c..e1f524b 100644
              case EVENT_GET_BINARY_SIZE_DONE:
                  ar = (AsyncResult)msg.obj;
                  response = (Message) ar.userObj;
-@@ -609,6 +661,7 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+@@ -607,9 +649,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+                 }
+ 
                  data = result.payload;
- 
+-
                  fileid = msg.arg1;
+-
 +                channel = msg.arg2;
- 
                  if (UiccTlvData.isUiccTlvData(data)) {
  
-@@ -634,8 +687,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+ 
+@@ -634,8 +675,8 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
                      throw new IccFileTypeMismatch();
                  }
  
@@ -5144,7 +5175,7 @@ index 24d948c..e1f524b 100644
                                  obtainMessage(EVENT_READ_BINARY_DONE,
                                                fileid, 0, response));
              break;
-@@ -665,11 +718,20 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+@@ -665,11 +706,21 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
                              path = getEFPath(lc.mEfid);
                          }
  
@@ -5153,7 +5184,7 @@ index 24d948c..e1f524b 100644
 -                                    READ_RECORD_MODE_ABSOLUTE,
 -                                    lc.mRecordSize, null, null, mAid,
 -                                    obtainMessage(EVENT_READ_RECORD_DONE, lc));
-+                        if (lc.mMode != -1) {
++                                               if (lc.mMode != -1) {
 +                            mCi.iccIOForAppEx(COMMAND_READ_RECORD, lc.mEfid,
 +                                        getSmsEFPath(lc.mMode),
 +                                        lc.mRecordNum,
@@ -5167,10 +5198,11 @@ index 24d948c..e1f524b 100644
 +                                        lc.mRecordSize, null, null, mAid, lc.mChannel,
 +                                        obtainMessage(EVENT_READ_RECORD_DONE, lc));
 +                        }
++
                      }
                  } else if (lc.mLoadPart) {
                      lc.results.set(lc.mRecordNum - 1, result.payload);
-@@ -680,9 +742,20 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+@@ -680,9 +731,20 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
                              if (path == null) {
                                  path = getEFPath(lc.mEfid);
                              }
@@ -5194,19 +5226,20 @@ index 24d948c..e1f524b 100644
                          } else {
                              sendResult(response, lc.results, null);
                          }
-@@ -752,9 +825,123 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+@@ -751,10 +813,123 @@ public abstract class IccFileHandler extends Handler implements IccConstants {
+         }
          return null;
      }
- 
+-
 +    public boolean needsFakeIccid() {
 +        return mCi.needsOldRilFeature("fakeiccid");
 +    }
-+
      protected abstract String getEFPath(int efid);
      protected abstract void logd(String s);
  
      protected abstract void loge(String s);
  
++
 +    // MTK
 +    public void loadEFLinearFixedAll(int fileid, Message onLoaded, boolean is7FFF) {
 +        Message response = obtainMessage(EVENT_GET_RECORD_SIZE_DONE,
@@ -5319,14 +5352,15 @@ index 24d948c..e1f524b 100644
 +    protected String getEFPath(int efid, boolean is7FFF) { return null; };
  }
 diff --git a/src/java/com/android/internal/telephony/uicc/RuimRecords.java b/src/java/com/android/internal/telephony/uicc/RuimRecords.java
-index 4d16293..883642b 100644
+index b7edcec..1e253cf 100644
 --- a/src/java/com/android/internal/telephony/uicc/RuimRecords.java
 +++ b/src/java/com/android/internal/telephony/uicc/RuimRecords.java
-@@ -723,11 +723,15 @@ public final class RuimRecords extends IccRecords {
+@@ -723,10 +723,17 @@ public final class RuimRecords extends IccRecords {
                  data = (byte[])ar.result;
  
                  if (ar.exception != null) {
 -                    break;
++
 +                    if(mFh.needsFakeIccid()) {
 +                        mIccId = FAKE_ICCID;
 +                    } else {
@@ -5337,19 +5371,20 @@ index 4d16293..883642b 100644
                  }
  
 -                mIccId = IccUtils.bcdToString(data, 0, data.length);
--
++
+ 
                  log("iccid: " + mIccId);
  
-             break;
 diff --git a/src/java/com/android/internal/telephony/uicc/SIMRecords.java b/src/java/com/android/internal/telephony/uicc/SIMRecords.java
-index cd65830..df24072 100644
+index 65139d5..1d24a60 100644
 --- a/src/java/com/android/internal/telephony/uicc/SIMRecords.java
 +++ b/src/java/com/android/internal/telephony/uicc/SIMRecords.java
-@@ -876,11 +876,15 @@ public class SIMRecords extends IccRecords {
+@@ -880,10 +880,17 @@ public class SIMRecords extends IccRecords {
                  data = (byte[])ar.result;
  
                  if (ar.exception != null) {
 -                    break;
++
 +                    if(mFh.needsFakeIccid()) {
 +                        mIccId = FAKE_ICCID;
 +                    } else {
@@ -5360,24 +5395,23 @@ index cd65830..df24072 100644
                  }
  
 -                mIccId = IccUtils.bcdToString(data, 0, data.length);
--
++
+ 
                  log("iccid: " + mIccId);
  
-             break;
 diff --git a/src/java/com/android/internal/telephony/uicc/UiccCard.java b/src/java/com/android/internal/telephony/uicc/UiccCard.java
-index 1c27e44..2c6a474 100644
+index 1c27e44..06f866a 100644
 --- a/src/java/com/android/internal/telephony/uicc/UiccCard.java
 +++ b/src/java/com/android/internal/telephony/uicc/UiccCard.java
-@@ -98,8 +98,20 @@ public class UiccCard {
+@@ -97,9 +97,16 @@ public class UiccCard {
+     private static final int EVENT_SIM_IO_DONE = 19;
      private static final int EVENT_CARRIER_PRIVILIGES_LOADED = 20;
      private static final int EVENT_SIM_GET_ATR_DONE = 21;
- 
-+    // MTK
+-
 +    private static final int EVENT_GET_ATR_DONE = 100;
 +    private static final int EVENT_OPEN_CHANNEL_WITH_SW_DONE = 101;
-+
      private int mPhoneId;
- 
+-
 +    // MTK
 +    static final String[] UICCCARD_PROPERTY_RIL_UICC_TYPE = {
 +        "gsm.ril.uicctype",
@@ -5385,11 +5419,10 @@ index 1c27e44..2c6a474 100644
 +        "gsm.ril.uicctype.3",
 +        "gsm.ril.uicctype.4",
 +    };
-+
      public UiccCard(Context c, CommandsInterface ci, IccCardStatus ics, int phoneId) {
          mCardState = ics.mCardState;
          mPhoneId = phoneId;
-@@ -371,6 +383,9 @@ public class UiccCard {
+@@ -371,6 +378,9 @@ public class UiccCard {
                  case EVENT_TRANSMIT_APDU_BASIC_CHANNEL_DONE:
                  case EVENT_SIM_IO_DONE:
                  case EVENT_SIM_GET_ATR_DONE:
@@ -5399,7 +5432,7 @@ index 1c27e44..2c6a474 100644
                      AsyncResult ar = (AsyncResult)msg.obj;
                      if (ar.exception != null) {
                         if (DBG)
-@@ -706,4 +721,96 @@ public class UiccCard {
+@@ -706,4 +716,96 @@ public class UiccCard {
          }
          pw.flush();
      }
@@ -5497,22 +5530,14 @@ index 1c27e44..2c6a474 100644
 +    }
  }
 diff --git a/src/java/com/android/internal/telephony/uicc/UiccCardApplication.java b/src/java/com/android/internal/telephony/uicc/UiccCardApplication.java
-index cce75f1..c455256 100644
+index cce75f1..d646be2 100644
 --- a/src/java/com/android/internal/telephony/uicc/UiccCardApplication.java
 +++ b/src/java/com/android/internal/telephony/uicc/UiccCardApplication.java
-@@ -22,6 +22,7 @@ import android.os.Handler;
- import android.os.Message;
- import android.os.Registrant;
- import android.os.RegistrantList;
-+import android.os.SystemProperties;
- import android.telephony.Rlog;
- 
- import com.android.internal.telephony.CommandsInterface;
-@@ -88,6 +89,37 @@ public class UiccCardApplication {
+@@ -87,7 +87,36 @@ public class UiccCardApplication {
+     private RegistrantList mReadyRegistrants = new RegistrantList();
      private RegistrantList mPinLockedRegistrants = new RegistrantList();
      private RegistrantList mPersoLockedRegistrants = new RegistrantList();
- 
-+    // MTK
++ // MTK
 +    private int mSlotId;
 +
 +    private static final int EVENT_QUERY_NETWORK_LOCK_DONE = 101;
@@ -5535,36 +5560,34 @@ index cce75f1..c455256 100644
 +        "gsm.sim.retry.pin1.3",
 +        "gsm.sim.retry.pin1.4",
 +    };
-+
+ 
 +    private static final String PROPERTY_PIN2_RETRY[] = {
 +        "gsm.sim.retry.pin2",
 +        "gsm.sim.retry.pin2.2",
 +        "gsm.sim.retry.pin2.3",
 +        "gsm.sim.retry.pin2.4",
 +    };
-+
      UiccCardApplication(UiccCard uiccCard,
                          IccCardApplicationStatus as,
                          Context c,
-@@ -107,6 +139,8 @@ public class UiccCardApplication {
+@@ -107,6 +136,8 @@ public class UiccCardApplication {
          mContext = c;
          mCi = ci;
  
-+        mSlotId = mUiccCard.getSlotId();
++		mSlotId = mUiccCard.getSlotId();
 +
          mIccFh = createIccFileHandler(as.app_type);
          mIccRecords = createIccRecords(as.app_type, mContext, mCi);
          if (mAppState == AppState.APPSTATE_READY) {
-@@ -146,6 +180,8 @@ public class UiccCardApplication {
+@@ -146,6 +177,7 @@ public class UiccCardApplication {
                  mIccRecords = createIccRecords(as.app_type, c, ci);
              }
  
-+            // MTK log
 +            if (DBG) log("mPersoSubState: " + mPersoSubState + " oldPersoSubState: " + oldPersoSubState);
              if (mPersoSubState != oldPersoSubState &&
                      isPersoLocked()) {
                  notifyPersoLockedRegistrantsIfNeeded(null);
-@@ -409,6 +445,28 @@ public class UiccCardApplication {
+@@ -409,6 +441,28 @@ public class UiccCardApplication {
                      ar = (AsyncResult)msg.obj;
                      onChangeFacilityLock(ar);
                      break;
@@ -5593,10 +5616,11 @@ index cce75f1..c455256 100644
                  case EVENT_RADIO_UNAVAILABLE:
                      if (DBG) log("handleMessage (EVENT_RADIO_UNAVAILABLE)");
                      mAppState = AppState.APPSTATE_UNKNOWN;
-@@ -779,12 +837,34 @@ public class UiccCardApplication {
+@@ -779,12 +833,34 @@ public class UiccCardApplication {
          }
      }
  
++
 +    // MTK implementation of getIccFdnAvailable
 +    public boolean getIccFdnAvailableMTK() {
 +        if (mIccRecords == null) {
@@ -5613,7 +5637,6 @@ index cce75f1..c455256 100644
 +            return false;
 +        }
 +    }
-+
      /**
       * Check whether fdn (fixed dialing number) service is available.
       * @return true if ICC fdn service available
@@ -5628,12 +5651,11 @@ index cce75f1..c455256 100644
          return mIccFdnAvailable;
      }
  
-@@ -958,4 +1038,87 @@ public class UiccCardApplication {
+@@ -958,4 +1034,86 @@ public class UiccCardApplication {
          }
          pw.flush();
      }
-+
-+    // MTK
++ // MTK
 +    private RegistrantList mFdnChangedRegistrants = new RegistrantList();
 +
 +    public void registerForFdnChanged(Handler h, int what, Object obj) {
@@ -5717,10 +5739,15 @@ index cce75f1..c455256 100644
 +    }
  }
 diff --git a/src/java/com/android/internal/telephony/uicc/UiccController.java b/src/java/com/android/internal/telephony/uicc/UiccController.java
-index 3e5d679..e3cc67c 100644
+index f1b47d6..ff6e89f 100644
 --- a/src/java/com/android/internal/telephony/uicc/UiccController.java
 +++ b/src/java/com/android/internal/telephony/uicc/UiccController.java
-@@ -18,14 +18,19 @@ package com.android.internal.telephony.uicc;
+@@ -14,31 +14,42 @@
+  * limitations under the License.
+  */
+ 
++
+ package com.android.internal.telephony.uicc;
  
  import android.content.Context;
  import android.content.Intent;
@@ -5738,9 +5765,10 @@ index 3e5d679..e3cc67c 100644
  import android.telephony.TelephonyManager;
 +import android.telephony.SubscriptionManager;
  import android.telephony.Rlog;
- import android.text.format.Time;
++import android.text.format.Time;
  
-@@ -34,7 +39,10 @@ import android.telephony.ServiceState;
+ import android.telephony.ServiceState;
+ 
  import com.android.internal.telephony.CommandsInterface;
  import com.android.internal.telephony.PhoneConstants;
  import com.android.internal.telephony.SubscriptionController;
@@ -5751,7 +5779,13 @@ index 3e5d679..e3cc67c 100644
  
  import java.io.FileDescriptor;
  import java.io.PrintWriter;
-@@ -97,6 +105,36 @@ public class UiccController extends Handler {
+ import java.nio.ByteBuffer;
+ import java.nio.ByteOrder;
++import java.util.LinkedList;
+ 
+ /**
+  * This class is responsible for keeping all knowledge about
+@@ -95,6 +106,36 @@ public class UiccController extends Handler {
      private static final int EVENT_REFRESH = 4;
      private static final int EVENT_REFRESH_OEM = 5;
  
@@ -5788,7 +5822,7 @@ index 3e5d679..e3cc67c 100644
      private CommandsInterface[] mCis;
      private UiccCard[] mUiccCards = new UiccCard[TelephonyManager.getDefault().getPhoneCount()];
  
-@@ -109,6 +147,15 @@ public class UiccController extends Handler {
+@@ -107,6 +148,20 @@ public class UiccController extends Handler {
  
      private boolean mOEMHookSimRefresh = false;
  
@@ -5801,10 +5835,15 @@ index 3e5d679..e3cc67c 100644
 +    private int[] mImsSessionId = new int[TelephonyManager.getDefault().getPhoneCount()];
 +    private RegistrantList mApplicationChangedRegistrants = new RegistrantList();
 +
-     // Logging for dumpsys. Useful in cases when the cards run into errors.
-     private static final int MAX_PROACTIVE_COMMANDS_TO_LOG = 20;
-     private LinkedList<String> mCardLogs = new LinkedList<String>();
-@@ -131,9 +178,11 @@ public class UiccController extends Handler {
++    // Logging for dumpsys. Useful in cases when the cards run into errors.
++    private static final int MAX_PROACTIVE_COMMANDS_TO_LOG = 20;
++    private LinkedList<String> mCardLogs = new LinkedList<String>();
++
++
+     public static UiccController make(Context c, CommandsInterface[] ci) {
+         synchronized (mLock) {
+             if (mInstance != null) {
+@@ -125,9 +180,11 @@ public class UiccController extends Handler {
                  com.android.internal.R.bool.config_sim_refresh_for_dual_mode_card);
          for (int i = 0; i < mCis.length; i++) {
              Integer index = new Integer(i);
@@ -5817,11 +5856,10 @@ index 3e5d679..e3cc67c 100644
                  mCis[i].registerForAvailable(this, EVENT_ICC_STATUS_CHANGED, index);
              } else {
                  mCis[i].registerForOn(this, EVENT_ICC_STATUS_CHANGED, index);
-@@ -142,12 +191,30 @@ public class UiccController extends Handler {
+@@ -136,12 +193,28 @@ public class UiccController extends Handler {
              mCis[i].registerForIccStatusChanged(this, EVENT_ICC_STATUS_CHANGED, index);
              // TODO remove this once modem correctly notifies the unsols
              mCis[i].registerForNotAvailable(this, EVENT_RADIO_UNAVAILABLE, index);
-+
 +            mCis[i].registerForVirtualSimOn(this, EVENT_VIRTUAL_SIM_ON, index);
 +            mCis[i].registerForVirtualSimOff(this, EVENT_VIRTUAL_SIM_OFF, index);
 +            mCis[i].registerForSimMissing(this, EVENT_SIM_MISSING, index);
@@ -5837,7 +5875,6 @@ index 3e5d679..e3cc67c 100644
                  mCis[i].registerForIccRefresh(this, EVENT_REFRESH, index);
              }
          }
-+
 +        IntentFilter filter = new IntentFilter();
 +        /* TODO: Wait for SIM Info migration done
 +        filter.addAction(TelephonyIntents.ACTION_SIM_INFO_UPDATE);
@@ -5848,10 +5885,11 @@ index 3e5d679..e3cc67c 100644
      }
  
      public static UiccController getInstance() {
-@@ -239,6 +306,23 @@ public class UiccController extends Handler {
+@@ -233,6 +306,24 @@ public class UiccController extends Handler {
          }
      }
  
++
 +    //Notifies when card status changes
 +    public void registerForIccRecovery(Handler h, int what, Object obj) {
 +        synchronized (mLock) {
@@ -5872,7 +5910,7 @@ index 3e5d679..e3cc67c 100644
      @Override
      public void handleMessage (Message msg) {
          synchronized (mLock) {
-@@ -259,6 +343,38 @@ public class UiccController extends Handler {
+@@ -253,6 +344,38 @@ public class UiccController extends Handler {
                      AsyncResult ar = (AsyncResult)msg.obj;
                      onGetIccCardStatusDone(ar, index);
                      break;
@@ -5911,7 +5949,7 @@ index 3e5d679..e3cc67c 100644
                  case EVENT_RADIO_UNAVAILABLE:
                      if (DBG) log("EVENT_RADIO_UNAVAILABLE, dispose card");
                      if (mUiccCards[index] != null) {
-@@ -267,6 +383,90 @@ public class UiccController extends Handler {
+@@ -261,6 +384,90 @@ public class UiccController extends Handler {
                      mUiccCards[index] = null;
                      mIccChangedRegistrants.notifyRegistrants(new AsyncResult(null, index, null));
                      break;
@@ -6002,12 +6040,11 @@ index 3e5d679..e3cc67c 100644
                  case EVENT_REFRESH:
                      ar = (AsyncResult)msg.obj;
                      if (DBG) log("Sim REFRESH received");
-@@ -437,4 +637,223 @@ public class UiccController extends Handler {
-             pw.println("  " + mCardLogs.get(i));
+@@ -418,4 +625,222 @@ public class UiccController extends Handler {
+             }
          }
      }
-+
-+    // MTK
++ // MTK
 +    private synchronized void onGetIccCardStatusDone(AsyncResult ar, Integer index, boolean isUpdate) {
 +        if (ar.exception != null) {
 +            Rlog.e(LOG_TAG, "Error getting ICC status. "
@@ -6227,34 +6264,39 @@ index 3e5d679..e3cc67c 100644
 +    }
  }
 diff --git a/src/java/com/android/internal/telephony/uicc/UsimFileHandler.java b/src/java/com/android/internal/telephony/uicc/UsimFileHandler.java
-index 612d55e..426814d 100644
+index 612d55e..86602c8 100644
 --- a/src/java/com/android/internal/telephony/uicc/UsimFileHandler.java
 +++ b/src/java/com/android/internal/telephony/uicc/UsimFileHandler.java
 @@ -35,7 +35,10 @@ public final class UsimFileHandler extends IccFileHandler implements IccConstant
      @Override
      protected String getEFPath(int efid) {
          switch(efid) {
+-        case EF_SMS:
 +        case EF_ICCID:
 +            return null;
-         case EF_SMS:
++         case EF_SMS:
 +        case EF_SMSP:   // [ALPS01206315] Support EF_SMSP
          case EF_EXT6:
          case EF_EXT5:
          case EF_MWIS:
-@@ -60,9 +63,13 @@ public final class UsimFileHandler extends IccFileHandler implements IccConstant
+@@ -60,10 +63,14 @@ public final class UsimFileHandler extends IccFileHandler implements IccConstant
          case EF_CSP_CPHS:
          case EF_GID1:
          case EF_LI:
+-        case EF_PLMNWACT:
+-            return MF_SIM + DF_ADF;
 +        case EF_ECC:
-         case EF_PLMNWACT:
-             return MF_SIM + DF_ADF;
- 
++         case EF_PLMNWACT:
++             return MF_SIM + DF_ADF;
++ 
 +        case EF_PSISMSC:
 +            return /*MF_SIM +*/ DF_TELECOM;
-+
-         case EF_PBR:
+ 
+-        case EF_PBR:
++         case EF_PBR:
              // we only support global phonebook.
              return MF_SIM + DF_TELECOM + DF_PHONEBOOK;
+         }
 diff --git a/src/java/com/mediatek/internal/telephony/EtwsNotification.java b/src/java/com/mediatek/internal/telephony/EtwsNotification.java
 new file mode 100644
 index 0000000..064f7eb

@@ -4,13 +4,9 @@ git apply -v ../../device/ark/benefit_m7/patches/framework_av/0001-libmedia-stub
 #git apply -v ../../device/ark/benefit_m7/patches/framework_av/0002-#camera.patch
 cd ../..
 cd frameworks/base
-git apply -v ../../device/ark/benefit_m7/patches/framework_base/0001-location-support-GNSS-extension-presumably-from-MTK.patch
-git apply -v ../../device/ark/benefit_m7/patches/framework_base/0002-location-add-some-logs-just-to-be-confident.patch
-git apply -v ../../device/ark/benefit_m7/patches/framework_base/0003-location-style-fix.patch
-git apply -v ../../device/ark/benefit_m7/patches/framework_base/0006-add-com.mediatek-for-build.patch
-git apply -v ../../device/ark/benefit_m7/patches/framework_base/0007-Update-for-mtk.patch
+git apply -v ../../device/ark/benefit_m7/patches/framework_base/0001-SlimLP-base-patch.patch
 cd ../opt/telephony
-git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0001-Update-for-mtk.patch
+git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0001-SlimLP-patch-MTK.patch
 git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0002_mobile_data_patch_mt6753.patch
 cd ../../..
 cd packages/services/Telephony
@@ -29,3 +25,4 @@ cd hardware/libhardware_legacy
 git apply -v ../../device/ark/benefit_m7/patches/hardware_libhardware_legacy/0001-patch-for-mtk.patch
 cd ../../
 echo DONE !
+
