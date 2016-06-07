@@ -5,8 +5,10 @@ git apply -v ../../device/ark/benefit_m7/patches/framework_av/0001-libmedia-stub
 cd ../..
 cd frameworks/base
 git apply -v ../../device/ark/benefit_m7/patches/framework_base/0001-SlimLP-base-patch.patch
+git apply -v ../../device/ark/benefit_m7/patches/framework_base/0002-SlimLP-mtk-patch.patch
 cd ../opt/telephony
 git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0001-SlimLP-patch-MTK.patch
+git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0002-SlimLP-patch-mtk.patch
 git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0002_mobile_data_patch_mt6753.patch
 cd ../../..
 cd packages/services/Telephony

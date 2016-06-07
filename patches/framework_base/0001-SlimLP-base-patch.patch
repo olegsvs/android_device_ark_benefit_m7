@@ -1,7 +1,7 @@
 From 0dbc8ce6191251e062acda5aa8b5413566a6b439 Mon Sep 17 00:00:00 2001
 From: olegsvs <oleg.texet@gmail.com>
 Date: Mon, 6 Jun 2016 17:52:52 -0400
-Subject: [PATCH] SlimLP base patch
+Subject: [PATCH 1/2] SlimLP base patch
 
 Change-Id: I6b02b2e61edb67e6c819495afde0e04f01f36aef
 ---
@@ -803,7 +803,6 @@ index 8183321..6ac1a99 100644
      // but continue to allow the rest of the GPS interface to work.
 -    if (sGpsXtraInterface && sGpsXtraInterface->init(&sGpsXtraCallbacks) != 0)
 -        sGpsXtraInterface = NULL;
-+ }
 +    if (sGpsXtraInterface) {
 +        ret = sGpsXtraInterface->init(&sGpsXtraCallbacks);
 +        ALOGV("init: sGpsXtraInterface->init() ret=%d", ret);

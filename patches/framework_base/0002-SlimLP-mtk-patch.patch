@@ -1,0 +1,54 @@
+From 3f6e2dde5a35ce7757513d64b7e36176c39c6167 Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Mon, 6 Jun 2016 20:14:01 -0400
+Subject: [PATCH 2/2] SlimLP mtk patch
+
+Change-Id: I582ae52461e55779bc15358acb2e7413602650d3
+---
+ services/core/java/com/android/server/location/GpsLocationProvider.java | 2 +-
+ services/core/jni/com_android_server_location_GpsLocationProvider.cpp   | 2 +-
+ telephony/java/android/telephony/ServiceState.java                      | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/services/core/java/com/android/server/location/GpsLocationProvider.java b/services/core/java/com/android/server/location/GpsLocationProvider.java
+index 0474bcb..1ed2c8b 100644
+--- a/services/core/java/com/android/server/location/GpsLocationProvider.java
++++ b/services/core/java/com/android/server/location/GpsLocationProvider.java
+@@ -2407,7 +2407,7 @@ public class GpsLocationProvider implements LocationProviderInterface {
+     private static final int EPHEMERIS_MASK = 0;
+     private static final int ALMANAC_MASK = 1;
+     private static final int USED_FOR_FIX_MASK = 2;
+-
++    private static final int MAX_GNSS_SVS = 256;
+     // preallocated arrays, to avoid memory allocation in reportStatus()
+ 
+     private int mSvs[] = new int[MAX_GNSS_SVS];
+diff --git a/services/core/jni/com_android_server_location_GpsLocationProvider.cpp b/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
+index 6ac1a99..89d2599 100644
+--- a/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
++++ b/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
+@@ -561,7 +561,7 @@ static jboolean android_location_GpsLocationProvider_init(JNIEnv* env, jobject o
+         }
+     } else {
+         return JNI_FALSE;
+-
++}
+     // if XTRA initialization fails we will disable it by sGpsXtraInterface to NULL,
+     // but continue to allow the rest of the GPS interface to work.
+     if (sGpsXtraInterface) {
+diff --git a/telephony/java/android/telephony/ServiceState.java b/telephony/java/android/telephony/ServiceState.java
+index 78022a7..881f43e 100644
+--- a/telephony/java/android/telephony/ServiceState.java
++++ b/telephony/java/android/telephony/ServiceState.java
+@@ -329,7 +329,7 @@ public class ServiceState implements Parcelable {
+         mDataOperatorNumeric = s.mDataOperatorNumeric;
+         mIsManualNetworkSelection = s.mIsManualNetworkSelection;
+         mRilVoiceRadioTechnology = s.mRilVoiceRadioTechnology;
+-        mRilDataRadioTechnology = fs.mRilDataRadioTechnology;
++        mRilDataRadioTechnology = s.mRilDataRadioTechnology;
+         mCssIndicator = s.mCssIndicator;
+         mNetworkId = s.mNetworkId;
+         mSystemId = s.mSystemId;
+-- 
+1.9.1
+

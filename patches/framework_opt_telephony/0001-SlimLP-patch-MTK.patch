@@ -1,7 +1,7 @@
 From e145cc4d533f5a31083fbc4b844de870d48eefae Mon Sep 17 00:00:00 2001
 From: olegsvs <oleg.texet@gmail.com>
 Date: Mon, 6 Jun 2016 17:26:14 -0400
-Subject: [PATCH] SlimLP patch MTK
+Subject: [PATCH 1/2] SlimLP patch MTK
 
 Change-Id: Ibd4d993973bbc06d450e8414848dbf203dd68819
 ---
