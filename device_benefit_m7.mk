@@ -82,10 +82,6 @@ PRODUCT_PACKAGES += libslfpjni
 PRODUCT_PACKAGES += libsileadinc_dev
 
 
-# Hack to fix asec on emulated sdcard
-PRODUCT_PACKAGES += \
-    	asec_helper
-
 # Gralloc
 PRODUCT_PACKAGES += \
    	libgralloc_extra
