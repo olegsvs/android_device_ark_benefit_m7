@@ -23,8 +23,8 @@ PRODUCT_MODEL := benefit_m7
 PRODUCT_MANUFACTURER := ark
 
 # BlissPop Configs
-BLISSIFY := true
-BLISS_O3 := true
-BLISS_GRAPHITE := true
-BLISS_STRICT := true
-BLISS_KRAIT := false
+#BLISSIFY := true
+#BLISS_O3 := true
+#BLISS_GRAPHITE := true
+#BLISS_STRICT := true
+#BLISS_KRAIT := false
