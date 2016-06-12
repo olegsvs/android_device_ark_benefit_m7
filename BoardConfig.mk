@@ -1,6 +1,7 @@
-# inherit from the proprietary version
+# include proprietary libraries and binaries
 -include vendor/ark/benefit_m7/BoardConfigVendor.mk
- 
+
+# use these headers 
 TARGET_SPECIFIC_HEADER_PATH := device/ark/benefit_m7/include
  
 # Link against libxlog
@@ -71,7 +72,7 @@ BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset 0x03f88000 -
 TARGET_REQUIRES_SYNCHRONOUS_SETSURFACE := true
  
 # build kernel from source
-#TARGET_KERNEL_SOURCE := kernel/elephone/p8000
+#TARGET_KERNEL_SOURCE := kernel/ark/benefit_m7
 #TARGET_KERNEL_ARCH := arm64
 #TARGET_KERNEL_HEADER_ARCH := arm64
 #TARGET_KERNEL_CONFIG := p8000_defconfig
@@ -82,13 +83,16 @@ TARGET_REQUIRES_SYNCHRONOUS_SETSURFACE := true
 TARGET_PREBUILT_KERNEL := device/ark/benefit_m7/kernel
  
 # prebuild kernel as fallback
-#TARGET_PREBUILT_KERNEL := device/elephone/p8000/prebuilt/kernel
-BOARD_HAS_NO_SELECT_BUTTON := true
+#TARGET_PREBUILT_KERNEL := device/ark/benefit_m7/prebuilt/kernel
+
+# Build an EXT4 ROM image
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_NO_FACTORYIMAGE := true
 
 # system.prop
 TARGET_SYSTEM_PROP := device/ark/benefit_m7/system.prop
 
-# CMHW
+# CyanogenMod Hardware Hooks
 BOARD_HARDWARE_CLASS := device/ark/benefit_m7/cmhw/
 
 # WiFi
@@ -117,17 +121,18 @@ BOARD_GPS_LIBRARIES :=true
 BOARD_CONNECTIVITY_MODULE := conn_soc
 BOARD_MEDIATEK_USES_GPS := true
 
+# Camera
 USE_CAMERA_STUB := true
-BOARD_USES_MTK_AUDIO := true
 
-# Disable memcpy opt (for audio libraries)
+# Audio
 TARGET_CPU_MEMCPY_OPT_DISABLE := true
+BOARD_USES_MTK_AUDIO := true
 
 # FM Radio
 MTK_FM_SUPPORT := yes
 MTK_FM_RX_SUPPORT := yes
 
-#Mediatek flags
+# Mediatek flags
 BOARD_HAS_MTK_HARDWARE := true
 MTK_HARDWARE := true
 COMMON_GLOBAL_CFLAGS += -DMTK_HARDWARE -DADD_LEGACY_ACQUIRE_BUFFER_SYMBOL
@@ -137,29 +142,15 @@ COMMON_GLOBAL_CPPFLAGS += -DMTK_HARDWARE
 VANZO_FEATURE_ADD_SILEADINC_FP := yes
 VANZO_FEATURE_FACTORYMODE_USE_ENGLISH := yes
 
-#EGL settings
+# EGL settings
 USE_OPENGL_RENDERER := true
 BOARD_EGL_CFG := device/ark/benefit_m7/egl.cfg
 BOARD_EGL_WORKAROUND_BUG_10194508 := true
-
-#Block based ota
-#http://review.cyanogenmod.org/#/c/78849/1/core/Makefile
-BLOCK_BASED_OTA := true
-#PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
-# recovery
-#TARGET_RECOVERY_INITRC := device/elephone/p8000/recovery/init.mt6753.rc
-TARGET_RECOVERY_FSTAB := device/ark/benefit_m7/recovery/root/fstab.mt6735
-PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
-# recovery
-#TARGET_RECOVERY_INITRC := device/elephone/p8000/recovery/init.mt6753.rc
-TARGET_RECOVERY_FSTAB := device/ark/benefit_m7/recovery/root/fstab.mt6735
-TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness\"
 
 # SELinux
 BOARD_SEPOLICY_DIRS := \
        device/ark/benefit_m7/sepolicy
 
-#SELinux: MTK added
 BOARD_SEPOLICY_UNION := \
     app.te \
     device.te \
@@ -177,12 +168,10 @@ BOARD_SEPOLICY_UNION := \
     system_app.te \
     zygote.te \
     aal.te \
-    aee_core_forwarder.te \
     akmd09911.te \
     akmd8963.te \
     akmd8975.te \
     ami304d.te \
-    auditd.te \
     ist8303.te \
     mc6470d.te \
     qmcX983d.te \
@@ -285,7 +274,6 @@ BOARD_SEPOLICY_UNION += \
 	bluetooth.te \
 	bootanim.te \
 	clatd.te \
-	debuggerd.te \
 	drmserver.te \
 	dhcp.te \
 	dnsmasq.te \
@@ -343,6 +331,19 @@ BOARD_SEPOLICY_UNION += \
 	cmddumper.te \
 	tunman.te 
 
+PRODUCT_PREBUILT_WEBVIEWCHROMIUM := yes
+
+# Block based ota
+# see http://review.cyanogenmod.org/#/c/78849/1/core/Makefile
+BLOCK_BASED_OTA := false
+
+# recovery
+#TARGET_RECOVERY_INITRC := device/ark/benefit_m7/recovery/init.mt6753.rc
+TARGET_RECOVERY_FSTAB := device/ark/benefit_m7/recovery/root/fstab.mt6753
+TARGET_RECOVERY_LCD_BACKLIGHT_PATH := \"/sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness\"
+
+# use power button for selections in recovery
+BOARD_HAS_NO_SELECT_BUTTON := true
 
 # ________________________________________________TWRP_________________________________________________
 # RECOVERY_VARIANT := twrp
@@ -377,4 +378,4 @@ TW_INCLUDE_CRYPTO := true
 # Antiforensic wipe
 BOARD_SUPPRESS_SECURE_ERASE :=  true
 # CPU temp
-# TW_CUSTOM_CPU_TEMP_PATH := XXXXXX ?????
+TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
