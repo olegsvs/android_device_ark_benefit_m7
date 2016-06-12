@@ -16,6 +16,10 @@ PRODUCT_AAPT_PREF_CONFIG := xhdpi
 # Recovery allowed devices
 TARGET_OTA_ASSERT_DEVICE :=   ARK,yk602_emmc_fdd_65u,benefit_m7
 
+# Set default player to AwesomePlayer
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.media.use-awesome=true
+
 ifeq ($(TARGET_PREBUILT_KERNEL),)
 	LOCAL_KERNEL := device/ark/benefit_m7/prebuilt/kernel
 else
