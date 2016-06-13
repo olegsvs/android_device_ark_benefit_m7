@@ -63,7 +63,7 @@
   <item name="cpu.idle">100</item>
   <!-- Current at each CPU speed, as per 'cpu.speeds' -->
   <array name="cpu.active">
-      <value>104442</value>
+      <value>238</value>
       <value>238</value>
       <value>302</value>
       <value>8365</value> 
