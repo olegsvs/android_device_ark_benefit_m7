@@ -25,6 +25,6 @@ cd ../../..
 #git apply -v ../../device/ark/benefit_m7/patches/system_core/0001-Patch-for-6735-mtk.patch
 #cd ../..
 cd system/netd
-git apply -v ../../device/ark/benefit_m7/patches/system_netd/01-Patch-for-6735-mtk.patch
+git apply -v ../../device/ark/benefit_m7/patches/system_netd/0001-Patch-for-6735-mtk.patch
 cd ../..
 echo Patches Applied Successfully!
