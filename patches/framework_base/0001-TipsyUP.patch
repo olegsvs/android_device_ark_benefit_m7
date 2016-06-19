@@ -1,9 +1,8 @@
-From 610283f14ad27ad00197cbedf21c98c77b5eb3f7 Mon Sep 17 00:00:00 2001
+From 01933b5d111c15f4f5aeea3e27773997d7ee19e8 Mon Sep 17 00:00:00 2001
 From: olegsvs <oleg.texet@gmail.com>
-Date: Sun, 12 Jun 2016 13:18:27 -0400
-Subject: [PATCH] Patch for 6735 mtk
+Date: Sun, 19 Jun 2016 15:43:02 -0400
+Subject: [PATCH] TipsyUP
 
-Change-Id: I76b27b3febfa9c97619284da4653570cae77671f
 ---
  core/java/com/mediatek/xlog/Xlog.java              | 123 ++++++++
  core/jni/android_media_AudioSystem.cpp             |  40 +++
@@ -13,16 +12,16 @@ Change-Id: I76b27b3febfa9c97619284da4653570cae77671f
  media/java/android/media/AudioSystem.java          |   3 +
  .../server/location/GpsLocationProvider.java       |  86 +++++-
  .../server/location/GpsStatusListenerHelper.java   |  26 ++
- ...android_server_location_GpsLocationProvider.cpp |  90 +++++-
+ ...android_server_location_GpsLocationProvider.cpp |  91 +++++-
  .../java/android/telephony/PhoneNumberUtils.java   | 280 ++++++++++++++++++
  .../java/android/telephony/PhoneRatFamily.aidl     |  19 ++
  .../java/android/telephony/PhoneRatFamily.java     | 114 ++++++++
  telephony/java/android/telephony/ServiceState.java | 190 +++++++++++-
  .../internal/telephony/IccCardConstants.java       |  12 +
- .../android/internal/telephony/RILConstants.java   | 324 ++++++++++++++++++++-
+ .../android/internal/telephony/RILConstants.java   | 322 ++++++++++++++++++++-
  .../internal/telephony/TelephonyIntents.java       | 255 ++++++++++++++++
  .../internal/telephony/TelephonyProperties.java    |  35 +++
- 17 files changed, 1653 insertions(+), 10 deletions(-)
+ 17 files changed, 1652 insertions(+), 10 deletions(-)
  create mode 100755 core/java/com/mediatek/xlog/Xlog.java
  create mode 100755 telephony/java/android/telephony/PhoneRatFamily.aidl
  create mode 100755 telephony/java/android/telephony/PhoneRatFamily.java
@@ -327,10 +326,10 @@ index bf79e9a..50b94ae 100644
  }
  
 diff --git a/services/core/java/com/android/server/location/GpsLocationProvider.java b/services/core/java/com/android/server/location/GpsLocationProvider.java
-index 4e58c6c..92a74ea 100644
+index 2a4fbb1..c82907d 100644
 --- a/services/core/java/com/android/server/location/GpsLocationProvider.java
 +++ b/services/core/java/com/android/server/location/GpsLocationProvider.java
-@@ -1719,6 +1719,72 @@ public class GpsLocationProvider implements LocationProviderInterface {
+@@ -1705,6 +1705,72 @@ public class GpsLocationProvider implements LocationProviderInterface {
      }
  
      /**
@@ -403,7 +402,7 @@ index 4e58c6c..92a74ea 100644
       * called from native code to update AGPS status
       */
      private void reportAGpsStatus(int type, int status, byte[] ipaddr) {
-@@ -2352,12 +2418,18 @@ public class GpsLocationProvider implements LocationProviderInterface {
+@@ -2338,12 +2404,18 @@ public class GpsLocationProvider implements LocationProviderInterface {
      private static final int ALMANAC_MASK = 1;
      private static final int USED_FOR_FIX_MASK = 2;
  
@@ -426,7 +425,7 @@ index 4e58c6c..92a74ea 100644
      private int mSvCount;
      // preallocated to avoid memory allocation in reportNmea()
      private byte[] mNmeaBuffer = new byte[120];
-@@ -2377,6 +2449,12 @@ public class GpsLocationProvider implements LocationProviderInterface {
+@@ -2363,6 +2435,12 @@ public class GpsLocationProvider implements LocationProviderInterface {
      // mask[0] is ephemeris mask and mask[1] is almanac mask
      private native int native_read_sv_status(int[] svs, float[] snrs,
              float[] elevations, float[] azimuths, int[] masks);
@@ -477,7 +476,7 @@ index 376b4a5..9155c7f 100644
          Operation operation = new Operation() {
              @Override
 diff --git a/services/core/jni/com_android_server_location_GpsLocationProvider.cpp b/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
-index 0d3fdf6..7d2fbe1 100644
+index 8183321..3eadeb4 100644
 --- a/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
 +++ b/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
 @@ -39,6 +39,7 @@ static jobject mCallbacksObj = NULL;
@@ -488,19 +487,19 @@ index 0d3fdf6..7d2fbe1 100644
  static jmethodID method_reportAGpsStatus;
  static jmethodID method_reportNmea;
  static jmethodID method_setEngineCapabilities;
-@@ -69,6 +70,7 @@ static const GnssConfigurationInterface* sGnssConfigurationInterface = NULL;
- 
+@@ -70,6 +71,7 @@ static const GnssConfigurationInterface* sGnssConfigurationInterface = NULL;
  // temporary storage for GPS callbacks
  static GpsSvStatus  sGpsSvStatus;
-+static GnssSvStatus  sGnssSvStatus;
  static const char* sNmeaString;
++static GnssSvStatus  sGnssSvStatus;
  static int sNmeaStringLength;
  
+ #define WAKE_LOCK_NAME  "GPS"
 @@ -105,11 +107,21 @@ static void status_callback(GpsStatus* status)
  static void sv_status_callback(GpsSvStatus* sv_status)
  {
      JNIEnv* env = AndroidRuntime::getJNIEnv();
-+    ALOGD("sv_status_callback(%p)", sv_status);
++	ALOGD("sv_status_callback(%p)", sv_status);
      memcpy(&sGpsSvStatus, sv_status, sizeof(sGpsSvStatus));
      env->CallVoidMethod(mCallbacksObj, method_reportSvStatus);
      checkAndClearExceptionFromCallback(env, __FUNCTION__);
@@ -522,7 +521,7 @@ index 0d3fdf6..7d2fbe1 100644
      location_callback,
      status_callback,
      sv_status_callback,
-+    gnss_sv_status_callback,
++	gnss_sv_status_callback,
      nmea_callback,
      set_capabilities_callback,
      acquire_wakelock_callback,
@@ -530,7 +529,7 @@ index 0d3fdf6..7d2fbe1 100644
      method_reportLocation = env->GetMethodID(clazz, "reportLocation", "(IDDDFFFJ)V");
      method_reportStatus = env->GetMethodID(clazz, "reportStatus", "(I)V");
      method_reportSvStatus = env->GetMethodID(clazz, "reportSvStatus", "()V");
-+    method_reportGnssSvStatus = env->GetMethodID(clazz, "reportGnssSvStatus", "()V");
++	method_reportGnssSvStatus = env->GetMethodID(clazz, "reportGnssSvStatus", "()V");
      method_reportAGpsStatus = env->GetMethodID(clazz, "reportAGpsStatus", "(II[B)V");
      method_reportNmea = env->GetMethodID(clazz, "reportNmea", "(J)V");
      method_setEngineCapabilities = env->GetMethodID(clazz, "setEngineCapabilities", "(I)V");
@@ -538,15 +537,15 @@ index 0d3fdf6..7d2fbe1 100644
              "(Landroid/location/GpsNavigationMessageEvent;)V");
  
      err = hw_get_module(GPS_HARDWARE_MODULE_ID, (hw_module_t const**)&module);
-+    ALOGV("hw_get_module err=%d module=%p", err, module);
++	ALOGV("hw_get_module err=%d module=%p", err, module);
      if (err == 0) {
          hw_device_t* device;
          err = module->methods->open(module, GPS_HARDWARE_MODULE_ID, &device);
-+        ALOGV("module->methods->open err=%d device=%p", err, device);
++		ALOGV("module->methods->open err=%d device=%p", err, device);
          if (err == 0) {
              gps_device_t* gps_device = (gps_device_t *)device;
              sGpsInterface = gps_device->get_gps_interface(gps_device);
-+            ALOGV("gps_device->get_gps_interface() = %p", sGpsInterface);
++			ALOGV("gps_device->get_gps_interface() = %p", sGpsInterface);
          }
      }
      if (sGpsInterface) {
@@ -571,7 +570,7 @@ index 0d3fdf6..7d2fbe1 100644
  
  static jboolean android_location_GpsLocationProvider_init(JNIEnv* env, jobject obj)
  {
-+    ALOGV("GpsLocationProvider_init");
++	ALOGV("GpsLocationProvider_init");
      // this must be set before calling into the HAL library
      if (!mCallbacksObj)
          mCallbacksObj = env->NewGlobalRef(obj);
@@ -589,7 +588,7 @@ index 0d3fdf6..7d2fbe1 100644
 +        }
 +    } else {
          return JNI_FALSE;
-+    }
++}
  
      // if XTRA initialization fails we will disable it by sGpsXtraInterface to NULL,
      // but continue to allow the rest of the GPS interface to work.
@@ -605,7 +604,7 @@ index 0d3fdf6..7d2fbe1 100644
      if (sAGpsInterface)
          sAGpsInterface->init(&sAGpsCallbacks);
      if (sGpsNiInterface)
-@@ -627,6 +670,44 @@ static jint android_location_GpsLocationProvider_read_sv_status(JNIEnv* env, job
+@@ -627,6 +670,45 @@ static jint android_location_GpsLocationProvider_read_sv_status(JNIEnv* env, job
      return (jint) num_svs;
  }
  
@@ -647,24 +646,25 @@ index 0d3fdf6..7d2fbe1 100644
 +    return (jint) num_svs;
 +}
 +
++
  static void android_location_GpsLocationProvider_agps_set_reference_location_cellid(JNIEnv* env,
-         jobject obj, jint type, jint mcc, jint mnc, jint lac, jint psc, jint cid)
+         jobject obj, jint type, jint mcc, jint mnc, jint lac, jint cid)
  {
-@@ -1444,6 +1525,9 @@ static JNINativeMethod sMethods[] = {
+@@ -1441,6 +1523,9 @@ static JNINativeMethod sMethods[] = {
      {"native_read_sv_status",
              "([I[F[F[F[I)I",
              (void*)android_location_GpsLocationProvider_read_sv_status},
-+    {"native_read_gnss_sv_status",
++	{"native_read_gnss_sv_status",
 +            "([I[F[F[F[Z[Z[Z)I",
 +            (void*)android_location_GpsLocationProvider_read_gnss_sv_status},
      {"native_read_nmea", "([BI)I", (void*)android_location_GpsLocationProvider_read_nmea},
      {"native_inject_time", "(JJI)V", (void*)android_location_GpsLocationProvider_inject_time},
      {"native_inject_location",
 diff --git a/telephony/java/android/telephony/PhoneNumberUtils.java b/telephony/java/android/telephony/PhoneNumberUtils.java
-index d6d56a1..dbcdd27 100644
+index 173437d..b912958 100644
 --- a/telephony/java/android/telephony/PhoneNumberUtils.java
 +++ b/telephony/java/android/telephony/PhoneNumberUtils.java
-@@ -47,6 +47,14 @@ import java.util.Locale;
+@@ -46,6 +46,14 @@ import java.util.Locale;
  import java.util.regex.Matcher;
  import java.util.regex.Pattern;
  
@@ -679,7 +679,7 @@ index d6d56a1..dbcdd27 100644
  /**
   * Various utilities for dealing with phone number strings.
   */
-@@ -89,6 +97,78 @@ public class PhoneNumberUtils
+@@ -88,6 +96,78 @@ public class PhoneNumberUtils
      private static final Pattern GLOBAL_PHONE_NUMBER_PATTERN =
              Pattern.compile("[\\+]?[0-9.-]+");
  
@@ -758,7 +758,7 @@ index d6d56a1..dbcdd27 100644
      /** True if c is ISO-LATIN characters 0-9 */
      public static boolean
      isISODigit (char c) {
-@@ -1855,6 +1935,8 @@ public class PhoneNumberUtils
+@@ -1805,6 +1885,8 @@ public class PhoneNumberUtils
      private static boolean isEmergencyNumberInternal(int subId, String number,
                                                       String defaultCountryIso,
                                                       boolean useExactMatch) {
@@ -767,7 +767,7 @@ index d6d56a1..dbcdd27 100644
          // If the number passed in is null, just return false:
          if (number == null) return false;
  
-@@ -1876,6 +1958,28 @@ public class PhoneNumberUtils
+@@ -1826,6 +1908,28 @@ public class PhoneNumberUtils
          Rlog.d(LOG_TAG, "subId:" + subId + ", number: " +  number + ", defaultCountryIso:" +
                  ((defaultCountryIso == null) ? "NULL" : defaultCountryIso));
  
@@ -796,7 +796,7 @@ index d6d56a1..dbcdd27 100644
          String emergencyNumbers = "";
          int slotId = SubscriptionManager.getSlotId(subId);
  
-@@ -1885,6 +1989,7 @@ public class PhoneNumberUtils
+@@ -1835,6 +1939,7 @@ public class PhoneNumberUtils
              String ecclist = (slotId == 0) ? "ril.ecclist" : ("ril.ecclist" + slotId);
  
              emergencyNumbers = SystemProperties.get(ecclist, "");
@@ -804,7 +804,7 @@ index d6d56a1..dbcdd27 100644
          }
  
          Rlog.d(LOG_TAG, "slotId:" + slotId + ", emergencyNumbers: " +  emergencyNumbers);
-@@ -1916,6 +2021,36 @@ public class PhoneNumberUtils
+@@ -1864,6 +1969,36 @@ public class PhoneNumberUtils
              return false;
          }
  
@@ -841,7 +841,7 @@ index d6d56a1..dbcdd27 100644
          Rlog.d(LOG_TAG, "System property doesn't provide any emergency numbers."
                  + " Use embedded logic for determining ones.");
  
-@@ -2990,4 +3125,149 @@ public class PhoneNumberUtils
+@@ -2880,4 +3015,149 @@ public class PhoneNumberUtils
          return SubscriptionManager.getDefaultVoiceSubId();
      }
      //==== End of utility methods used only in compareStrictly() =====
@@ -1414,7 +1414,7 @@ index 2d72c2b..5f5377f 100644
 +    }
  }
 diff --git a/telephony/java/com/android/internal/telephony/IccCardConstants.java b/telephony/java/com/android/internal/telephony/IccCardConstants.java
-index e24664b..79063f5 100644
+index 606dd31..e8522bb 100644
 --- a/telephony/java/com/android/internal/telephony/IccCardConstants.java
 +++ b/telephony/java/com/android/internal/telephony/IccCardConstants.java
 @@ -51,6 +51,18 @@ public class IccCardConstants {
@@ -1437,25 +1437,23 @@ index e24664b..79063f5 100644
       * This is combination of IccCardStatus.CardState and IccCardApplicationStatus.AppState
       * for external apps (like PhoneApp) to use
 diff --git a/telephony/java/com/android/internal/telephony/RILConstants.java b/telephony/java/com/android/internal/telephony/RILConstants.java
-index b87cfac..d9f6323 100644
+index 0764805..ed374de 100644
 --- a/telephony/java/com/android/internal/telephony/RILConstants.java
 +++ b/telephony/java/com/android/internal/telephony/RILConstants.java
-@@ -323,7 +323,8 @@ cat include/telephony/ril.h | \
-     int RIL_REQUEST_GET_RADIO_CAPABILITY = 130;
-     int RIL_REQUEST_SET_RADIO_CAPABILITY = 131;
-     int RIL_REQUEST_GET_DATA_CALL_PROFILE = 132;
--    int RIL_REQUEST_SIM_GET_ATR = 133;
-+    // MTK please
-+    // int RIL_REQUEST_SIM_GET_ATR = 133;
+@@ -321,7 +321,7 @@ cat include/telephony/ril.h | \
+     int RIL_REQUEST_SET_DATA_PROFILE = 128;
+     int RIL_REQUEST_SHUTDOWN = 129;
+     int RIL_REQUEST_GET_DATA_CALL_PROFILE = 130;
+-    int RIL_REQUEST_SIM_GET_ATR = 131;
++    //int RIL_REQUEST_SIM_GET_ATR = 131;
+     int RIL_REQUEST_GET_3G_CAPABILITY = 130;
+     int RIL_REQUEST_SET_3G_CAPABILITY = 131;
  
-     int RIL_UNSOL_RESPONSE_BASE = 1000;
-     int RIL_UNSOL_RESPONSE_RADIO_STATE_CHANGED = 1000;
-@@ -373,4 +374,325 @@ cat include/telephony/ril.h | \
-     int RIL_UNSOL_STK_CC_ALPHA_NOTIFY = 1044;
- 
+@@ -370,4 +370,324 @@ cat include/telephony/ril.h | \
+     int RIL_UNSOL_ON_SS = 1042;
+     int RIL_UNSOL_STK_CC_ALPHA_NOTIFY = 1043;
      int RIL_UNSOL_STK_SEND_SMS_RESULT = 11002; /* Samsung STK */
-+
-+    // MediaTek Custom States
++ // MediaTek Custom States
 +    // oh no
 +    static final int RIL_REQUEST_GET_PHONE_RAT_FAMILY = 130;
 +    static final int RIL_REQUEST_SET_PHONE_RAT_FAMILY = 131;

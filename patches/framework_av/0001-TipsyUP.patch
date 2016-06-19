@@ -1,9 +1,8 @@
-From 98e9c1a025e5fd853ba9214dc5f610f93ff4b8d9 Mon Sep 17 00:00:00 2001
+From daa0b15d2e8c2bca4756f50b1e1826fa4fdf91fc Mon Sep 17 00:00:00 2001
 From: olegsvs <oleg.texet@gmail.com>
-Date: Sun, 12 Jun 2016 13:17:40 -0400
-Subject: [PATCH] Patch for 6735 mtk
+Date: Sun, 19 Jun 2016 15:43:40 -0400
+Subject: [PATCH] TipsyUP
 
-Change-Id: I04fca74c8bd65b7223fae3e10cd17f052900ae47
 ---
  include/media/AudioSystem.h                        |   3 +
  include/media/IAudioFlinger.h                      |   3 +
