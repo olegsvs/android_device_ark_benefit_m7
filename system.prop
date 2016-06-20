@@ -1,6 +1,9 @@
 rild.libpath=/system/lib64/mtk-ril.so
 rild.libargs=-d /dev/ttyC0
 
+# FMRadio without headsets
+ro.mtk_fm_short_antenna_support=1
+
 # MTK, Infinity, 20090720 {
 wifi.interface=wlan0
 # MTK, Infinity, 20090720 }
