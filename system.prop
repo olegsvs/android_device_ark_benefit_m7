@@ -15,6 +15,8 @@ ro.mediatek.wlan.p2p=1
 # MTK, mtk03034, 20101213 {
 mediatek.wlan.ctia=0
 # MTK, mtk03034 20101213}
+# FMRadio without headsets
+ro.mtk_fm_short_antenna_support=1
 
 #
 wifi.tethering.interface=ap0
