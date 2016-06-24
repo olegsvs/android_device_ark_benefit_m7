@@ -10,7 +10,7 @@ $(call inherit-product, vendor/ark/benefit_m7/benefit_m7-vendor.mk)
 DEVICE_PACKAGE_OVERLAYS += device/ark/benefit_m7/overlay
 
 # Device uses high-density artwork where available
-PRODUCT_AAPT_CONFIG := normal xhdpi
+PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
 
 # Recovery allowed devices

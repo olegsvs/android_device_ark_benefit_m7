@@ -2,7 +2,7 @@
 Device repository for ARK Benefit M7 CM12.1 6735
 
 Currently broken features:
- * FM Radio
+ *you tell me
 
 ## Thanks to:
  * DerTeufel1980
