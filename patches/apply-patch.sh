@@ -1,5 +1,8 @@
 #!/bin/bash
 cd ../../../..
+cd external/tinycompress
+git apply -v ../../device/ark/benefit_m7/patches/external_tinycompress/0001-fix-without-sorces.patch
+cd ../..
 cd frameworks/av
 git apply -v ../../device/ark/benefit_m7/patches/framework_av/0001-TipsyUP.patch
 cd ../..

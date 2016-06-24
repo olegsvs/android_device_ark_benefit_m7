@@ -1,0 +1,27 @@
+From 2a546ceea9017be8a7c73fc36f59c10cd0aa6bbf Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Fri, 24 Jun 2016 16:10:02 -0400
+Subject: [PATCH] fix without sorces
+
+---
+ Android.mk | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Android.mk b/Android.mk
+index bdb58b6..473b728 100644
+--- a/Android.mk
++++ b/Android.mk
+@@ -2,8 +2,8 @@ LOCAL_PATH:= $(call my-dir)
+ 
+ include $(CLEAR_VARS)
+ LOCAL_C_INCLUDES:= $(LOCAL_PATH)/include
+-LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+-LOCAL_ADDITIONAL_DEPENDENCIES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
++#LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
++#LOCAL_ADDITIONAL_DEPENDENCIES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+ LOCAL_SRC_FILES:= compress.c utils.c
+ LOCAL_MODULE := libtinycompress
+ LOCAL_SHARED_LIBRARIES:= libcutils libutils
+-- 
+1.9.1
+

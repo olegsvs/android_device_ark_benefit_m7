@@ -1,9 +1,10 @@
-From 01933b5d111c15f4f5aeea3e27773997d7ee19e8 Mon Sep 17 00:00:00 2001
+From d9c2ae6b8d2a1ee5a6c188ab4013155c42d91884 Mon Sep 17 00:00:00 2001
 From: olegsvs <oleg.texet@gmail.com>
-Date: Sun, 19 Jun 2016 15:43:02 -0400
+Date: Fri, 24 Jun 2016 16:28:27 -0400
 Subject: [PATCH] TipsyUP
 
 ---
+ core/java/android/os/BatteryProperties.java        |  55 ++++
  core/java/com/mediatek/xlog/Xlog.java              | 123 ++++++++
  core/jni/android_media_AudioSystem.cpp             |  40 +++
  location/java/android/location/GpsStatus.java      |  36 +++
@@ -21,11 +22,107 @@ Subject: [PATCH] TipsyUP
  .../android/internal/telephony/RILConstants.java   | 322 ++++++++++++++++++++-
  .../internal/telephony/TelephonyIntents.java       | 255 ++++++++++++++++
  .../internal/telephony/TelephonyProperties.java    |  35 +++
- 17 files changed, 1652 insertions(+), 10 deletions(-)
+ 18 files changed, 1707 insertions(+), 10 deletions(-)
  create mode 100755 core/java/com/mediatek/xlog/Xlog.java
  create mode 100755 telephony/java/android/telephony/PhoneRatFamily.aidl
  create mode 100755 telephony/java/android/telephony/PhoneRatFamily.java
 
+diff --git a/core/java/android/os/BatteryProperties.java b/core/java/android/os/BatteryProperties.java
+index 8f5cf8b..9e366ee 100644
+--- a/core/java/android/os/BatteryProperties.java
++++ b/core/java/android/os/BatteryProperties.java
+@@ -1,4 +1,5 @@
+ /* Copyright 2013, The Android Open Source Project
++ * Copyright 2015, The CyanogenMod Project
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -30,6 +31,16 @@ public class BatteryProperties implements Parcelable {
+     public int batteryTemperature;
+     public String batteryTechnology;
+ 
++    public boolean dockBatterySupported;
++    public boolean chargerDockAcOnline;
++    public int dockBatteryStatus;
++    public int dockBatteryHealth;
++    public boolean dockBatteryPresent;
++    public int dockBatteryLevel;
++    public int dockBatteryVoltage;
++    public int dockBatteryTemperature;
++    public String dockBatteryTechnology;
++
+     public BatteryProperties() {
+     }
+ 
+@@ -44,6 +55,16 @@ public class BatteryProperties implements Parcelable {
+         batteryVoltage = other.batteryVoltage;
+         batteryTemperature = other.batteryTemperature;
+         batteryTechnology = other.batteryTechnology;
++
++        dockBatterySupported = other.dockBatterySupported;
++        chargerDockAcOnline = other.chargerDockAcOnline;
++        dockBatteryStatus = other.dockBatteryStatus;
++        dockBatteryHealth = other.dockBatteryHealth;
++        dockBatteryPresent = other.dockBatteryPresent;
++        dockBatteryLevel = other.dockBatteryLevel;
++        dockBatteryVoltage = other.dockBatteryVoltage;
++        dockBatteryTemperature = other.dockBatteryTemperature;
++        dockBatteryTechnology = other.dockBatteryTechnology;
+     }
+ 
+     /*
+@@ -62,6 +83,27 @@ public class BatteryProperties implements Parcelable {
+         batteryVoltage = p.readInt();
+         batteryTemperature = p.readInt();
+         batteryTechnology = p.readString();
++
++        dockBatterySupported = p.readInt() == 1 ? true : false;
++        if (dockBatterySupported) {
++            chargerDockAcOnline = p.readInt() == 1 ? true : false;
++            dockBatteryStatus = p.readInt();
++            dockBatteryHealth = p.readInt();
++            dockBatteryPresent = p.readInt() == 1 ? true : false;
++            dockBatteryLevel = p.readInt();
++            dockBatteryVoltage = p.readInt();
++            dockBatteryTemperature = p.readInt();
++            dockBatteryTechnology = p.readString();
++        } else {
++            chargerDockAcOnline = false;
++            dockBatteryStatus = BatteryManager.BATTERY_STATUS_UNKNOWN;
++            dockBatteryHealth = BatteryManager.BATTERY_HEALTH_UNKNOWN;
++            dockBatteryPresent = false;
++            dockBatteryLevel = 0;
++            dockBatteryVoltage = 0;
++            dockBatteryTemperature = 0;
++            dockBatteryTechnology = "";
++        }
+     }
+ 
+     public void writeToParcel(Parcel p, int flags) {
+@@ -75,6 +117,18 @@ public class BatteryProperties implements Parcelable {
+         p.writeInt(batteryVoltage);
+         p.writeInt(batteryTemperature);
+         p.writeString(batteryTechnology);
++
++        p.writeInt(dockBatterySupported ? 1 : 0);
++        if (dockBatterySupported) {
++            p.writeInt(chargerDockAcOnline ? 1 : 0);
++            p.writeInt(dockBatteryStatus);
++            p.writeInt(dockBatteryHealth);
++            p.writeInt(dockBatteryPresent ? 1 : 0);
++            p.writeInt(dockBatteryLevel);
++            p.writeInt(dockBatteryVoltage);
++            p.writeInt(dockBatteryTemperature);
++            p.writeString(dockBatteryTechnology);
++        }
+     }
+ 
+     public static final Parcelable.Creator<BatteryProperties> CREATOR
+@@ -92,3 +146,4 @@ public class BatteryProperties implements Parcelable {
+         return 0;
+     }
+ }
++
 diff --git a/core/java/com/mediatek/xlog/Xlog.java b/core/java/com/mediatek/xlog/Xlog.java
 new file mode 100755
 index 0000000..4be6749
