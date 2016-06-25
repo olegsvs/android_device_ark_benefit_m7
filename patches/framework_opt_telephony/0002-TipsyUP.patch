@@ -1,0 +1,159 @@
+From a5abfacb082d8583504e5e19e8c883598adf8d2f Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Sat, 25 Jun 2016 07:42:25 -0400
+Subject: [PATCH 2/2] TipsyUP
+
+---
+ src/java/com/android/internal/telephony/MediaTekRIL.java     |  4 +---
+ src/java/com/android/internal/telephony/RIL.java             | 12 ++++++------
+ .../android/internal/telephony/dataconnection/DcTracker.java |  3 ++-
+ .../internal/telephony/dataconnection/DcTrackerBase.java     | 11 ++++++-----
+ 4 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/src/java/com/android/internal/telephony/MediaTekRIL.java b/src/java/com/android/internal/telephony/MediaTekRIL.java
+index 947fc3f..d999a70 100644
+--- a/src/java/com/android/internal/telephony/MediaTekRIL.java
++++ b/src/java/com/android/internal/telephony/MediaTekRIL.java
+@@ -1370,6 +1370,7 @@ public class MediaTekRIL extends RIL implements CommandsInterface {
+             case RIL_REQUEST_SET_BAND_MODE: return "SET_BAND_MODE";
+             case RIL_REQUEST_QUERY_AVAILABLE_BAND_MODE: return "QUERY_AVAILABLE_BAND_MODE";
+             case RIL_REQUEST_STK_GET_PROFILE: return "REQUEST_STK_GET_PROFILE";
++            case RIL_REQUEST_GET_PHONE_RAT_FAMILY: return "RIL_REQUEST_GET_PHONE_RAT_FAMILY";
+             case RIL_REQUEST_STK_SET_PROFILE: return "REQUEST_STK_SET_PROFILE";
+             case RIL_REQUEST_STK_SEND_ENVELOPE_COMMAND: return "REQUEST_STK_SEND_ENVELOPE_COMMAND";
+             case RIL_REQUEST_STK_SEND_TERMINAL_RESPONSE: return "REQUEST_STK_SEND_TERMINAL_RESPONSE";
+@@ -1431,7 +1432,6 @@ public class MediaTekRIL extends RIL implements CommandsInterface {
+             case RIL_REQUEST_SIM_AUTHENTICATION: return "RIL_REQUEST_SIM_AUTHENTICATION";
+             case RIL_REQUEST_SHUTDOWN: return "RIL_REQUEST_SHUTDOWN";
+             case RIL_REQUEST_SET_PHONE_RAT_FAMILY: return "RIL_REQUEST_SET_PHONE_RAT_FAMILY";
+-            case RIL_REQUEST_GET_PHONE_RAT_FAMILY: return "RIL_REQUEST_GET_PHONE_RAT_FAMILY";
+ 
+             /* M: call control part start */
+             case RIL_REQUEST_HANGUP_ALL: return "HANGUP_ALL";
+@@ -1680,8 +1680,6 @@ public class MediaTekRIL extends RIL implements CommandsInterface {
+             case RIL_UNSOL_ON_SS: return "UNSOL_ON_SS";
+             case RIL_UNSOL_STK_CC_ALPHA_NOTIFY: return "UNSOL_STK_CC_ALPHA_NOTIFY";
+             case RIL_UNSOL_STK_SEND_SMS_RESULT: return "RIL_UNSOL_STK_SEND_SMS_RESULT";
+-            case RIL_UNSOL_SET_PHONE_RAT_FAMILY_COMPLETE:
+-                    return "RIL_UNSOL_SET_PHONE_RAT_FAMILY_COMPLETE";
+             /* M: call control part start */
+             case RIL_UNSOL_CALL_FORWARDING: return "UNSOL_CALL_FORWARDING";
+             case RIL_UNSOL_CRSS_NOTIFICATION: return "UNSOL_CRSS_NOTIFICATION";
+diff --git a/src/java/com/android/internal/telephony/RIL.java b/src/java/com/android/internal/telephony/RIL.java
+index b9da379..b559a64 100644
+--- a/src/java/com/android/internal/telephony/RIL.java
++++ b/src/java/com/android/internal/telephony/RIL.java
+@@ -507,13 +507,14 @@ public class RIL extends BaseCommands implements CommandsInterface {
+         return messageLength;
+     }
+ 
+-    class RILReceiver implements Runnable {
++    protected class RILReceiver implements Runnable {
+         byte[] buffer;
+ 
+-        RILReceiver() {
++        protected RILReceiver() {
+             buffer = new byte[RIL_MAX_COMMAND_BYTES];
+         }
+ 
++
+         @Override
+         public void
+         run() {
+@@ -3731,7 +3732,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
+         return new IccIoResult(sw1, sw2, s);
+     }
+ 
+-    private Object
++    protected Object
+     responseICC_IOBase64(Parcel p) {
+         int sw1, sw2;
+         Message ret;
+@@ -4224,7 +4225,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
+         return response;
+     }
+ 
+-    private ArrayList<ApnSetting> responseGetDataCallProfile(Parcel p) {
++    protected ArrayList<ApnSetting> responseGetDataCallProfile(Parcel p) {
+         int nProfiles = p.readInt();
+         if (RILJ_LOGD) riljLog("# data call profiles:" + nProfiles);
+ 
+@@ -4313,7 +4314,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
+         return response;
+     }
+ 
+-   private Object
++   protected Object
+    responseHardwareConfig(Parcel p) {
+       int num;
+       ArrayList<HardwareConfig> response;
+@@ -4493,7 +4494,6 @@ public class RIL extends BaseCommands implements CommandsInterface {
+             case RIL_REQUEST_SIM_AUTHENTICATION: return "RIL_REQUEST_SIM_AUTHENTICATION";
+             case RIL_REQUEST_SHUTDOWN: return "RIL_REQUEST_SHUTDOWN";
+             case RIL_REQUEST_SET_PHONE_RAT_FAMILY: return "RIL_REQUEST_SET_PHONE_RAT_FAMILY";
+-            case RIL_REQUEST_GET_PHONE_RAT_FAMILY: return "RIL_REQUEST_GET_PHONE_RAT_FAMILY";
+ 
+             /* M: call control part start */
+             case RIL_REQUEST_HANGUP_ALL: return "HANGUP_ALL";
+diff --git a/src/java/com/android/internal/telephony/dataconnection/DcTracker.java b/src/java/com/android/internal/telephony/dataconnection/DcTracker.java
+index c6e3d31..ff8705a 100755
+--- a/src/java/com/android/internal/telephony/dataconnection/DcTracker.java
++++ b/src/java/com/android/internal/telephony/dataconnection/DcTracker.java
+@@ -188,6 +188,8 @@ public final class DcTracker extends DcTrackerBase {
+     private boolean mDeregistrationAlarmState = false;
+     private PendingIntent mImsDeregistrationDelayIntent = null;
+ 
++	protected FdManager mFdMgr;
++
+     /* IWLAN and WWAN co-exist flag */
+     private boolean mWwanIwlanCoexistFlag = false;
+     private long mSubId;
+@@ -1483,7 +1485,6 @@ public final class DcTracker extends DcTrackerBase {
+         // match the current operator.
+         if (DBG) log("tryRestartDataConnections: createAllApnList and cleanUpAllConnections");
+         createAllApnList();
+-        setInitialAttachApn();
+         if (isCleanupNeeded) {
+             cleanUpAllConnections(!isDisconnected, reason);
+         }
+diff --git a/src/java/com/android/internal/telephony/dataconnection/DcTrackerBase.java b/src/java/com/android/internal/telephony/dataconnection/DcTrackerBase.java
+index a513a54..b6c51d7 100644
+--- a/src/java/com/android/internal/telephony/dataconnection/DcTrackerBase.java
++++ b/src/java/com/android/internal/telephony/dataconnection/DcTrackerBase.java
+@@ -1796,19 +1796,21 @@ public abstract class DcTrackerBase extends Handler {
+         startDataStallAlarm(DATA_STALL_NOT_SUSPECTED);
+     }
+ 
+-    protected void setInitialAttachApn() {
++   
++    protected void setInitialAttachApn(ArrayList <ApnSetting> apnList, IccRecords r) {
+         ApnSetting iaApnSetting = null;
+         ApnSetting defaultApnSetting = null;
+         ApnSetting firstApnSetting = null;
++        String operator = (r != null) ? r.getOperatorNumeric(): "";
+ 
+         log("setInitialApn: E operator=" + operator + " mPreferredApn=" + mPreferredApn);
+ 
+-        if (mAllApnSettings != null && !mAllApnSettings.isEmpty()) {
+-            firstApnSetting = mAllApnSettings.get(0);
++        if (apnList != null && !apnList.isEmpty()) {
++            firstApnSetting = apnList.get(0);
+             log("setInitialApn: firstApnSetting=" + firstApnSetting);
+ 
+             // Search for Initial APN setting and the first apn that can handle default
+-            for (ApnSetting apn : mAllApnSettings) {
++            for (ApnSetting apn : apnList) {
+                 // Can't use apn.canHandleType(), as that returns true for APNs that have no type.
+                 if (ArrayUtils.contains(apn.types, PhoneConstants.APN_TYPE_IA) &&
+                         apn.carrierEnabled) {
+@@ -1858,7 +1860,6 @@ public abstract class DcTrackerBase extends Handler {
+                     null);
+         }
+     }
+-
+     protected void setDataProfilesAsNeeded() {
+         if (DBG) log("setDataProfilesAsNeeded");
+         if (mAllApnSettings != null && !mAllApnSettings.isEmpty()) {
+-- 
+1.9.1
+

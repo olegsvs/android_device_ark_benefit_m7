@@ -13,7 +13,8 @@ cd ../..
 #git apply -v ../../../device/ark/benefit_m7/patches/packages_apps_Settings/0001-Patch-for-6735-mtk.patch
 #cd ../../..
 cd frameworks/opt/telephony
-git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0001-TipsyUP.patch
+git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0001-Patch-for-6735-mtk.patch
+git apply -v ../../../device/ark/benefit_m7/patches/framework_opt_telephony/0002-TipsyUP.patch
 cd ../../..
 cd hardware/libhardware
 git apply -v ../../device/ark/benefit_m7/patches/hardware_libhardware/0001-Patch-for-6735-mtk.patch
