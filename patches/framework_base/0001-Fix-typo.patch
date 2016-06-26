@@ -1,0 +1,85 @@
+From 70170cf45f3472f5db90457693f10d2c91f4da84 Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Sun, 26 Jun 2016 19:12:05 -0400
+Subject: [PATCH] Fix typo
+
+---
+ .../jni/com_android_server_location_GpsLocationProvider.cpp  | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/services/core/jni/com_android_server_location_GpsLocationProvider.cpp b/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
+index 1618ee5..3eadeb4 100644
+--- a/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
++++ b/services/core/jni/com_android_server_location_GpsLocationProvider.cpp
+@@ -39,6 +39,7 @@ static jobject mCallbacksObj = NULL;
+ static jmethodID method_reportLocation;
+ static jmethodID method_reportStatus;
+ static jmethodID method_reportSvStatus;
++static jmethodID method_reportGnssSvStatus;
+ static jmethodID method_reportAGpsStatus;
+ static jmethodID method_reportNmea;
+ static jmethodID method_setEngineCapabilities;
+@@ -47,7 +48,6 @@ static jmethodID method_reportNiNotification;
+ static jmethodID method_requestRefLocation;
+ static jmethodID method_requestSetID;
+ static jmethodID method_requestUtcTime;
+-static jmethodID method_reportGnssSvStatus;
+ static jmethodID method_reportGeofenceTransition;
+ static jmethodID method_reportGeofenceStatus;
+ static jmethodID method_reportGeofenceAddStatus;
+@@ -71,8 +71,8 @@ static const GnssConfigurationInterface* sGnssConfigurationInterface = NULL;
+ // temporary storage for GPS callbacks
+ static GpsSvStatus  sGpsSvStatus;
+ static const char* sNmeaString;
+-static int sNmeaStringLength;
+ static GnssSvStatus  sGnssSvStatus;
++static int sNmeaStringLength;
+ 
+ #define WAKE_LOCK_NAME  "GPS"
+ 
+@@ -524,6 +524,7 @@ static void android_location_GpsLocationProvider_class_init_native(JNIEnv* env,
+             (const GnssConfigurationInterface*)sGpsInterface->get_extension(
+                     GNSS_CONFIGURATION_INTERFACE);
+     }
++
+     ALOGV("sGpsXtraInterface = %p", sGpsXtraInterface);
+     ALOGV("sAGpsInterface = %p", sAGpsInterface);
+     ALOGV("sGpsNiInterface = %p", sGpsNiInterface);
+@@ -545,8 +546,7 @@ static jboolean android_location_GpsLocationProvider_is_supported(JNIEnv* env, j
+ 
+ static jboolean android_location_GpsLocationProvider_init(JNIEnv* env, jobject obj)
+ {
+-
+-	 ALOGV("GpsLocationProvider_init");
++	ALOGV("GpsLocationProvider_init");
+     // this must be set before calling into the HAL library
+     if (!mCallbacksObj)
+         mCallbacksObj = env->NewGlobalRef(obj);
+@@ -563,6 +563,7 @@ static jboolean android_location_GpsLocationProvider_init(JNIEnv* env, jobject o
+         }
+     } else {
+         return JNI_FALSE;
++}
+ 
+     // if XTRA initialization fails we will disable it by sGpsXtraInterface to NULL,
+     // but continue to allow the rest of the GPS interface to work.
+@@ -707,6 +708,7 @@ static jint android_location_GpsLocationProvider_read_gnss_sv_status(JNIEnv* env
+     return (jint) num_svs;
+ }
+ 
++
+ static void android_location_GpsLocationProvider_agps_set_reference_location_cellid(JNIEnv* env,
+         jobject obj, jint type, jint mcc, jint mnc, jint lac, jint cid)
+ {
+@@ -1521,7 +1523,7 @@ static JNINativeMethod sMethods[] = {
+     {"native_read_sv_status",
+             "([I[F[F[F[I)I",
+             (void*)android_location_GpsLocationProvider_read_sv_status},
+-    {"native_read_gnss_sv_status",
++	{"native_read_gnss_sv_status",
+             "([I[F[F[F[Z[Z[Z)I",
+             (void*)android_location_GpsLocationProvider_read_gnss_sv_status},
+     {"native_read_nmea", "([BI)I", (void*)android_location_GpsLocationProvider_read_nmea},
+-- 
+1.9.1
+
