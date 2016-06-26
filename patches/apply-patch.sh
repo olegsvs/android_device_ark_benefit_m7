@@ -5,6 +5,7 @@ git apply -v ../../device/ark/benefit_m7/patches/framework_av/0001-Patch-for-673
 cd ../..
 cd frameworks/base
 git apply -v ../../device/ark/benefit_m7/patches/framework_base/0001-XenonHD-up.patch
+git apply -v ../../device/ark/benefit_m7/patches/framework_base/0001-Fix-typo.patch
 cd ../..
 cd packages/apps/Settings/
 git apply -v ../../../device/ark/benefit_m7/patches/packages_apps_Settings/0001-Patch-for-6735-mtk.patch
