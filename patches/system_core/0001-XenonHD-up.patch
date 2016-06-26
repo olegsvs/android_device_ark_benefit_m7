@@ -1,0 +1,25 @@
+From f0eab51ef055af4cb29b8c9c6a2ee8ffe944f70b Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Sun, 26 Jun 2016 16:45:09 -0400
+Subject: [PATCH] XenonHD up
+
+---
+ healthd/BatteryMonitor.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/healthd/BatteryMonitor.cpp b/healthd/BatteryMonitor.cpp
+index 66c4e8e..25e984e 100644
+--- a/healthd/BatteryMonitor.cpp
++++ b/healthd/BatteryMonitor.cpp
+@@ -198,7 +198,7 @@ bool BatteryMonitor::update(void) {
+     props.batteryLevel = mBatteryFixedCapacity ?
+         mBatteryFixedCapacity :
+         getIntField(mHealthdConfig->batteryCapacityPath);
+-    props.batteryVoltage = getIntField(mHealthdConfig->batteryVoltagePath) / 1000;
++    props.batteryVoltage = getIntField(mHealthdConfig->batteryVoltagePath);
+ 
+     props.batteryTemperature = mBatteryFixedTemperature ?
+         mBatteryFixedTemperature :
+-- 
+1.9.1
+
