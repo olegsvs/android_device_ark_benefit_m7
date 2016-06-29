@@ -1,0 +1,26 @@
+From ccda16b21889d6af2cf1afe69d272aa698d1e1a9 Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Wed, 29 Jun 2016 09:34:18 -0400
+Subject: [PATCH] mt6735
+
+Change-Id: Iaabd6e4f10a2309672d2639e95a03ea7a916dc79
+---
+ healthd/BatteryMonitor.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/healthd/BatteryMonitor.cpp b/healthd/BatteryMonitor.cpp
+index 66c4e8e..e5c3df8 100644
+--- a/healthd/BatteryMonitor.cpp
++++ b/healthd/BatteryMonitor.cpp
+@@ -198,7 +198,7 @@ bool BatteryMonitor::update(void) {
+     props.batteryLevel = mBatteryFixedCapacity ?
+         mBatteryFixedCapacity :
+         getIntField(mHealthdConfig->batteryCapacityPath);
+-    props.batteryVoltage = getIntField(mHealthdConfig->batteryVoltagePath) / 1000;
++    props.batteryVoltage = getIntField(mHealthdConfig->batteryVoltagePath) ;
+ 
+     props.batteryTemperature = mBatteryFixedTemperature ?
+         mBatteryFixedTemperature :
+-- 
+1.9.1
+
