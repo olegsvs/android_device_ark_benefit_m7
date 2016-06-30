@@ -21,9 +21,9 @@ cd ../..
 cd packages/services/Telephony
 git apply -v ../../../device/ark/benefit_m7/patches/packages_services_telephony/0001-Patch-for-6735-mtk.patch
 cd ../../..
-#cd system/core
-#git apply -v ../../device/ark/benefit_m7/patches/system_core/0001-Patch-for-6735-mtk.patch
-#cd ../..
+cd system/core
+git apply -v ../../device/ark/benefit_m7/patches/system_core/0001-mt6735.patch
+cd ../..
 cd system/netd
 git apply -v ../../device/ark/benefit_m7/patches/system_netd/0001-Patch-for-6735-mtk.patch
 cd ../..

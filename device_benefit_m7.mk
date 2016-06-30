@@ -10,7 +10,7 @@ $(call inherit-product, vendor/ark/benefit_m7/benefit_m7-vendor.mk)
 DEVICE_PACKAGE_OVERLAYS += device/ark/benefit_m7/overlay
 
 # Device uses high-density artwork where available
-PRODUCT_AAPT_CONFIG := normal xhdpi
+PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
 
 # Recovery allowed devices
@@ -67,10 +67,6 @@ PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/configs/media_codecs.xml:system/etc/permissions/media_codecs.xml \
 	$(LOCAL_PATH)/configs/platform.xml:system/etc/permissions/platform.xml
 
-# CM's Snap camera
-PRODUCT_PACKAGES += \
-	Snap
-
 # MTK's Engineer Mode
 PRODUCT_PACKAGES += \
         EngineerMode
@@ -120,12 +116,6 @@ PRODUCT_COPY_FILES += \
     	$(LOCAL_PATH)/configs/audio_device.xml:system/etc/audio_device.xml \
     	$(LOCAL_PATH)/configs/audio_policy.conf:system/etc/audio_policy.conf \
     	$(LOCAL_PATH)/configs/audio_effects.conf:system/etc/audio_effects.conf
-
-# Thermal
-PRODUCT_COPY_FILES += \
-    	$(LOCAL_PATH)/configs/thermal/thermal.conf:system/etc/.tp/thermal.conf \
-    	$(LOCAL_PATH)/configs/thermal/thermal.off.conf:system/etc/.tp/thermal.off.conf \
-    	$(LOCAL_PATH)/configs/thermal/.ht120.mtc:system/etc/.tp/.ht120.mtc 
 
 # Charger
 PRODUCT_PACKAGES += \

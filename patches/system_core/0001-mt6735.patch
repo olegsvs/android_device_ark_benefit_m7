@@ -1,0 +1,35 @@
+From 4ae99cf5d93f1730b8f26fc69904f6c35a85675d Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Thu, 30 Jun 2016 14:51:36 -0400
+Subject: [PATCH] mt6735
+
+Change-Id: I7360a8dba99172a3d4494cff8a6b7dfc44f68bac
+---
+ healthd/BatteryMonitor.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/healthd/BatteryMonitor.cpp b/healthd/BatteryMonitor.cpp
+index 66c4e8e..d973841 100644
+--- a/healthd/BatteryMonitor.cpp
++++ b/healthd/BatteryMonitor.cpp
+@@ -198,7 +198,7 @@ bool BatteryMonitor::update(void) {
+     props.batteryLevel = mBatteryFixedCapacity ?
+         mBatteryFixedCapacity :
+         getIntField(mHealthdConfig->batteryCapacityPath);
+-    props.batteryVoltage = getIntField(mHealthdConfig->batteryVoltagePath) / 1000;
++    props.batteryVoltage = getIntField(mHealthdConfig->batteryVoltagePath) ;
+ 
+     props.batteryTemperature = mBatteryFixedTemperature ?
+         mBatteryFixedTemperature :
+@@ -227,7 +227,7 @@ bool BatteryMonitor::update(void) {
+         props.dockBatteryLevel = mBatteryFixedCapacity ?
+             mBatteryFixedCapacity :
+             getIntField(mHealthdConfig->dockBatteryCapacityPath);
+-        props.dockBatteryVoltage = getIntField(mHealthdConfig->dockBatteryVoltagePath) / 1000;
++        props.dockBatteryVoltage = getIntField(mHealthdConfig->dockBatteryVoltagePath) ;
+ 
+         props.dockBatteryTemperature = mBatteryFixedTemperature ?
+             mBatteryFixedTemperature :
+-- 
+1.9.1
+
