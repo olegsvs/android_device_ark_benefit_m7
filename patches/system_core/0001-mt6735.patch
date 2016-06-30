@@ -1,9 +1,9 @@
-From ccda16b21889d6af2cf1afe69d272aa698d1e1a9 Mon Sep 17 00:00:00 2001
+From c66094180a5d9b8a79babfd15f4b7fac5885e0ce Mon Sep 17 00:00:00 2001
 From: olegsvs <oleg.texet@gmail.com>
-Date: Wed, 29 Jun 2016 09:34:18 -0400
+Date: Thu, 30 Jun 2016 14:42:01 -0400
 Subject: [PATCH] mt6735
 
-Change-Id: Iaabd6e4f10a2309672d2639e95a03ea7a916dc79
+Change-Id: I5e81352bd830c97c770dde191c992158787a16ae
 ---
  healthd/BatteryMonitor.cpp | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)

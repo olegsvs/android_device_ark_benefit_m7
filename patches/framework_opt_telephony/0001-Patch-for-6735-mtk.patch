@@ -1,9 +1,9 @@
-From 7b501b327af4183b7c89c5761dbebd977a126ee1 Mon Sep 17 00:00:00 2001
+From 19044254448d50faed4427ae444ddc6c4717916f Mon Sep 17 00:00:00 2001
 From: olegsvs <oleg.texet@gmail.com>
-Date: Wed, 29 Jun 2016 09:34:02 -0400
-Subject: [PATCH] mt6735
+Date: Sun, 12 Jun 2016 13:19:03 -0400
+Subject: [PATCH] Patch for 6735 mtk
 
-Change-Id: Ica9d9a83dbff8944e7cdbeabd72d6d9b06330965
+Change-Id: Ia7d89678193394b3f54aff3463d62b7909bb18fb
 ---
  .../android/internal/telephony/BaseCommands.java   |  209 ++
  .../internal/telephony/CommandsInterface.java      |  250 +++
@@ -36,7 +36,7 @@ Change-Id: Ica9d9a83dbff8944e7cdbeabd72d6d9b06330965
  .../internal/telephony/uicc/SIMRecords.java        |   10 +-
  .../android/internal/telephony/uicc/UiccCard.java  |  107 +
  .../telephony/uicc/UiccCardApplication.java        |  163 ++
- .../internal/telephony/uicc/UiccController.java    |  432 +++-
+ .../internal/telephony/uicc/UiccController.java    |  421 +++-
  .../internal/telephony/uicc/UsimFileHandler.java   |    7 +
  .../internal/telephony/EtwsNotification.java       |   42 +
  .../com/mediatek/internal/telephony/EtwsUtils.java |   31 +
@@ -53,7 +53,7 @@ Change-Id: Ica9d9a83dbff8944e7cdbeabd72d6d9b06330965
  .../telephony/worldphone/WorldPhoneOm.java         |  912 ++++++++
  .../telephony/worldphone/WorldPhoneUtil.java       |  246 +++
  .../telephony/worldphone/WorldPhoneWrapper.java    |   86 +
- 48 files changed, 8363 insertions(+), 69 deletions(-)
+ 48 files changed, 8360 insertions(+), 61 deletions(-)
  create mode 100644 src/java/com/android/internal/telephony/MediaTekRIL.java
  create mode 100644 src/java/com/mediatek/internal/telephony/EtwsNotification.java
  create mode 100644 src/java/com/mediatek/internal/telephony/EtwsUtils.java
@@ -5720,30 +5720,44 @@ index cce75f1..c455256 100644
 +    }
  }
 diff --git a/src/java/com/android/internal/telephony/uicc/UiccController.java b/src/java/com/android/internal/telephony/uicc/UiccController.java
-index 3e5d679..6c1eb55 100644
+index 3e5d679..e3cc67c 100644
 --- a/src/java/com/android/internal/telephony/uicc/UiccController.java
 +++ b/src/java/com/android/internal/telephony/uicc/UiccController.java
-@@ -19,6 +19,15 @@ package com.android.internal.telephony.uicc;
+@@ -18,14 +18,19 @@ package com.android.internal.telephony.uicc;
+ 
  import android.content.Context;
  import android.content.Intent;
- 
 +import android.content.SharedPreferences;
 +import android.content.BroadcastReceiver;
 +import android.content.IntentFilter;
-+import android.os.Bundle;
-+import android.telephony.SubscriptionManager;
-+import com.android.internal.telephony.IccCardConstants;
-+import com.android.internal.telephony.TelephonyIntents;
-+import com.android.internal.telephony.uicc.IccCardApplicationStatus.PersoSubState;
-+
+ 
  import android.os.AsyncResult;
++import android.os.Bundle;
  import android.os.Handler;
  import android.os.Message;
-@@ -97,6 +106,37 @@ public class UiccController extends Handler {
+ import android.os.Registrant;
+ import android.os.RegistrantList;
+ import android.os.SystemProperties;
+ import android.telephony.TelephonyManager;
++import android.telephony.SubscriptionManager;
+ import android.telephony.Rlog;
+ import android.text.format.Time;
+ 
+@@ -34,7 +39,10 @@ import android.telephony.ServiceState;
+ import com.android.internal.telephony.CommandsInterface;
+ import com.android.internal.telephony.PhoneConstants;
+ import com.android.internal.telephony.SubscriptionController;
++import com.android.internal.telephony.IccCardConstants;
++import com.android.internal.telephony.TelephonyIntents;
+ import com.android.internal.telephony.uicc.IccCardApplicationStatus.AppState;
++import com.android.internal.telephony.uicc.IccCardApplicationStatus.PersoSubState;
+ 
+ import java.io.FileDescriptor;
+ import java.io.PrintWriter;
+@@ -97,6 +105,36 @@ public class UiccController extends Handler {
      private static final int EVENT_REFRESH = 4;
      private static final int EVENT_REFRESH_OEM = 5;
  
-+ 
 +    // MTK
 +    protected static final int EVENT_RADIO_AVAILABLE = 100;
 +    protected static final int EVENT_VIRTUAL_SIM_ON = 101;
@@ -5777,7 +5791,7 @@ index 3e5d679..6c1eb55 100644
      private CommandsInterface[] mCis;
      private UiccCard[] mUiccCards = new UiccCard[TelephonyManager.getDefault().getPhoneCount()];
  
-@@ -109,6 +149,15 @@ public class UiccController extends Handler {
+@@ -109,6 +147,15 @@ public class UiccController extends Handler {
  
      private boolean mOEMHookSimRefresh = false;
  
@@ -5793,27 +5807,24 @@ index 3e5d679..6c1eb55 100644
      // Logging for dumpsys. Useful in cases when the cards run into errors.
      private static final int MAX_PROACTIVE_COMMANDS_TO_LOG = 20;
      private LinkedList<String> mCardLogs = new LinkedList<String>();
-@@ -131,10 +180,12 @@ public class UiccController extends Handler {
+@@ -131,9 +178,11 @@ public class UiccController extends Handler {
                  com.android.internal.R.bool.config_sim_refresh_for_dual_mode_card);
          for (int i = 0; i < mCis.length; i++) {
              Integer index = new Integer(i);
 -            if (SystemProperties.getBoolean("persist.radio.apm_sim_not_pwdn", false)) {
--                // Reading ICC status in airplane mode is only supported in QCOM
--                // RILs when this property is set to true
--                mCis[i].registerForAvailable(this, EVENT_ICC_STATUS_CHANGED, index);
 +            if (SystemProperties.getBoolean("persist.radio.apm_sim_not_pwdn", false) ||
 +                SystemProperties.get("gsm.version.ril-impl").startsWith("mtk")) {
-+                 // Reading ICC status in airplane mode is only supported in QCOM
-+                 // RILs when this property is set to true
+                 // Reading ICC status in airplane mode is only supported in QCOM
+                 // RILs when this property is set to true
 +                // and MTK RILs
-+                 mCis[i].registerForAvailable(this, EVENT_ICC_STATUS_CHANGED, index);
+                 mCis[i].registerForAvailable(this, EVENT_ICC_STATUS_CHANGED, index);
              } else {
                  mCis[i].registerForOn(this, EVENT_ICC_STATUS_CHANGED, index);
-             }
-@@ -142,12 +193,28 @@ public class UiccController extends Handler {
+@@ -142,12 +191,30 @@ public class UiccController extends Handler {
              mCis[i].registerForIccStatusChanged(this, EVENT_ICC_STATUS_CHANGED, index);
              // TODO remove this once modem correctly notifies the unsols
              mCis[i].registerForNotAvailable(this, EVENT_RADIO_UNAVAILABLE, index);
++
 +            mCis[i].registerForVirtualSimOn(this, EVENT_VIRTUAL_SIM_ON, index);
 +            mCis[i].registerForVirtualSimOff(this, EVENT_VIRTUAL_SIM_OFF, index);
 +            mCis[i].registerForSimMissing(this, EVENT_SIM_MISSING, index);
@@ -5829,6 +5840,7 @@ index 3e5d679..6c1eb55 100644
                  mCis[i].registerForIccRefresh(this, EVENT_REFRESH, index);
              }
          }
++
 +        IntentFilter filter = new IntentFilter();
 +        /* TODO: Wait for SIM Info migration done
 +        filter.addAction(TelephonyIntents.ACTION_SIM_INFO_UPDATE);
@@ -5936,9 +5948,9 @@ index 3e5d679..6c1eb55 100644
 +                    //Response format: <Application ID>, <Session ID>
 +                    int[] result = (int[]) ar.result;
 +                    // FIXME: application id and array index? only support one application now.
-+                   if (DBG) log("Application = " + result[0] + ", Session = " + result[1]);
++                    if (DBG) log("Application = " + result[0] + ", Session = " + result[1]);
 +                    mImsSessionId[index] =  result[1];
-+                   break;
++                    break;
 +                case EVENT_VIRTUAL_SIM_ON:
 +                    mCis[index].getIccCardStatus(obtainMessage(EVENT_GET_ICC_STATUS_DONE, index));
 +                    // setNotificationVirtual(index, EVENT_VIRTUAL_SIM_ON);
@@ -5993,17 +6005,10 @@ index 3e5d679..6c1eb55 100644
                  case EVENT_REFRESH:
                      ar = (AsyncResult)msg.obj;
                      if (DBG) log("Sim REFRESH received");
-@@ -430,11 +630,225 @@ public class UiccController extends Handler {
-             } else {
-                 pw.println("  mUiccCards[" + i + "]=" + mUiccCards[i]);
-                 mUiccCards[i].dump(fd, pw, args);
--            }
-+             }
+@@ -437,4 +637,223 @@ public class UiccController extends Handler {
+             pw.println("  " + mCardLogs.get(i));
          }
--        pw.println("mCardLogs: ");
--        for (int i = 0; i < mCardLogs.size(); ++i) {
--            pw.println("  " + mCardLogs.get(i));
-+    }
+     }
 +
 +    // MTK
 +    private synchronized void onGetIccCardStatusDone(AsyncResult ar, Integer index, boolean isUpdate) {
@@ -6016,7 +6021,7 @@ index 3e5d679..6c1eb55 100644
 +        if (!isValidCardIndex(index)) {
 +            Rlog.e(LOG_TAG, "onGetIccCardStatusDone: invalid index : " + index);
 +            return;
-         }
++        }
 +        if (DBG) log("onGetIccCardStatusDone, index " + index + "isUpdateSiminfo " + isUpdate);
 +
 +        IccCardStatus status = (IccCardStatus) ar.result;
@@ -6035,16 +6040,16 @@ index 3e5d679..6c1eb55 100644
 +            // UiccManager.getUiccCard(), it will return the default card.
 +            if (index == PhoneConstants.DEFAULT_CARD_INDEX) {
 +                mUiccCard = mUiccCards[index];
-+             }
++            }
 +*/
 +        } else {
-+           //Update already existing card
++            //Update already existing card
 +            mUiccCards[index].update(mContext, mCis[index] , status, isUpdate);
 +        }
 +
 +        if (DBG) log("Notifying IccChangedRegistrants");
 +        // TODO: Think if it is possible to pass isUpdate
-+       if (!SystemProperties.get(COMMON_SLOT_PROPERTY).equals("1")) {
++        if (!SystemProperties.get(COMMON_SLOT_PROPERTY).equals("1")) {
 +            mIccChangedRegistrants.notifyRegistrants(new AsyncResult(null, index, null));
 +        } else {
 +            Bundle result = new Bundle();
@@ -6057,7 +6062,7 @@ index 3e5d679..6c1eb55 100644
 +
 +    private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
 +        public void onReceive(Context context, Intent intent) {
-+           if (intent == null) return;
++            if (intent == null) return;
 +            String action = intent.getAction();
 +            log("mIntentReceiver Receive action " + action);
 +
@@ -6076,7 +6081,7 @@ index 3e5d679..6c1eb55 100644
 +
 +                if (IccCardConstants.INTENT_VALUE_ICC_READY.equals(stateExtra)
 +                        && "USIM".equals(iccType)) {
-+                   mCis[slot].openIccApplication(0, obtainMessage(EVENT_TURN_ON_ISIM_APPLICATION_DONE, slot));
++                    mCis[slot].openIccApplication(0, obtainMessage(EVENT_TURN_ON_ISIM_APPLICATION_DONE, slot));
 +                }
 +            } else if (action.equals(ACTION_RESET_MODEM)) {
 +                int simIdFor3G = SystemProperties.getInt(PROPERTY_3G_SWITCH, 1) - 1;
@@ -6086,14 +6091,14 @@ index 3e5d679..6c1eb55 100644
 +                    return;
 +                }
 +                log("mIntentReceiver Receive ACTION_RESET_MODEM: " + slotId);
-+               if (simIdFor3G == slotId) {
++                if (simIdFor3G == slotId) {
 +                    log("phone " + simIdFor3G + " will reset modem");
 +                    mCis[slotId].resetRadio(null);
 +                }
 +            } /* else if (TelephonyIntents.ACTION_SIM_INFO_UPDATE.equals(action)) {
 +                //ALPS00776430: Since EF_MSISDN can not be read/wrtie without verify PIN.
 +                //We need to clear it or update it to avoid user to get the cached data before.
-+               new Thread() {
++                new Thread() {
 +                    @Override
 +                    public void run() {
 +                        SIMInfo simInfo = SIMInfo.getSIMInfoBySlot(mContext, mSimId);
@@ -6104,7 +6109,7 @@ index 3e5d679..6c1eb55 100644
 +                            if(iccRecord != null) {
 +                                SIMInfo.setNumber(mContext, iccRecord.getMsisdnNumber(), simInfo.mSimId);
 +                            } else {
-+                               SIMInfo.setNumber(mContext, "", simInfo.mSimId);
++                                SIMInfo.setNumber(mContext, "", simInfo.mSimId);
 +                            }
 +                            Intent intent = new Intent(TelephonyIntents.ACTION_SIM_INFO_UPDATE);
 +                            ActivityManagerNative.broadcastStickyIntent(intent, READ_PHONE_STATE, UserHandle.USER_ALL);
@@ -6128,7 +6133,7 @@ index 3e5d679..6c1eb55 100644
 +        }
 +        if (DBG) log("onGetIccApplicationStatusDone, index " + index);
 +
-+       IccCardStatus status = (IccCardStatus) ar.result;
++        IccCardStatus status = (IccCardStatus) ar.result;
 +
 +        if (mUiccCards[index] == null) {
 +            //Create new card
@@ -6138,64 +6143,65 @@ index 3e5d679..6c1eb55 100644
 +            // Update the UiccCard in base class, so that if someone calls
 +            // UiccManager.getUiccCard(), it will return the default card.
 +            if (index == PhoneConstants.DEFAULT_CARD_INDEX) {
-+               mUiccCard = mUiccCards[index];
-+          }
++                mUiccCard = mUiccCards[index];
++            }
 +*/
 +        } else {
 +            //Update already existing card
 +            mUiccCards[index].update(mContext, mCis[index] , status);
 +        }
 +
-+       if (DBG) log("Notifying mApplicationChangedRegistrants");
++        if (DBG) log("Notifying mApplicationChangedRegistrants");
 +        mApplicationChangedRegistrants.notifyRegistrants();
-     }
--}
++    }
 +
 +    private int mBtSlotId = -1;
 +
 +    /**
 +     * Get BT connected sim id.
 +     *
-+    * @internal
-+     */
-+    public int getBtConnectedSimId() {
-+       if (DBG) log("getBtConnectedSimId, slot " + mBtSlotId);
-+        return mBtSlotId;
-+    }
-+    /**
-+     * Set BT connected sim id.
-+    *
 +     * @internal
 +     */
-+   public void setBtConnectedSimId(int simId) {
++    public int getBtConnectedSimId() {
++        if (DBG) log("getBtConnectedSimId, slot " + mBtSlotId);
++        return mBtSlotId;
++    }
++
++    /**
++     * Set BT connected sim id.
++     *
++     * @internal
++     */
++    public void setBtConnectedSimId(int simId) {
 +        mBtSlotId = simId;
 +        if (DBG) log("setBtConnectedSimId, slot " + mBtSlotId);
 +    }
++
 +    /**
 +     * Parse network lock reason string.
 +     *
 +     * @param state network lock type
 +     * @return network lock string
-+    *
++     *
 +     */
-+   private String parsePersoType(PersoSubState state) {
++    private String parsePersoType(PersoSubState state) {
 +        if (DBG) log("parsePersoType, state = " + state);
 +        switch (state) {
 +            case PERSOSUBSTATE_SIM_NETWORK:
 +                return IccCardConstants.INTENT_VALUE_LOCKED_NETWORK;
 +            case PERSOSUBSTATE_SIM_NETWORK_SUBSET:
-+               return IccCardConstants.INTENT_VALUE_LOCKED_NETWORK_SUBSET;
++                return IccCardConstants.INTENT_VALUE_LOCKED_NETWORK_SUBSET;
 +            case PERSOSUBSTATE_SIM_CORPORATE:
 +                return IccCardConstants.INTENT_VALUE_LOCKED_CORPORATE;
 +            case PERSOSUBSTATE_SIM_SERVICE_PROVIDER:
 +                return IccCardConstants.INTENT_VALUE_LOCKED_SERVICE_PROVIDER;
 +            case PERSOSUBSTATE_SIM_SIM:
 +                return IccCardConstants.INTENT_VALUE_LOCKED_SIM;
-+           default:
++            default:
 +                break;
-+       }
++        }
 +        return IccCardConstants.INTENT_VALUE_ICC_UNKNOWN;
-+   }
++    }
 +
 +    //Modem SML change feature.
 +    public void repollIccStateForModemSmlChangeFeatrue(int slotId, boolean needIntent) {
@@ -6209,7 +6215,7 @@ index 3e5d679..6c1eb55 100644
 +    //Notifies when application status changes
 +    public void registerForApplicationChanged(Handler h, int what, Object obj) {
 +        synchronized (mLock) {
-+           Registrant r = new Registrant(h, what, obj);
++            Registrant r = new Registrant(h, what, obj);
 +            mApplicationChangedRegistrants.add(r);
 +            //Notify registrant right after registering, so that it will get the latest application status,
 +            //otherwise which may not happen until there is an actual change in application status.
@@ -6220,10 +6226,9 @@ index 3e5d679..6c1eb55 100644
 +    public void unregisterForApplicationChanged(Handler h) {
 +        synchronized (mLock) {
 +            mApplicationChangedRegistrants.remove(h);
-+         }
-+     }
-+ }
-+
++        }
++    }
+ }
 diff --git a/src/java/com/android/internal/telephony/uicc/UsimFileHandler.java b/src/java/com/android/internal/telephony/uicc/UsimFileHandler.java
 index 612d55e..426814d 100644
 --- a/src/java/com/android/internal/telephony/uicc/UsimFileHandler.java

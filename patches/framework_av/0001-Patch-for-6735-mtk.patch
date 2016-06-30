@@ -1,9 +1,9 @@
-From d24dc4fe2b2d1144fcf5f1be4f2f0a6ba5bf13a5 Mon Sep 17 00:00:00 2001
+From 98e9c1a025e5fd853ba9214dc5f610f93ff4b8d9 Mon Sep 17 00:00:00 2001
 From: olegsvs <oleg.texet@gmail.com>
-Date: Wed, 29 Jun 2016 09:33:53 -0400
-Subject: [PATCH] mt6735
+Date: Sun, 12 Jun 2016 13:17:40 -0400
+Subject: [PATCH] Patch for 6735 mtk
 
-Change-Id: I2f6a5ef5dba9c48475caf08d93af750796f28e77
+Change-Id: I04fca74c8bd65b7223fae3e10cd17f052900ae47
 ---
  include/media/AudioSystem.h                        |   3 +
  include/media/IAudioFlinger.h                      |   3 +
