@@ -11,11 +11,9 @@ import /init.${ro.zygote}.rc
 import /init.trace.rc
 # Include CM's extra init file
 import /init.cm.rc
-import /init.hermes.power.rc
-import /init.storage.rc
+
 
 on early-init
-
     # Set init and its forked children's oom_adj.
     write /proc/1/oom_score_adj -1000
 
@@ -37,8 +35,7 @@ on early-init
 on init
     sysclktz 0
 
-loglevel 6 ####
-    write /proc/bootprof "INIT: on init start" ####
+    loglevel 1
 
     # Backward compatibility
     symlink /system/etc /etc
@@ -65,6 +62,7 @@ loglevel 6 ####
     write /sys/fs/cgroup/memory/sw/memory.move_charge_at_immigrate 1
     chown root system /sys/fs/cgroup/memory/sw/tasks
     chmod 0660 /sys/fs/cgroup/memory/sw/tasks
+    chmod 0220 /sys/fs/cgroup/memory/cgroup.event_control
 
     mkdir /system
     mkdir /data 0771 system system
@@ -127,7 +125,7 @@ loglevel 6 ####
     chown system system /dev/cpuctl/tasks
     chmod 0666 /dev/cpuctl/tasks
     write /dev/cpuctl/cpu.shares 1024
-    write /dev/cpuctl/cpu.rt_runtime_us 950000
+    write /dev/cpuctl/cpu.rt_runtime_us 800000
     write /dev/cpuctl/cpu.rt_period_us 1000000
 
     mkdir /dev/cpuctl/bg_non_interactive
@@ -156,45 +154,6 @@ loglevel 6 ####
     mount pstore pstore /sys/fs/pstore
     chown system log /sys/fs/pstore/console-ramoops
     chmod 0440 /sys/fs/pstore/console-ramoops
-	# ion device
-	chmod 0666 /dev/ion
-
-	chmod 0660 /sys/bus/platform/drivers/gsensor/cpsdata 
-	chmod 0660 /sys/bus/platform/drivers/gsensor/cpsrange 
-	chmod 0660 /sys/bus/platform/drivers/gsensor/cpsbandwidth 
-	chmod 0660 /sys/bus/platform/drivers/gsensor/cpsopmode 
-	chmod 0660 /sys/bus/platform/drivers/gsensor/fifo_mode 
-	chmod 0660 /sys/bus/platform/drivers/gsensor/fifo_data_frame 
-	chmod 0660 /sys/bus/platform/drivers/gsensor/fifo_framecount 
-	chown system system /sys/bus/platform/drivers/gsensor/cpsdata 
-	chown system system /sys/bus/platform/drivers/gsensor/cpsrange 
-	chown system system /sys/bus/platform/drivers/gsensor/cpsbandwidth 
-	chown system system /sys/bus/platform/drivers/gsensor/cpsopmode 
-	chown system system /sys/bus/platform/drivers/gsensor/fifo_mode 
-	chown system system /sys/bus/platform/drivers/gsensor/fifo_data_frame 
-	chown system system /sys/bus/platform/drivers/gsensor/fifo_framecount 
-	#add for mag 
-	chmod 0660 /sys/bus/platform/drivers/msensor/rawdata 
-	chown system system /sys/bus/platform/drivers/msensor/rawdata 
-
-	chmod 0660 /sys/bus/platform/drivers/msensor/daemon
-	chown system system /sys/bus/platform/drivers/msensor/daemon
-
-	#add for gyro 
-	chmod 0660 /sys/bus/platform/drivers/gyroscope/rawdata 
-	chmod 0660 /sys/bus/platform/drivers/gyroscope/datarate 
-	chmod 0660 /sys/bus/platform/drivers/gyroscope/range 
-	chmod 0660 /sys/bus/platform/drivers/gyroscope/powermode 
-	chmod 0660 /sys/bus/platform/drivers/gyroscope/fifo_mode 
-	chmod 0660 /sys/bus/platform/drivers/gyroscope/fifo_data_frame 
-	chmod 0660 /sys/bus/platform/drivers/gyroscope/fifo_framecount 
-	chown system system /sys/bus/platform/drivers/gyroscope/rawdata 
-	chown system system /sys/bus/platform/drivers/gyroscope/datarate 
-	chown system system /sys/bus/platform/drivers/gyroscope/range 
-	chown system system /sys/bus/platform/drivers/gyroscope/powermode 
-	chown system system /sys/bus/platform/drivers/gyroscope/fifo_mode 
-	chown system system /sys/bus/platform/drivers/gyroscope/fifo_data_frame
-	chown system system /sys/bus/platform/drivers/gyroscope/fifo_framecount
 
 # Healthd can trigger a full boot from charger mode by signaling this
 # property when the power button is held.
@@ -356,10 +315,6 @@ on post-fs-data
     # Separate location for storing security policy files on data
     mkdir /data/security 0711 system system
 
-    # add for mediaserver data
-    mkdir /data/mediaserver 0775 media media
-    restorecon /data/mediaserver
-
     # Reload policy from /data/security if present.
     setprop selinux.reload_policy 1
 
@@ -453,16 +408,6 @@ on boot
     chown system system /sys/class/leds/red/device/grpfreq
     chown system system /sys/class/leds/red/device/grppwm
     chown system system /sys/class/leds/red/device/blink
-# LEDS
-chown system  system  /sys/class/leds/yellow/brightness
-chown system  system  /sys/class/leds/white/brightness
-chown system  system   /sys/class/leds/cyan/brightness
-chown system  system  /sys/class/leds/violet/brightness
-chown system  system  /sys/class/leds/yellow/trigger
-chown system  system  /sys/class/leds/white/trigger
-chown system  system  /sys/class/leds/cyan/trigger
-chown system  system  /sys/class/leds/violet/trigger
-
     chown system system /sys/class/timed_output/vibrator/enable
     chown system system /sys/module/sco/parameters/disable_esco
     chown system system /sys/kernel/ipv4/tcp_wmem_min
@@ -472,8 +417,6 @@ chown system  system  /sys/class/leds/violet/trigger
     chown system system /sys/kernel/ipv4/tcp_rmem_def
     chown system system /sys/kernel/ipv4/tcp_rmem_max
     chown root radio /proc/cmdline
-	chown system root /sys/class/input/input9/mag_hard_offset
-	chmod 0660 /sys/class/input/input9/mag_hard_offset
 
     # Define default initial receive window size in segments.
     setprop net.tcp.default_init_rwnd 60
@@ -558,10 +501,6 @@ service console /system/bin/sh
     group shell log
     seclabel u:r:shell:s0
 
-service auditd /system/bin/auditd -k
-    seclabel u:r:logd:s0
-    class main
-
 on property:ro.debuggable=1
     start console
 
@@ -571,7 +510,7 @@ service adbd /sbin/adbd --root_seclabel=u:r:su:s0
     socket adbd stream 660 system system
     disabled
     seclabel u:r:adbd:s0
-	
+
 # adbd on at boot in emulator
 on property:ro.kernel.qemu=1
     start adbd
@@ -591,7 +530,6 @@ service servicemanager /system/bin/servicemanager
     onrestart restart media
     onrestart restart surfaceflinger
     onrestart restart drm
-    onrestart restart shelld
 
 service vold /system/bin/vold
     class core
@@ -611,13 +549,12 @@ service debuggerd /system/bin/debuggerd
 service debuggerd64 /system/bin/debuggerd64
     class main
 
-# for using TK init.modem.rc rild-daemon setting
-#service ril-daemon /system/bin/rild
-#    class main
-#    socket rild stream 660 root radio
-#    socket rild-debug stream 660 radio system
-#    user root
-#    group radio cache inet misc audio log
+service ril-daemon /system/bin/rild
+    class main
+    socket rild stream 660 root radio
+    socket rild-debug stream 660 radio system
+    user root
+    group radio cache inet misc audio sdcard_rw qcom_diag log
 
 service surfaceflinger /system/bin/surfaceflinger
     class core
@@ -625,22 +562,15 @@ service surfaceflinger /system/bin/surfaceflinger
     group graphics drmrpc
     onrestart restart zygote
 
-#make sure drm server has rights to read and write sdcard ####
 service drm /system/bin/drmserver
     class main
     user drm
-    # group drm system inet drmrpc ####
-    group drm system inet drmrpc sdcard_r ####
+    group drm system inet drmrpc
 
 service media /system/bin/mediaserver
     class main
-    user root ####
-#   google default ####
-#   user media    ####
-    group audio camera inet net_bt net_bt_admin net_bw_acct drmrpc mediadrm media sdcard_r system net_bt_stack ####
-#   google default ####
-#   group audio camera inet net_bt net_bt_admin net_bw_acct drmrpc mediadrm ####
-
+    user root
+    group audio camera inet net_bt net_bt_admin net_bw_acct drmrpc mediadrm media sdcard_r system net_bt_stack 
     ioprio rt 4
 
 # One shot invocation to deal with encrypted volume.
@@ -660,7 +590,7 @@ service encrypt /system/bin/vdc --wait cryptfs enablecrypto inplace default
 service bootanim /system/bin/bootanimation
     class core
     user graphics
-    group graphics media audio
+    group graphics audio
     disabled
     oneshot
 
@@ -717,25 +647,3 @@ service pre-recovery /system/bin/uncrypt
     class main
     disabled
     oneshot
-#add by lizhiye, for atmel tp
-on post-fs-data
-chown root root /system/bin/init.atmel_ts.sh
-chmod 777 /system/bin/init.atmel_ts.sh
-
-#yangchao for xiaomikey ta
-chmod 777 system/bin/tlcMkm
-
-#yangchao for read otp data
-chmod 777 system/bin/getuuid
- 
-service atmel_ts /system/bin/init.atmel_ts.sh
-class main
-user root
-oneshot
-#endif
-
-# add by GOODIX for fingerprint begin
-service fpDaemon /system/bin/gxFpDaemon
-    class main
-    oneshot
-# add by GOODIX for finger print end

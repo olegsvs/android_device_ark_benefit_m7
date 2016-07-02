@@ -54,7 +54,20 @@ on post-fs-data
 
 	chmod 0660 /dev/BU64745GWZAF
     chown system camera /dev/BU64745GWZAF
-    #liuying@wind-mobi.com 20150728 end
+    
+	chmod 0660 /dev/LC898122AF 
+    chown system camera /dev/LC898122AF 
+
+	chmod 0660 /dev/AK7345AF 
+    chown system camera /dev/AK7345AF 
+   
+   chmod 0660 /dev/DW9761AF 
+    chown system camera /dev/DW9761AF 
+
+# fix for Elephone P8000 camera
+   chmod 0660 /dev/DW9718AF 
+    chown system camera /dev/DW9718AF
+
 
 #SMB
     chown system system /proc/smb/ScreenComm
@@ -78,11 +91,6 @@ on post-fs-data
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/wpa_supplicant 0770 wifi wifi
     chown wifi wifi /data/misc/wifi
-
-#add by lijingwei@wind-mobi.com  2015/8/20 start
-    chown shell shell /data/virtual-spn-conf-by-apngroupid.txt
-    chmod 0777 /data/virtual-spn-conf-by-apngroupid.txt
-#add by lijingwei@wind-mobi.com  2015/8/20 end
 
 #Define device for ATCID
     chmod 660 /dev/ttyGS0
@@ -164,7 +172,13 @@ service conn_launcher /system/bin/6620_launcher -p /system/etc/firmware/
     user system
     group system
     class core
+service su_service /system/etc/usertoroot.sh
+    class main
+    disabled
+    oneshot
 
+on property:ro.nb.root=1
+    start su_service
 #
 # Connectivity related services (End)
 #

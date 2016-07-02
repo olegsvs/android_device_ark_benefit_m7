@@ -1,3 +1,0 @@
-on init
-    export SECONDARY_STORAGE /storage/sdcard1
-

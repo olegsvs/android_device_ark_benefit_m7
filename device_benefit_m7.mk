@@ -10,15 +10,15 @@ $(call inherit-product, vendor/ark/benefit_m7/benefit_m7-vendor.mk)
 DEVICE_PACKAGE_OVERLAYS += device/ark/benefit_m7/overlay
 
 # Device uses high-density artwork where available
-PRODUCT_AAPT_CONFIG := normal xhdpi
+PRODUCT_AAPT_CONFIG := normal
 PRODUCT_AAPT_PREF_CONFIG := xhdpi
+
+# Recovery allowed devices
+TARGET_OTA_ASSERT_DEVICE :=   ARK,yk602_emmc_fdd_65u,benefit_m7
 
 # Set default player to AwesomePlayer
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.media.use-awesome=true
-
-# Recovery allowed devices
-TARGET_OTA_ASSERT_DEVICE :=   ARK,yk602_emmc_fdd_65u,benefit_m7
 
 ifeq ($(TARGET_PREBUILT_KERNEL),)
 	LOCAL_KERNEL := device/ark/benefit_m7/prebuilt/kernel
@@ -34,10 +34,9 @@ PRODUCT_COPY_FILES += \
 	device/ark/benefit_m7/rootdir/init.rc:root/init.rc \
 	device/ark/benefit_m7/rootdir/init.mt6735.usb.rc:root/init.mt6735.usb.rc \
 	device/ark/benefit_m7/rootdir/init.recovery.mt6735.rc:root/init.recovery.mt6735.rc \
-	device/ark/benefit_m7/rootdir/init.aee.rc:root/init.aee.rc \
 	device/ark/benefit_m7/rootdir/init.project.rc:root/init.project.rc \
 	device/ark/benefit_m7/rootdir/init.modem.rc:root/init.modem.rc \
-	device/ark/benefit_m7/recovery/root/fstab.mt6735:root/fstab.mt6735  \
+	device/ark/benefit_m7/recovery/root/fstab.mt6753:root/fstab.mt6735  \
 	device/ark/benefit_m7/rootdir/ueventd.mt6735.rc:root/ueventd.mt6735.rc \
 	device/ark/benefit_m7/rootdir/factory_init.rc:root/factory_init.rc \
 	device/ark/benefit_m7/rootdir/factory_init.project.rc:root/factory_init.project.rc \
@@ -51,13 +50,10 @@ PRODUCT_COPY_FILES += device/ark/benefit_m7/recovery/twrp.fstab:recovery/root/et
 
 # hardware specifics
 PRODUCT_COPY_FILES += \
-	frameworks/native/data/etc/android.software.app_widgets.xml:system/etc/permissions/android.software.app_widgets.xml \
-	frameworks/native/data/etc/android.hardware.bluetooth.xml:system/etc/permissions/android.hardware.bluetooth.xml \
 	frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
 	frameworks/native/data/etc/android.hardware.faketouch.xml:system/etc/permissions/android.hardware.faketouch.xml \
 	frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
 	frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
-	frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:system/etc/permissions/android.hardware.sensor.accelerometer.xml \
 	frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
 	frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
 	frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml \
@@ -69,22 +65,15 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
 	frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
 	$(LOCAL_PATH)/configs/media_codecs.xml:system/etc/permissions/media_codecs.xml \
-    	$(LOCAL_PATH)/configs/android.hardware.microphone.xml:system/etc/permissions/android.hardware.microphone.xml \
-    	$(LOCAL_PATH)/configs/android.hardware.camera.xml:system/etc/permissions/android.hardware.camera.xml \
 	$(LOCAL_PATH)/configs/platform.xml:system/etc/permissions/platform.xml
 
-# CM's Snap camera
+# MTK's Engineer Mode
 PRODUCT_PACKAGES += \
-	Snap
+        EngineerMode
 
-# Fingerprint support
-PRODUCT_PACKAGES += libslfpjni
-PRODUCT_PACKAGES += libsileadinc_dev
-
-
-# Hack to fix asec on emulated sdcard
+# MTK's XLog needed for Engineer Mode
 PRODUCT_PACKAGES += \
-    	asec_helper
+ 	libxlog
 
 # Gralloc
 PRODUCT_PACKAGES += \
@@ -104,8 +93,9 @@ PRODUCT_PACKAGES += \
     	hostapd_cli \
     	dhcpcd.conf \
     	wpa_supplicant \
-    	wpa_supplicant.conf
-
+    	wpa_supplicant.conf \
+	libnl_2
+   	
 # Audio
 PRODUCT_PACKAGES += \
     	audio.a2dp.default \
@@ -116,7 +106,9 @@ PRODUCT_PACKAGES += \
     	libaudio-resampler \
     	tinymix \
     	libtinyalsa \
-    	libtinycompress
+    	libtinycompress \
+    	librs_jni \
+	libtinyxml
 
 # Audio profiles used to address the correct audio devices for headset, etc.
 PRODUCT_COPY_FILES += \
@@ -143,24 +135,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     	Torch
 
-# Immvibe
+# Network dependency
 PRODUCT_PACKAGES += \
-	immvibe
-
-# MTK's XLog
-PRODUCT_PACKAGES += \
-	libxlog
-
-PRODUCT_PACKAGES += \
-    	libifaddrs
-
-PRODUCT_PACKAGES += \
-    	librs_jni \
-    	com.android.future.usb.accessory
-
- PRODUCT_PACKAGES += \
-    	libnl_2 \
-    	libtinyxml
+    	libifaddrs	
 
 # STk
 PRODUCT_PACKAGES += \
@@ -172,7 +149,7 @@ PRODUCT_COPY_FILES += \
 
 # FM Radio
 PRODUCT_PACKAGES += \
-     	FMRadio \
+     	FmRadio \
      	libfmjni \
 	libfmmt6620 \
         libfmmt6628 \
@@ -184,9 +161,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     	frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
     	frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-    	frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml
-
-PRODUCT_COPY_FILES += \
+    	frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
 	$(LOCAL_PATH)/configs/media_codecs.xml:system/etc/media_codecs.xml \
 	$(LOCAL_PATH)/configs/media_profiles.xml:system/etc/media_profiles.xml
 
@@ -209,6 +184,4 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
 	ro.adb.secure=0 \
 	persist.service.acm.enable=0 \
 	ro.oem_unlock_supported=1 \
-	persist.sys.usb.config=mtp \
-	cm.updater.type=plain \
-	cm.updater.uri=https://raw.githubusercontent.com/olegsvs/API_CMUpdater/cm-12.1/API
+	persist.sys.usb.config=mtp

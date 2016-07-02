@@ -1,15 +1,37 @@
-on post-fs-data
+mkdir /data/misc/sensors 0664 system system
+
+service msensord /system/bin/msensord
+    user system
+    group system
+    oneshot
+
+service akmd8963 /system/bin/akmd8963
+    disabled
+    user system
+    group system
+
+
+on post-fs
 #
 # Connectivity related modules and character device nodes (Begin)
 #
-
-#/dev/ttyMT2 for Connectivity BT/FM/GPS usage
+    #for 662x_launcher
     chmod 0660 /dev/ttyMT2
     chown system system /dev/ttyMT2
 
-	insmod /system/lib/modules/mtk_wmt_detect.ko
+    # STP, SDIO, WMT, GPS, FM and BT Driver
+#   insmod /system/lib/modules/mtk_hif_sdio.ko
+#   insmod /system/lib/modules/mtk_stp_wmt.ko
+#   insmod /system/lib/modules/mtk_stp_uart.ko
+#   insmod /system/lib/modules/mtk_stp_gps.ko
+#   insmod /system/lib/modules/mtk_stp_bt.ko
+#   insmod /system/lib/modules/mtk_fm_drv.ko
+#   insmod /system/lib/modules/mtk_fm_priv.ko
+#   insmod /system/lib/modules/mtk_wmt_wifi.ko
 
-	# Create char device file for WMT, GPS, BT, FM, WIFI
+    insmod /system/lib/modules/mtk_wmt_detect.ko
+    
+    # Create char device file for WMT, GPS, BT, FM, WIFI
     mknod /dev/stpwmt c 190 0;
     mknod /dev/stpgps c 191 0;
     mknod /dev/stpbt  c 192 0;
@@ -31,64 +53,12 @@ on post-fs-data
     # Load WiFi Driver
     #insmod /system/lib/modules/wlan.ko
 
-
-# BT
-    chmod 0660 /dev/stpbt
-    chown bluetooth radio /dev/stpbt
-
-# GPS
-    chown gps gps /dev/stpgps
-    chown gps gps /sys/class/gpsdrv/gps/pwrctl
-    chown gps gps /sys/class/gpsdrv/gps/suspend
-    chown gps gps /sys/class/gpsdrv/gps/state
-    chown gps gps /sys/class/gpsdrv/gps/pwrsave
-    chown gps gps /sys/class/gpsdrv/gps/status
-    chmod 0660 /dev/stpgps
-
-# WiFi
-    mkdir /data/misc/wifi 0770 wifi wifi
-    mkdir /data/misc/wifi/sockets 0770 wifi wifi
-    mkdir /data/misc/wpa_supplicant 0770 wifi wifi
-    chown wifi wifi /data/misc/wifi
-#Camera
-    chmod 0660 /dev/GAF001AF
-    chown system camera /dev/GAF001AF
-   
-    chmod 0660 /dev/DW9714AF
-    chown system camera /dev/DW9714AF
-
-    chmod 0660 /dev/FM50AF
-    chown system camera /dev/FM50AF
-
-    chmod 0660 /dev/DW9718AF
-    chown system camera /dev/DW9718AF
-
-    chmod 0660 /dev/BU6429AF
-    chown system camera /dev/BU6429AF
-    
-    chmod 0660 /dev/AD5820AF
-    chown system camera /dev/AD5820AF
-    
-    chmod 0660 /dev/BU64745GWZAF
-    chown system camera /dev/BU64745GWZAF
-    
-    chmod 0660 /dev/LC898212AF
-    chown system camera /dev/LC898212AF
-
-    chmod 0660 /dev/LC898122AF
-    chown system camera /dev/LC898122AF
-
-# FM Radio device node
-    mknod /dev/fm     c 193 0;
-    chmod 0660 /dev/fm
-    chown system media /dev/fm
-
 #
-# Connectivity related device nodes & configuration (end)
+# Connectivity related modules and character device nodes (Ends)
 #
-
 
 on boot
+
 
 #
 # Connectivity related services (Begin)
@@ -102,7 +72,9 @@ service wmtLoader /system/bin/wmt_loader
 service conn_launcher /system/bin/6620_launcher -p /system/etc/firmware/
     user system
     group system
+    
 
 #
 # Connectivity related services (End)
 #
+

@@ -2,9 +2,10 @@
 Device repository for ARK Benefit M7 CM12.1 6735
 
 Currently broken features:
- * FM Radio
+you tell me
 
 ## Thanks to:
+ * SRT TEAM
  * DerTeufel1980
  * fire855
  * jianminglok
@@ -17,3 +18,4 @@ Currently broken features:
  * Cheshkin
  * Hyperion70
  * vo-1
+ * more more guys
