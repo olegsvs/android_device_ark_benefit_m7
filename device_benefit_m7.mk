@@ -175,8 +175,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     	dalvik.vm.dex2oat-threads=2 \
     	dalvik.vm.image-dex2oat-threads=4
 
-$(call inherit-product, build/target/product/full.mk)
-
 ADDITIONAL_DEFAULT_PROPERTIES += \
 	ro.secure=0 \
 	ro.allow.mock.location=1 \
