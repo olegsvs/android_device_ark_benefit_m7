@@ -1,0 +1,119 @@
+From 40cd0ed5f52c2d05394133af5f36b14f16381710 Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Sun, 12 Jun 2016 13:19:42 -0400
+Subject: [PATCH] Patch for 6735 mtk
+
+Change-Id: I6eb04962dda31810397a8cbe0b5f727aaddd98f4
+---
+ include/hardware/audio.h |  6 ++++++
+ include/hardware/gps.h   | 49 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 55 insertions(+)
+
+diff --git a/include/hardware/audio.h b/include/hardware/audio.h
+index c3cb740..02372f5 100644
+--- a/include/hardware/audio.h
++++ b/include/hardware/audio.h
+@@ -753,6 +753,12 @@ struct audio_hw_device {
+     int (*listen_set_parameters)(struct audio_hw_device *dev,
+                                  const char *kv_pairs);
+ #endif
++    int (*dummy1)(void);
++    int (*dummy2)(void);
++    int (*dummy3)(void);
++    int (*dummy4)(void);
++    int (*set_audio_data)(struct audio_hw_device *dev, int par1, size_t len, void *ptr);
++    int (*get_audio_data)(struct audio_hw_device *dev, int par1, size_t len, void *ptr);
+ };
+ typedef struct audio_hw_device audio_hw_device_t;
+ 
+diff --git a/include/hardware/gps.h b/include/hardware/gps.h
+index fb1f669..580d5a4 100644
+--- a/include/hardware/gps.h
++++ b/include/hardware/gps.h
+@@ -37,6 +37,9 @@ __BEGIN_DECLS
+ /** Milliseconds since January 1, 1970 */
+ typedef int64_t GpsUtcTime;
+ 
++/** Maximum number of GNSS SVs for gps_sv_status_callback(). */
++#define GNSS_MAX_SVS 256
++
+ /** Maximum number of SVs for gps_sv_status_callback(). */
+ #define GPS_MAX_SVS 32
+ 
+@@ -482,6 +485,33 @@ typedef struct {
+     float   azimuth;
+ } GpsSvInfo;
+ 
++
++/** Represents GNSS SV information. */
++typedef struct {
++    /** set to sizeof(GnssSvInfo) */
++    size_t          size;
++    /** Pseudo-random number for the SV. */
++    int     prn;
++    /** Signal to noise ratio. */
++    float   snr;
++    /** Elevation of SV in degrees. */
++    float   elevation;
++    /** Azimuth of SV in degrees. */
++    float   azimuth;
++    /**
++     * SVs have ephemeris data.
++     */
++    bool has_ephemeris;
++    /**
++     * SVs have almanac data.
++     */
++    bool has_almanac;
++    /**
++     * SVs were used for computing the most recent position fix.
++     */
++    bool used_in_fix;
++} GnssSvInfo;
++
+ /** Represents SV status. */
+ typedef struct {
+     /** set to sizeof(GpsSvStatus) */
+@@ -511,6 +541,18 @@ typedef struct {
+ } GpsSvStatus;
+ 
+ 
++/** Represents GNSS SV status. */
++typedef struct {
++    /** set to sizeof(GnssSvStatus) */
++    size_t          size;
++
++    /** Number of SVs currently visible. */
++    int         num_svs;
++
++    /** Contains an array of GNSS SV information. */
++    GnssSvInfo   sv_list[GNSS_MAX_SVS];
++} GnssSvStatus;
++
+ /* 2G and 3G */
+ /* In 3G lac is discarded */
+ typedef struct {
+@@ -550,6 +592,12 @@ typedef void (* gps_status_callback)(GpsStatus* status);
+  */
+ typedef void (* gps_sv_status_callback)(GpsSvStatus* sv_info);
+ 
++/**
++ * Callback with GNSS SV status information.
++ * Can only be called from a thread created by create_thread_cb.
++ */
++typedef void (* gnss_sv_status_callback)(GnssSvStatus* sv_info);
++
+ /** Callback for reporting NMEA sentences.
+  *  Can only be called from a thread created by create_thread_cb.
+  */
+@@ -583,6 +631,7 @@ typedef struct {
+     gps_location_callback location_cb;
+     gps_status_callback status_cb;
+     gps_sv_status_callback sv_status_cb;
++    gnss_sv_status_callback gnss_sv_status_cb;
+     gps_nmea_callback nmea_cb;
+     gps_set_capabilities set_capabilities_cb;
+     gps_acquire_wakelock acquire_wakelock_cb;
+-- 
+1.9.1
+

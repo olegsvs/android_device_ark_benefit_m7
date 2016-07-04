@@ -1,8 +1,3 @@
-#
-#
-# system.prop for P8000, thanks to jianminglok
-#
-
 rild.libpath=/system/lib64/mtk-ril.so
 rild.libargs=-d /dev/ttyC0
 
@@ -20,6 +15,9 @@ ro.mediatek.wlan.p2p=1
 # MTK, mtk03034, 20101213 {
 mediatek.wlan.ctia=0
 # MTK, mtk03034 20101213}
+
+# FMRadio without headsets thanks to igor-s74
+ro.mtk_fm_short_antenna_support=1
 
 #
 wifi.tethering.interface=ap0
@@ -176,3 +174,12 @@ ro.telephony.ril.config=fakeiccid
 persist.call_recording.enabled=true
 persist.call_recording.src=1
 
+ro.kernel.android.checkjni=0
+ro.telephony.ril_class=MediaTekRIL
+ro.telephony.ril.config=fakeiccid
+persist.call_recording.enabled=true
+persist.call_recording.src=1
+
+# OTA
+cm.updater.type=plain
+cm.updater.uri=https://raw.githubusercontent.com/olegsvs/API_CMUpdater/cm-12.1/API
