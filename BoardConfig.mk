@@ -10,7 +10,9 @@ TARGET_LDPRELOAD += libxlog.so
 # Bootloader
 TARGET_BOOTLOADER_BOARD_NAME := mt6735m
 TARGET_NO_BOOTLOADER := true
- 
+
+XENONHD_VERSION=XenonHD-benefit_m7_build_#2
+
 # Architecture
 TARGET_BOARD_PLATFORM := mt6735m
 TARGET_ARCH := arm64
