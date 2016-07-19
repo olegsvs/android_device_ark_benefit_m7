@@ -17,6 +17,6 @@ $(call inherit-product, device/ark/benefit_m7/device_benefit_m7.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
 PRODUCT_NAME := full_benefit_m7
-PRODUCT_DEVICE := ark
+PRODUCT_DEVICE := benefit_m7
 PRODUCT_BRAND := Ark
 PRODUCT_MODEL := Benefit M7

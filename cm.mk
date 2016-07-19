@@ -12,7 +12,7 @@ TARGET_SCREEN_HEIGHT := 1280
 TARGET_SCREEN_WIDTH := 720
 
 ## Device identifier. This must come after all inclusions
-PRODUCT_DEVICE := ark
+PRODUCT_DEVICE := benefit_m7
 PRODUCT_NAME := cm_benefit_m7
 PRODUCT_BRAND := Ark
 PRODUCT_MODEL := Benefit M7

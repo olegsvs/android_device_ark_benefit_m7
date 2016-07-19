@@ -22,7 +22,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_KERNEL):kernel
 
 PRODUCT_NAME := ark
-PRODUCT_DEVICE := ark
+PRODUCT_DEVICE := benefit_m7
 PRODUCT_BRAND := Ark
 PRODUCT_MODEL := Benefit M7
 
