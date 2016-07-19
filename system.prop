@@ -1,0 +1,7 @@
+#
+# system.prop for benefit_m7
+#
+ro.ctr.crypto.passwd="64656661756c745f70617373776f7264"
+ro.ctr.forbid_format=/frp,/persistent,/lk,/uboot,/logo,/metadata,/nvdata,/nvram,/secro
+ro.ctr.forbid_mount=/frp,/persistent,/lk,/uboot,/logo,/metadata,/nvdata,/nvram,/secro
+ro.ctr.touch_accuracy=10
