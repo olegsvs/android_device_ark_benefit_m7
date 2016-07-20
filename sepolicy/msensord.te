@@ -40,16 +40,11 @@ unix_socket_connect(msensord,property,init)
 
 allow msensord ctl_akmd8963_prop:property_service set;
 allow msensord ctl_akmd09911_prop:property_service set;
+allow msensord ctl_akmd09912_prop:property_service set;
 allow msensord ctl_bmm050d_prop:property_service set;
+allow msensord ctl_s62xd_prop:property_service set;
 allow msensord ctl_bmm056d_prop:property_service set;
-allow msensord ctl_memsicd3416x_prop:property_service set;
-allow msensord ctl_bmc156d_prop:property_service set;
-allow msensord ctl_bmx056d_prop:property_service set;
 allow msensord ctl_geomagneticd_prop:property_service set;
 allow msensord ctl_orientationd_prop:property_service set;
 allow msensord ctl_istd8303_prop:property_service set;
 allow msensord ctl_st480_prop:property_service set;
-allow msensord ctl_mmc3524xd_prop:property_service set;
-allow msensord ctl_mc6470d_prop:property_service set;
-allow msensord ctl_qmcX983d_prop:property_service set;
-allow msensord ctl_af7133e_prop:property_service set;

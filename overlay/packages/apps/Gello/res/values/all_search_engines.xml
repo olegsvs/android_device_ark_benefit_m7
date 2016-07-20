@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2010 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+ 
+<!--
+Each string-array item below refers to one search engine in a specific locale, and the name of the
+item is referred to by the <engine_X_name> items in the locale specific search_engines.xml file.
+
+Format:
+  - Human readable label
+  - Keyword: empty string if the engine has no keyword. (currently unused)
+  - Favicon URL
+  - Search URL
+  - Encoding
+  - Suggest URL: empty string if this engine has no suggest feature
+
+The parameters enclosed in curly braces come from the OpenSearch specification, see
+http://www.opensearch.org/Specifications/OpenSearch/1.1/Draft_4#OpenSearch_1.1_parameters
+-->
+   
+<resources>
+    <!-- Baidu -->
+    <string-array name="baidu" translatable="false">
+        <item>Baidu</item>
+        <item>baidu.com</item>
+        <item>http://www.baidu.com/favicon.ico</item>
+        <item>http://www.baidu.com/s?wd={searchTerms}</item>
+        <item>UTF-8</item>
+        <item></item>
+    </string-array>
+
+    <!-- Bing -->
+    <string-array name="bing" translatable="false">
+        <item>Bing</item>
+        <item>bing.com</item>
+        <item>http://www.bing.com/s/wlflag.ico</item>
+        <item>http://www.bing.com/search?q={searchTerms}</item>
+        <item>UTF-8</item>
+        <item>http://api.bing.com/osjson.aspx?query={searchTerms}&amp;language={language}</item>
+    </string-array>
+
+    <!-- DuckDuckGo -->
+    <string-array name="DuckDuckGo" translatable="false">
+        <item>DuckDuckGo</item>
+        <item>duckduckgo.com</item>
+        <item>http://duckduckgo.com/favicon.ico</item>
+        <item>https://duckduckgo.com/?q={searchTerms}&amp;t=cyanogenmod</item>
+        <item>UTF-8</item>
+        <item></item>
+    </string-array>
+
+    <!-- Google -->
+    <string-array name="google" translatable="false">
+        <item>Google</item>
+        <item>google.com</item>
+        <item>https://www.google.com/favicon.ico</item>
+        <item>https://www.google.com/search?ie={inputEncoding}&amp;source=android-browser&amp;q={searchTerms}</item>
+        <item>UTF-8</item>
+        <item>https://www.google.com/complete/search?client=android&amp;q={searchTerms}</item>
+    </string-array>
+
+    <!-- Yahoo -->
+    <string-array name="yahoo" translatable="false">
+        <item>Yahoo!</item>
+        <item>yahoo.com</item>
+        <item>http://search.yahoo.com/favicon.ico</item>
+        <item>http://search.yahoo.com/search?ei={inputEncoding}&amp;fr=crmas&amp;p={searchTerms}</item>
+        <item>UTF-8</item>
+        <item>http://ff.search.yahoo.com/gossip?output=fxjson&amp;command={searchTerms}</item>
+    </string-array>
+
+  <string-array name="rambler" translatable="false">
+    <item>Rambler</item>
+    <item>rambler.ru</item>
+    <item>http://www.rambler.ru/favicon.ico</item>
+    <item>http://www.rambler.ru/srch?words={searchTerms}</item>
+    <item>windows-1251</item>
+    <item></item>
+  </string-array>
+
+  <string-array name="mail_ru" translatable="false">
+    <item>\@MAIL.RU</item>
+    <item>mail.ru</item>
+    <item>http://img.go.mail.ru/favicon.ico</item>
+    <item>http://go.mail.ru/search?q={searchTerms}</item>
+    <item>windows-1251</item>
+    <item></item>
+  </string-array>
+
+  <string-array name="yandex_ru" translatable="false">
+    <item>&#x042f;&#x043d;&#x0434;&#x0435;&#x043a;&#x0441;</item>
+    <item>yandex.ru</item>
+    <item>http://yandex.ru/favicon.ico</item>
+    <item>http://yandex.ru/yandsearch?text={searchTerms}</item>
+    <item>UTF-8</item>
+    <item>http://suggest.yandex.net/suggest-ff.cgi?part={searchTerms}</item>
+  </string-array>
+  
+    <!-- Custom search engines used from overlays -->
+    <string-array name="custom_search_engine_1" translatable="false" />
+    <string-array name="custom_search_engine_2" translatable="false" />
+    <string-array name="custom_search_engine_3" translatable="false" />
+    <string-array name="custom_search_engine_4" translatable="false" />
+    <string-array name="custom_search_engine_5" translatable="false" />
+    <string-array name="custom_search_engine_6" translatable="false" />
+    <string-array name="custom_search_engine_7" translatable="false" />
+    <string-array name="custom_search_engine_8" translatable="false" />
+    <string-array name="custom_search_engine_9" translatable="false" />
+    <string-array name="custom_search_engine_10" translatable="false" />
+    <string-array name="custom_search_engine_11" translatable="false" />
+    <string-array name="custom_search_engine_12" translatable="false" />
+    <string-array name="custom_search_engine_13" translatable="false" />
+    <string-array name="custom_search_engine_14" translatable="false" />
+    <string-array name="custom_search_engine_15" translatable="false" />
+    <string-array name="custom_search_engine_16" translatable="false" />
+    <string-array name="custom_search_engine_17" translatable="false" />
+    <string-array name="custom_search_engine_18" translatable="false" />
+    <string-array name="custom_search_engine_19" translatable="false" />
+    <string-array name="custom_search_engine_20" translatable="false" />
+</resources>

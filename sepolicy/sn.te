@@ -24,10 +24,15 @@ type sn ,domain;
 init_daemon_domain(sn)
 
 # Date : WK14.31
-# Operation : Migration 
+# Operation : Migration
 # Purpose : for L early bring up
 allow sn sdcard_internal:dir search;
 allow sn fuse:file { read getattr open };
 allow sn sysfs:file write;
-allow sn tmpfs:lnk_file read;
+#allow sn tmpfs:lnk_file read;
 allow sn self:capability { dac_read_search dac_override };
+allow sn mnt_user_file:dir search;
+allow sn mnt_user_file:lnk_file read;
+#allow sn storage_file:dir search;
+allow sn storage_file:lnk_file read;
+

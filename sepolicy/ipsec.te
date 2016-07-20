@@ -67,9 +67,16 @@ allow ipsec vpn_data_file:dir { write remove_name add_name search };
 allow ipsec vpn_data_file:file { write create open getattr setattr read unlink };
 allow ipsec vpn_data_file:sock_file { write create unlink setattr };
 
+# Purpose :  charon read certs
+allow ipsec custom_file:dir { read open search };
+allow ipsec custom_file:file { read getattr open };
+
 # Purpose :  read strongswan config file for IKEv2 Tunnel
-allow ipsec wod_apn_conf_file:dir search;
-allow ipsec wod_apn_conf_file:file { read ioctl open getattr };
-allow ipsec wod_ipsec_conf_file:file { read ioctl open getattr };
-allow ipsec wod_ipsec_conf_file:dir search;
+allow ipsec wod_apn_conf_file:dir { write read open search remove_name add_name create};
+allow ipsec wod_apn_conf_file:file { write read ioctl open getattr };
+allow ipsec wod_ipsec_conf_file:file { write read ioctl open getattr create append unlink };
+allow ipsec wod_ipsec_conf_file:dir { write read open search remove_name add_name };
+
+# Purpose : set alarm for DPD
+allow ipsec self:capability2 wake_alarm;
 

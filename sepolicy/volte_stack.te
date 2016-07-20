@@ -12,6 +12,7 @@ type volte_stack_exec, exec_type, file_type;
 # ==============================================
 #permissive volte_stack;
 init_daemon_domain(volte_stack)
+file_type_auto_trans(volte_stack, system_data_file, ims_ipsec_data_file)
 
 # Date : WK14.42
 # Operation : Migration 
@@ -33,7 +34,7 @@ allow volte_stack port:tcp_socket name_bind;
 allow volte_stack port:udp_socket name_bind;
 allow volte_stack fwmarkd_socket:sock_file write;
 allow volte_stack system_data_file:dir { write remove_name add_name };
-allow volte_stack system_data_file:file { rename write ioctl create unlink open append };
+allow volte_stack ims_ipsec_data_file:file { rename write ioctl create unlink open append };
 allow volte_stack system_file:file execute_no_trans;
 
 # Date : 2015/01/07
@@ -45,3 +46,5 @@ allow volte_stack self:tcp_socket write;
 allow volte_stack self:tcp_socket getattr;
 allow volte_stack self:tcp_socket connect;
 allow volte_stack port:tcp_socket name_connect;
+
+allow volte_stack volte_stack_socket:sock_file write;

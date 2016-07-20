@@ -25,4 +25,4 @@ allow istd8303 istd8303_access_file1:file { open read write };
 allow istd8303 istd8303_access_file2:file { open read write };
 # Operate data partation directly, need modify later, e.g. use "data/misc/istd_set.txt".
 allow istd8303 system_data_file:dir { write add_name create setattr };
-allow istd8303 system_data_file:file { open write read create setattr };
+#allow istd8303 system_data_file:file { open write read create setattr };

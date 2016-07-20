@@ -4,7 +4,7 @@
 type statusd_exec, exec_type, file_type;
 type statusd, domain;
 
-#permissive statusd;
+# permissive statusd;
 
 init_daemon_domain(statusd)
 
@@ -20,8 +20,9 @@ allow statusd nvram_data_file:file { create write open read getattr setattr};
 allow statusd nvram_data_file:lnk_file { read};
 allow statusd nvdata_file:dir { search add_name write remove_name read open};
 allow statusd nvdata_file:file { create write open read getattr setattr};
-allow statusd platformblk_device:blk_file { read write open };
-allow statusd platformblk_device:dir search;
+allow statusd nvram_device:blk_file { read write open };
+allow statusd mmcblk0_block_device:blk_file { read write open };
+allow statusd nvdata_device:blk_file { read write open };
 allow statusd property_socket:sock_file write;
 allow statusd radio_prop:property_service set;
 allow statusd ril_cdma_report_prop:property_service set;
@@ -30,8 +31,9 @@ allow statusd self:udp_socket { create ioctl };
 allow statusd statusd_socket:sock_file { write setattr };
 allow statusd sysfs_wake_lock:file { read write open };
 allow statusd system_data_file:dir { write add_name };
-allow statusd system_data_file:file { open write create };
 allow statusd system_data_file:sock_file { write create setattr };
+allow statusd c2k_file:dir create_dir_perms;
+allow statusd c2k_file:file create_file_perms;
 allow statusd system_file:file execute_no_trans;
 allow statusd ttyMT_device:chr_file { read write ioctl open };
 allow statusd ttySDIO_device:chr_file { read write open setattr ioctl};

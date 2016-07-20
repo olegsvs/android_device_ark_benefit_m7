@@ -29,6 +29,6 @@ wakelock_use(ccci_rpcd)
 #============= ccci_rpcd ==============
 allow ccci_rpcd ccci_device:chr_file rw_file_perms;
 allow ccci_rpcd block_device:dir search;
-allow ccci_rpcd platformblk_device:dir search;
-allow ccci_rpcd platformblk_device:blk_file { open read write };
+allow ccci_rpcd misc2_block_device:blk_file { open read write };
+allow ccci_rpcd mmcblk0_block_device:blk_file { open read write };
 allow ccci_rpcd misc2_device:chr_file { open read write };

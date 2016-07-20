@@ -35,6 +35,18 @@ allow emdlogger ccci_device:chr_file { read write ioctl open };
 allow emdlogger eemcs_device:chr_file { read write ioctl open };
 
 #=========================================================
+# C2K project SDIO device for external modem
+# ttySDIO2 control port, ttySDIO8 log port
+#=========================================================
+allow emdlogger ttySDIO_device:chr_file { read write ioctl open };
+
+#=========================================================
+# C2K project modem device for external modem
+# vmodem start/stop/ioctl modem
+#=========================================================
+allow emdlogger vmodem_device:chr_file { read write ioctl open };
+
+#=========================================================
 # usb device ttyGSx for modem logger usb logging
 #=========================================================
 allow emdlogger ttyGS_device:chr_file { read write open ioctl};
@@ -50,7 +62,7 @@ allow emdlogger fuse:file { write read create open rename unlink getattr setattr
 #=========================================================
 allow emdlogger mdlog_data_file:dir { write search read create open rmdir remove_name add_name relabelto getattr};
 allow emdlogger mdlog_data_file:fifo_file { read write open create setattr};
-allow emdlogger mdlog_data_file:file { write read create open rename unlink getattr setattr};
+allow emdlogger mdlog_data_file:file { write read create open rename unlink getattr setattr append};
 allow emdlogger system_data_file:dir { write create open add_name relabelfrom};
 
 #=========================================================
@@ -68,4 +80,19 @@ allow emdlogger platform_app:unix_stream_socket connectto;
 allow emdlogger shell_exec:file { read execute open execute_no_trans };
 allow emdlogger system_file:file execute_no_trans;
 allow emdlogger zygote_exec:file { read getattr open execute execute_no_trans };
-allow emdlogger tmpfs:lnk_file read;
+#allow emdlogger tmpfs:lnk_file read;
+
+#=========================================================
+#modem logger SD logging in factory mode
+#=========================================================
+allow emdlogger vfat:dir create_dir_perms;
+allow emdlogger vfat:file create_file_perms;
+
+#=========================================================
+#modem logger permission in storage in android M version
+#=========================================================
+allow emdlogger log_device:chr_file { write open };
+allow emdlogger mnt_user_file:dir search;
+allow emdlogger mnt_user_file:lnk_file read;
+#allow emdlogger storage_file:dir search;
+allow emdlogger storage_file:lnk_file read;

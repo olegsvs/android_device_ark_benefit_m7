@@ -29,5 +29,8 @@ allow thermal proc_thermal:file { read write open };
 allow thermal rild_oem_socket:sock_file write;
 allow thermal netd_socket:sock_file write;
 allow thermal netd:unix_stream_socket connectto;
-
-
+allow thermal self:udp_socket create;
+allow thermal self:udp_socket ioctl; 
+allow thermal rpc_socket:sock_file write;
+allow thermal viarild:unix_stream_socket connectto;
+allow thermal statusd:unix_stream_socket connectto;

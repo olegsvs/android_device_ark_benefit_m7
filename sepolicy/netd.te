@@ -116,5 +116,13 @@ allow netd isolated_app:fd use;
 #============= netd ==============
 allow netd radio_tmpfs:file write;
 
+# Date : W15.28
+# Operation : Migration
+# Purpose : add WFCA support
+allow netd wfca:fd use;
+allow netd wfca:udp_socket {read write setopt getopt};
 
+#============= netd ==============
+allow netd volte_ua:fd use;
+allow netd volte_ua:udp_socket {read write setopt getopt};
 

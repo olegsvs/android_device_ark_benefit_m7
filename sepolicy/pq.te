@@ -1,5 +1,5 @@
 # ==============================================
-# Policy File of /system/binpq Executable File 
+# Policy File of /system/binpq Executable File
 
 
 # ==============================================
@@ -31,10 +31,30 @@ init_daemon_domain(pq)
 allow pq system_prop:property_service set;
 allow pq graphics_device:chr_file { read write open ioctl };
 
-
 # Date : 2014/10/29
 # Operation : Migration
 # Purpose : for enforcing
 allow pq init:unix_stream_socket connectto;
 allow pq property_socket:sock_file write;
-allow pq tmpfs:lnk_file read;
+#allow pq tmpfs:lnk_file read;
+
+# Date : 2015/08/27
+# Operation : Migration
+# Purpose : allow Binder IPC
+binder_use(pq)
+binder_call(pq, binderservicedomain)
+binder_service(pq)
+
+# Date : 2015/08/27
+# Operation : Migration
+# Purpose : Support pq_service
+
+allow pq graphics_device:dir search;
+allow pq pq_service:service_manager add;
+
+
+# Date : WK15.39
+# Operation : Migration
+# Purpose : Allow permission check
+allow pq pq_service:service_manager { find };
+allow pq permission_service:service_manager { find };

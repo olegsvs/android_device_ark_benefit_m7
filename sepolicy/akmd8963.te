@@ -34,5 +34,8 @@ allow akmd8963 input_device:file { open read };
 allow akmd8963 akmd8963_access_file1:file { open read write };
 allow akmd8963 akmd8963_access_file2:file { open read write};
 # Operate data partation directly, need modify later,e.g. use "data/misc/sensor".
-allow akmd8963 system_data_file:dir { write add_name create setattr };
-allow akmd8963 system_data_file:file { open write read create setattr};
+# for msensor daemon access "data/misc".
+file_type_auto_trans(akmd8963, system_data_file, msensor_data_file)
+allow akmd8963 system_data_file:dir { create setattr };
+allow akmd8963 msensor_data_file:file { open write read create setattr};
+

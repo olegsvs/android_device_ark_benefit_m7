@@ -4,7 +4,7 @@
 # Date : WK14.34
 # Operation : Migration
 # Purpose : 6571/6572 GMO external memory access(/dev/exm0)
-allow installd exm0_device:chr_file { read write ioctl open };
+#allow installd exm0_device:chr_file { read write ioctl open };
 
 # Date : WK14.34
 # Operation : Migration
@@ -55,3 +55,10 @@ allow installd platform_app:fd use;
 # Operation : SQC1
 # Purpose : ALPS01911340 (MTK MTBF for GMO project)
 allow installd platform_app_tmpfs:file { open read write getattr };
+
+# Date : WK15.32
+# Operation : Migration
+# Purpose : disable AT_SECURE for LD_PRELOAD
+userdebug_or_eng(`
+  allow installd dex2oat:process noatsecure;
+')

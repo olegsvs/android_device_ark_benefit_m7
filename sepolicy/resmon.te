@@ -1,5 +1,5 @@
 # ==============================================
-# Policy File of /system/binresmon Executable File 
+# Policy File of /system/binresmon Executable File
 
 
 # ==============================================
@@ -23,7 +23,6 @@ type resmon ,domain;
 userdebug_or_eng(`
   permissive resmon;
   init_daemon_domain(resmon)
-  unconfined_domain(resmon)
 
   # Date : 2014/09/10
   # Operation : Migration

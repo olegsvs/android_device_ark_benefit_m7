@@ -5,7 +5,7 @@
 # Date : WK14.34
 # Operation : Migration
 # Purpose : 6571/6572 LCA external memory access(/dev/exm0)
-allow dex2oat exm0_device:chr_file { read write ioctl open };
+#allow dex2oat exm0_device:chr_file { read write ioctl open };
 
 # Date : WK14.36
 # Operation : Migration

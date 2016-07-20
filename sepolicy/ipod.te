@@ -1,5 +1,5 @@
 # ==============================================
-# Policy File of /system/binipod Executable File 
+# Policy File of /system/binipod Executable File
 
 
 # ==============================================
@@ -21,9 +21,9 @@ type ipod ,domain;
 # MTK Policy Rule
 # ==============================================
 
-# permissive ipod;
 init_daemon_domain(ipod)
 # unconfined_domain(ipod)
+file_type_auto_trans(ipod, system_data_file, ipoh_data_file)
 
 # date: 2014/09/19
 # operation : migration
@@ -48,8 +48,12 @@ allow ipod system_file:file execute_no_trans;
 # allow ipod vold_socket:sock_file write;
 # allow ipod vold:unix_stream_socket connectto;
 
-allow ipod platformblk_device:blk_file { read open write };
-allow ipod platformblk_device:dir search;
+# allow ipod platformblk_device:blk_file { read open write };
+allow ipod mmcblk0_block_device:blk_file rw_file_perms;
+allow ipod userdata_block_device:blk_file rw_file_perms;
+allow ipod cache_block_device:blk_file rw_file_perms;
+allow ipod logo_block_device:blk_file { read open };
+allow ipod para_block_device:blk_file rw_file_perms;
 
 allow ipod self:capability dac_override;
 allow ipod self:capability net_admin;
@@ -72,6 +76,12 @@ allow ipod system_server:unix_stream_socket connectto;
 allow ipod proc:file { open read write };
 allow ipod proc:dir { search getattr };
 allow ipod logo_device:chr_file { open read };
+allow ipod mtd_device:chr_file { open read write };
+allow ipod mtd_device:dir search;
+allow ipod self:capability2 block_suspend;
+allow ipod power_service:service_manager find;
+allow ipod surfaceflinger_service:service_manager find;
+allow ipod proc_drop_caches:file { open write };
 
 # reboot syscall to switch to recovery/factory mode instantly
 allow ipod self:capability sys_boot;
@@ -81,9 +91,11 @@ allow ipod debugfs:file { open read getattr };
 
 # IPOH
 allow ipod system_data_file:dir { open read write add_name create remove_name };
-allow ipod system_data_file:file { create open write ioctl setattr };
+allow ipod ipoh_data_file:file { create open write ioctl setattr };
 allow ipod cache_file:dir { open read write add_name create remove_name };
 allow ipod cache_file:file { create open write ioctl setattr };
 allow ipod proc_lk_env:file { open read write };
 allow ipod misc_device:chr_file { open read write };
 allow ipod self:capability { chown sys_admin };
+allow ipod mtd_device:blk_file { read write open };
+allow ipod ctl_ipo_swap_prop:property_service set;

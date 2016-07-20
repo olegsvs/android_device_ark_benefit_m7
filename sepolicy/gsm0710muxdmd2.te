@@ -25,7 +25,6 @@ init_daemon_domain(gsm0710muxdmd2)
 allow gsm0710muxdmd2 gsm0710muxd_device:chr_file open;
 allow gsm0710muxdmd2 gsm0710muxd_device:chr_file { read write };
 allow gsm0710muxdmd2 ctl_ril-daemon-md2_prop:property_service set;
-allow gsm0710muxdmd2 ril_mux_report_case_prop:property_service set;
 allow gsm0710muxdmd2 ctl_muxreport-daemon_prop:property_service set;
 allow gsm0710muxdmd2 gsm0710muxd_prop:property_service set;
 allow gsm0710muxdmd2 devpts:chr_file setattr;
@@ -43,3 +42,5 @@ allow gsm0710muxdmd2 eemcs_device:chr_file open;
 allow gsm0710muxdmd2 eemcs_device:chr_file { read write };
 allow gsm0710muxdmd2 ctl_ril-daemon-md2_prop:property_service set;
 allow gsm0710muxdmd2 emd_device:chr_file { read write open };
+allow gsm0710muxdmd2 radio_prop:property_service set;
+allow gsm0710muxdmd2 ril_mux_report_case_prop:property_service set;

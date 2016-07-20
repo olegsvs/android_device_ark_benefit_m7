@@ -1,21 +1,12 @@
-# android_device_benefit_m7
-Device repository for ARK Benefit M7 CM12.1 6735
+cm13.0 WiP for benefit_m7
+not work :
+ril
+camer's
+....
 
-Currently broken features:
-you tell me
+Thanks :
+@Zormax
+@xen0n
+@ferhung ( and ferhung-mtk)
+@fire855
 
-## Thanks to:
- * SRT TEAM
- * DerTeufel1980
- * fire855
- * jianminglok
- * walter79
- * visi0nary
- * vova.vafin
- * ariafan
- * DeepFlex
- * Zormax
- * Cheshkin
- * Hyperion70
- * vo-1
- * more more guys

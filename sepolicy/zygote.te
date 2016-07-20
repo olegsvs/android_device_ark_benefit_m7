@@ -12,7 +12,7 @@ allow zygote proc:file write;
 # Date : WK14.34
 # Operation : Migration 
 # Purpose : 6571/6572 LCA external memory access(/dev/exm0)
-allow zygote exm0_device:chr_file { read write ioctl open };
+#allow zygote exm0_device:chr_file { read write ioctl open };
 
 # Date : WK14.34
 # Operation : Migration 
@@ -29,7 +29,7 @@ dontaudit zygote untrusted_app:process ptrace;
 # Operation : Migration 
 # Purpose : for dump hprof when OOME
 allow zygote anr_data_file:dir *;
-allow zygote anr_data_file:file ~{ execute entrypoint };
+allow zygote anr_data_file:file ~{ execute entrypoint execmod };
 
 # Date : WK14.43
 # Operation : SQC2

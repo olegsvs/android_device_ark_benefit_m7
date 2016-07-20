@@ -16,10 +16,21 @@ init_daemon_domain(sbchk)
 # Operation : Migration
 # Purpose : for security driver access
 allow sbchk misc_sd_device:chr_file { read open };
-allow sbchk platformblk_device:blk_file { read write open };
-allow sbchk platformblk_device:dir search;
+allow sbchk seccfg_block_device:blk_file rw_file_perms;
+allow sbchk secro_block_device:blk_file rw_file_perms;
+allow sbchk preloader_block_device:blk_file rw_file_perms;
+allow sbchk mmcblk0_block_device:blk_file rw_file_perms;
 allow sbchk preloader_device:chr_file { read open };
+#allow sbchk recovery_block_device:blk_file rw_file_perms;
 allow sbchk sec_device:chr_file { read ioctl open };
-allow sbchk seccfg_device:chr_file { read write open };
+allow sbchk seccfg_device:chr_file rw_file_perms;
 allow sbchk sec_ro_device:chr_file { open read };
 allow sbchk block_device:dir search;
+
+# Date WK15.13
+# Operation : Migration
+# Purpose : for nand partition access
+allow sbchk mtd_device:chr_file rw_file_perms;
+allow sbchk mtd_device:dir search;
+
+

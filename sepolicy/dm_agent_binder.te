@@ -52,10 +52,6 @@ allow dm_agent_binder nvdata_file:file { create_file_perms };
 # Purpose : Allow DmAgent access block_device.
 allow dm_agent_binder block_device:dir search;
 
-# Date : WK14.42
-# Operation : Basic UT 
-# Purpose : Allow DmAgent access platformblk_device.
-allow dm_agent_binder platformblk_device:dir search;
 
 # Date : WK14.42
 # Operation : Basic UT 
@@ -75,8 +71,9 @@ allow dm_agent_binder init:unix_stream_socket connectto;
 # Date : 2014/10/17
 # Operation : QC
 # Purpose : [Privacy protection lock][dm_agent_binder call FileOp_BackupToBinRegionForDM to do nvram backup] 
-allow dm_agent_binder mmcblk_device:blk_file rw_file_perms;
-allow dm_agent_binder platformblk_device:blk_file rw_file_perms;
+allow dm_agent_binder nvram_device:blk_file rw_file_perms;
+allow dm_agent_binder para_block_device:blk_file rw_file_perms;
+allow dm_agent_binder mmcblk0_block_device:blk_file rw_file_perms;
 
 # Date : WK14.42
 # Operation : Basic UT 
@@ -97,3 +94,8 @@ allow dm_agent_binder cache_file:file { create_file_perms };
 # Operation : Basic UT 
 # Purpose : Allow DmAgent to access nvram_device.
 allow dm_agent_binder nvram_device:chr_file { rw_file_perms };
+
+# Date : WK15.30
+# Operation : Migration
+# Purpose : for device bring up, not to block early migration/sanity
+allow dm_agent_binder nvdata_file:dir create;

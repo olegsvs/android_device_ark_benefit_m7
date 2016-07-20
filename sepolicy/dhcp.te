@@ -26,3 +26,7 @@ allow dhcp platform_app_tmpfs:file write;
 #============= dhcp ==============
 allow dhcp init:fifo_file { read write };
 allow dhcp init:unix_stream_socket { read write };
+
+
+#============= dhcp ==============
+allow dhcp untrusted_app:fd use;

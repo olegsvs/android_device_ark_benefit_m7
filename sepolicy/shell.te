@@ -6,8 +6,10 @@
 # Operation : Migration
 # Purpose : for exec labels defined by mtk
 allow shell mtk_6620_launcher_exec:file rx_file_perms;
+allow shell stp_dump3_exec:file rx_file_perms;
 allow shell GoogleOtaBinder_exec:file rx_file_perms;
 allow shell MtkCodecService_exec:file rx_file_perms;
+allow shell aee_core_forwarder_exec:file rx_file_perms;
 allow shell akmd8963_exec:file rx_file_perms;
 allow shell akmd8975_exec:file rx_file_perms;
 allow shell ami304d_exec:file rx_file_perms;
@@ -18,7 +20,6 @@ allow shell audiocmdservice_atci_exec:file rx_file_perms;
 allow shell autokd_exec:file rx_file_perms;
 allow shell batterywarning_exec:file rx_file_perms;
 allow shell bmm050d_exec:file rx_file_perms;
-allow shell bmx056d_exec:file rx_file_perms;
 allow shell boot_logo_updater_exec:file rx_file_perms;
 allow shell bootanim_exec:file rx_file_perms;
 allow shell ccci_fsd_exec:file rx_file_perms;
@@ -31,7 +32,6 @@ allow shell dhcp_exec:file rx_file_perms;
 allow shell dmlog_exec:file rx_file_perms;
 allow shell dnsmasq_exec:file rx_file_perms;
 allow shell drmserver_exec:file rx_file_perms;
-allow shell dualmdlogger_exec:file rx_file_perms;
 allow shell dumpstate_exec:file rx_file_perms;
 allow shell em_svr_exec:file rx_file_perms;
 allow shell emdlogger_exec:file rx_file_perms;
@@ -50,20 +50,16 @@ allow shell mdlogger_exec:file rx_file_perms;
 allow shell mdnsd_exec:file rx_file_perms;
 allow shell mediaserver_exec:file rx_file_perms;
 allow shell memsicd_exec:file rx_file_perms;
-allow shell memsicp_exec:file rx_file_perms;
 allow shell memsicd3416x_exec:file rx_file_perms;
-allow shell bmc156d_exec:file rx_file_perms;
 allow shell mobile_log_d_exec:file rx_file_perms;
 allow shell msensord_exec:file rx_file_perms;
 allow shell mtk_agpsd_exec:file rx_file_perms;
-allow shell mtkbt_exec:file rx_file_perms;
 allow shell mtkrild_exec:file rx_file_perms;
 allow shell mtkrildmd2_exec:file rx_file_perms;
 allow shell mtp_exec:file rx_file_perms;
 allow shell muxreport_exec:file rx_file_perms;
 allow shell netdiag_exec:file rx_file_perms;
 allow shell nvram_agent_binder_exec:file rx_file_perms;
-allow shell nvram_backup_binder_exec:file rx_file_perms;
 allow shell nvram_daemon_exec:file rx_file_perms;
 allow shell orientationd_exec:file rx_file_perms;
 allow shell dex2oat_exec:file rx_file_perms;
@@ -86,6 +82,7 @@ allow shell wmt_loader_exec:file rx_file_perms;
 allow shell wpa_exec:file rx_file_perms;
 allow shell xlog_exec:file rx_file_perms;
 allow shell istd8303_exec:file rx_file_perms;
+allow shell spm_loader_exec:file rx_file_perms;
 
 # Date : WK14.47
 # Operation : Migration
@@ -100,9 +97,25 @@ allow shell block_device:dir search;
 # Operation : Migration
 # Purpose : for debugging in user debug load.
 #           su does't exist on user load.
-allow shell su_exec:file rx_file_perms;
+userdebug_or_eng(`allow shell su_exec:file rx_file_perms;')
 
 # Date : WK14.46
 # Operation : Migration
 # Purpose : for MTK Emulator HW GPU
 allow shell qemu_pipe_device:chr_file rw_file_perms;
+
+# GAT ls /data/aee_exp/db.xxxx
+allow shell aee_exp_data_file:dir r_dir_perms;
+allow shell aee_exp_data_file:file r_file_perms;
+
+# Date : WK15.39
+# Operation : Migration
+# Purpose: Allow shell to read binder from surfaceflinger
+allow shell surfaceflinger:fifo_file {read write};
+
+#allow shell to run init_thh
+userdebug_or_eng(`
+  allow shell init_thh_service_exec:file r_file_perms;
+  allow shell init_thh_service_exec:dir r_dir_perms;
+  allow shell init_thh_service_exec:file {execute execute_no_trans};
+')

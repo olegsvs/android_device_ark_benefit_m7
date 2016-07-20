@@ -32,3 +32,8 @@ binder_use(batterywarning)
 # Operation : Migration
 # Purpose : allow battery warning use AMS to send broadcast through binder call
 allow batterywarning system_server:binder call;
+
+# Date : 2015/07/27
+# Operation : Migration
+# Purpose : allow battery warning check AMS service status
+allow batterywarning activity_service:service_manager find;

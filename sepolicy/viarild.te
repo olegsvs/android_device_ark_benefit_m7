@@ -69,7 +69,7 @@ allow viarild self:capability dac_override;
 allow viarild ccci_device:chr_file { read write ioctl open };
 allow viarild devpts:chr_file ioctl;
 allow viarild misc_device:chr_file { read write open };
-allow viarild platformblk_device:blk_file { read write open };
+#allow viarild platformblk_device:blk_file { read write open };
 allow viarild proc_lk_env:file { read ioctl open };
 allow viarild sysfs_vcorefs_pwrctrl:file { open write };
 allow viarild ril_active_md_prop:property_service set;

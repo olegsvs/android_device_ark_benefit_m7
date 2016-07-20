@@ -3,6 +3,7 @@
 # ==============================================
 
 # permissive system_app;
+typeattribute system_app mlstrustedsubject;
 
 
 # Date : 2014/07/31
@@ -52,6 +53,12 @@ allow system_app atci_service:unix_stream_socket connectto;
 # Package Name: com.mediatek.batterywarning
 allow system_app guiext-server:binder { transfer call };
 
+# Date: 2015/07/24
+# Stage: BaseUT
+# Purpose: [HotKnot][HotKnot service will add into ServiceManager]
+# Package Name: com.mediatek.hotknot.service
+allow system_app mtk_hotknot_service:service_manager add;
+
 # Date: 2014/09/02
 # Operation: BaseUT
 # Purpose: [HotKnot][HotKnot service will use hoknot device node]
@@ -70,6 +77,24 @@ allow system_app devmap_device:chr_file { read ioctl open };
 # Package: com.mediatek.hotknot.service
 allow system_app graphics_device:chr_file { read write ioctl open };
 allow system_app graphics_device:dir search;
+
+# Date: W1602
+# Operation: IR-Learning Feature
+# Purpose: [IR-Learning][ConsumerIrHostService will use irtx_device device node]
+# Package: com.mediatek.hardware.consumerir
+allow system_app irtx_device:chr_file { read write ioctl open };
+
+# Date: W1602
+# Operation: IR-Learning Feature
+# Purpose: [IR-Learning][ConsumerIrHostService will use irrx_device device node]
+# Package: com.mediatek.hardware.consumerir
+allow system_app irrx_device:chr_file { read write ioctl open };
+
+# Date: W1602
+# Operation: IR-Learning Feature
+# Purpose: [IR-Learning][ConsumerIrHostService will need to add service]
+# Package: com.mediatek.hardware.consumerir
+allow system_app mtk_consumerir_service:service_manager add;
 
 # Data : 2014/09/09
 # Operation : Migration
@@ -130,7 +155,6 @@ allow system_app proc_secmem:file rw_file_perms;
 # Operation: SQC
 # Purpose: [Settings][Developer options module will communicate with all Services through binder call]
 # Package: com.android.settings
-binder_call(system_app, mtkbt)
 binder_call(system_app, MtkCodecService)
 
 # Date : 2014/11/26
@@ -157,3 +181,35 @@ dontaudit system_app untrusted_app_tmpfs:file write;
 # Package: android.ui
 dontaudit system_app radio_data_file:dir search;
 
+# Date : WK15.30
+# Operation : Migration
+# Purpose : for device bring up, not to block early migration/sanity
+allow system_app system_app_service:service_manager add;
+allow system_app drmserver:drmservice openDecryptSession;
+
+# Date: 2015/07/24
+# Stage: Migration
+# Purpose: [MTKThermalManager][View thermal zones and coolers, and change thermal policies]
+# Package Name: com.mediatek.mtkthermalmanager
+allow system_app thermal_manager_data_file:file { open getattr read write create};
+allow system_app thermal_manager_data_file:file { open setattr lock };
+allow system_app thermal_manager_data_file:dir { search getattr open read write setattr add_name };
+
+# Date: 2015/09/10
+# Stage: Migration
+# Purpose: [HotKnot] Allow HotKnot service to start/stop hotknot_native_service
+allow system_app hotknot_prop:property_service set;
+
+# Date : 2015/10/27
+# Operation : Feature Developing
+# Purpose : allow system_app to find mw_blacklist
+# Package: com.mediatek.multiwindow.service
+allow system_app mtk_mwblacklist_service:service_manager add;
+allow system_app mtk_mwblacklist_service:service_manager find;
+
+# Date : 2015/06/12
+# Operation: TEEI integration
+# Purpose: access for fp device and client device of TEEI
+# Package: teei
+allow system_app teei_fp_device:chr_file rw_file_perms;
+allow system_app teei_client_device:chr_file r_file_perms;

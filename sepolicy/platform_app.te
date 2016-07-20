@@ -2,7 +2,9 @@
 # MTK Policy Rule 
 # ==============================================
 
-# permissive platform_app;
+typeattribute platform_app mlstrustedsubject;
+
+#permissive platform_app;
 
 # Date : 2014/07/22
 # Operation : Migration
@@ -20,7 +22,7 @@ allow platform_app fm_device:chr_file rw_file_perms;
 # Operation: Migration
 # Purpose: enable drawing picture/texture in OpenGl environment for gallery3d
 # Package: com.android.gallery3d
-allow platform_app init:binder transfer;
+#allow platform_app init:binder transfer;
 # add debugfs policy for MMProfile
 allow platform_app debugfs:file { read ioctl };
 
@@ -109,6 +111,13 @@ allow platform_app system_app_data_file:file {read write};
 # Package: com.mediatek.voicecommand
 allow platform_app vow_device:chr_file rw_file_perms;
 
+# Date : 2014/11/12
+# Operation : Migration
+# Purpose : MTKLogger need copy db from data folder
+# Package: com.mediatek.mtklogger
+allow platform_app aee_exp_data_file:file r_file_perms;
+allow platform_app aee_exp_data_file:dir r_dir_perms;
+
 # Date : WK14.46
 # Operation : Migration
 # Purpose : for MTK Emulator HW GPU
@@ -170,8 +179,104 @@ allow platform_app mobicore_tui_device:chr_file { read open ioctl };
 # Package: com.mediatek.mtklogger
 allow platform_app mnld:unix_stream_socket connectto;
 
-# silead 
-allow platform_app silead_fp_dev_device:chr_file {open read write ioctl};
-allow platform_app init_tmpfs:file {open read write};
-allow platform_app tmpfs:dir {mounton read write};
-allow platform_app init_tmpfs:file getattr;
+# Date : 2015/03/24
+# Operation : New feature for AppManager Install
+# Purpose : AppManager Install need pm access permission 
+# Package: com.mediatek.wearable
+allow platform_app system_app_data_file:dir search;
+
+# Date : W1537
+# Operation: M0 Migration
+# Purpose : Allow untrusted_app to find HotKnot
+# Package : com.mediatek.hotknot.service
+allow platform_app mtk_hotknot_service:service_manager find;
+
+# Date : W1602
+# Operation: IR-Learning feature check-in
+# Purpose : Allow all platform apps to find ConsumerIrExtraService
+# Package: com.mediatek.hardware.consumerir
+allow platform_app mtk_consumerir_service:service_manager find;
+
+# Date : WK15.29
+# Operation : Migration
+# Purpose : for device bring up, not to block early migration
+# grant permission for mtk logger to mobile_log_d/mdlogger
+unix_socket_connect(platform_app, netdiag, netdiag)
+allow platform_app mobile_log_d:unix_stream_socket connectto;
+allow platform_app mdlogger:unix_stream_socket connectto;
+allow platform_app aee_exp_data_file:dir r_dir_perms;
+allow platform_app fuse:file create_file_perms;
+allow platform_app fuse:dir create_dir_perms;
+# require process owner to review.
+allow platform_app dm_agent_binder_service:service_manager find;
+allow platform_app guiext-server_service:service_manager find;
+allow platform_app program_binary_service:service_manager find;
+allow platform_app system_app_service:service_manager find;
+
+# Date: 2015/08/19
+# Operation: Migration
+# Purpose: enable accessing cache dir and executing renderscript lib for gallery3d
+# Package: com.android.gallery3d
+allow platform_app app_data_file:file execute;
+
+# Date : 2015/08/17
+# Operation : Migration
+# Purpose : Allow ppl agent app to find ppl agent servive
+# Package: com.android.systemui
+allow platform_app ppl_agent_service:service_manager find;
+
+# Date : 2015/08/20
+# Operation : Migration
+# Purpose : Allow mota app to find ota agent servive
+# Package: com.android.systemupdate
+allow platform_app ota_agent_service:service_manager find;
+
+# Date : 2015/09/06
+# Operation : SQC
+# Purpose : [NFC][can not get nfc service]
+# Package: com.android.gallery3d
+allow platform_app nfc_service:service_manager find;
+
+# Date : 2015/09/12
+# Operation : SQC
+# Purpose : allow settings get file of ntfs device
+# Package: com.android.settings
+allow platform_app fuseblk:dir { read open write search add_name remove_name rmdir };
+
+# Date : 2015/09/19
+# Operation : Migration
+# Purpose : allow platform_app to find pq_service
+allow platform_app pq_service:service_manager { find };
+
+# Date : 2015/09/21
+# Operation : CMCC_AutoTest
+# Purpose : gallery needs to search mediaserver when browsing videos
+# Package: com.android.gallery3d
+allow platform_app mediaserver:dir search;
+
+# Date : 2015/10/12
+# Operation : CMCC_AutoTest
+# Purpose : allow platform_app to access debugfs
+# Package: memtrack
+allow platform_app debugfs:file getattr;
+
+# Date : 2015/10/15
+# Operation : jg_jinchuanqin
+# Purpose :[ALPS02350168]allow Settings get file of ntfs device
+# Package: com.android.settings
+allow platform_app fuseblk:file { read open write create getattr unlink};
+# Date : 2015/10/27
+# Operation : Feature Developing
+# Purpose : allow platform_app to find mw_blacklist
+# Package: com.mediatek.multiwindow.service
+allow platform_app mtk_mwblacklist_service:service_manager find;
+
+# Date : 2015/10/13
+# Operation : md_monitor IT
+# Purpose : Allow platform app connects to md_monitor's local socket
+# Package: com.mediatek.mdmlsample
+allow platform_app md_monitor:unix_stream_socket connectto;
+
+# Purpose : subtitle feature need to w/r /mnt/subt/.
+allow platform_app subtitle_data_file:dir { open read write search create add_name};
+allow platform_app subtitle_data_file:file { open read write create};

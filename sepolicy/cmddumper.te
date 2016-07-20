@@ -30,6 +30,6 @@ allow cmddumper system_file:file execute_no_trans;
 allow cmddumper debug_mdlogger_prop:property_service set;
 allow cmddumper debug_prop:property_service set;
 
-allow cmddumper tmpfs:lnk_file read;
+#allow cmddumper tmpfs:lnk_file read;
 allow cmddumper system_data_file:dir { write create open add_name relabelfrom relabelto};
 

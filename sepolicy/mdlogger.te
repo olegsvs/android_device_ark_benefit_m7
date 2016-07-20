@@ -47,7 +47,7 @@ allow mdlogger platform_app:unix_stream_socket connectto;
 allow mdlogger shell_exec:file { read execute open execute_no_trans };
 allow mdlogger system_file:file execute_no_trans;
 allow mdlogger zygote_exec:file { read getattr open };
-allow mdlogger tmpfs:lnk_file read;
+#allow mdlogger tmpfs:lnk_file read;
 
 #============= mdlogger usb logging ==============
 # Date : 2014/09/26
@@ -59,4 +59,21 @@ allow mdlogger fuse:dir search;
 allow mdlogger node:tcp_socket node_bind;
 allow mdlogger port:tcp_socket name_bind;
 allow mdlogger self:tcp_socket { write read bind create setopt accept listen };
+
+#=========================================================
+#modem logger SD logging in factory mode
+#=========================================================
+allow mdlogger vfat:dir create_dir_perms;
+allow mdlogger vfat:file create_file_perms;
+
+#=========================================================
+#modem logger permission in storage in android M version
+#=========================================================
+allow mdlogger log_device:chr_file w_file_perms;
+allow mdlogger tmpfs:lnk_file read;
+#allow mdlogger storage_file:dir search;
+allow mdlogger storage_file:lnk_file rw_file_perms;
+allow mdlogger mnt_user_file:dir search;
+allow mdlogger mnt_user_file:lnk_file rw_file_perms;
+allow mdlogger fuse:file create_file_perms;
 

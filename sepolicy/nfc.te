@@ -80,7 +80,7 @@ allow nfc self:tcp_socket { setopt read bind create accept write getattr connect
 # Operation : Refine
 # Purpose   : For Gallery3d
 
-allow nfc init:binder { transfer };
+#allow nfc init:binder { transfer };
 
 
 # ==============================================
@@ -97,6 +97,13 @@ allow nfc zygote:unix_stream_socket { getopt getattr };
 # Purpose   : For VPN
 
 allow nfc init:unix_stream_socket { write read setopt };
+
+
+# ==============================================
+# Date      : 2015/03/11
+# Operation : SQC
+# Purpose   : For platform_app_tmpfs
+allow nfc platform_app_tmpfs:file write;
 
 
 # allow nfc init_tmpfs:file read;

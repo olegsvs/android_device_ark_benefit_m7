@@ -41,3 +41,10 @@ allow bootanim debug_prop:property_service set;
 # Operation : Migration
 # Purpose : for MTK Emulator HW GPU
 allow bootanim qemu_pipe_device:chr_file rw_file_perms;
+
+# Date : WK15.30
+# Operation : Migration
+# Purpose : for device bring up, not to block early migration/sanity
+allow bootanim mediaserver_service:service_manager find;
+
+allow bootanim terservice_service:service_manager find;

@@ -18,6 +18,6 @@ init_daemon_domain(fota1)
 # Purpose : For recovery and tee1 upgrade
 allow fota1 cache_file:file append;
 allow fota1 misc_device:chr_file { write open };
-allow fota1 platformblk_device:blk_file { read write open };
-allow fota1 platformblk_device:dir search;
+#allow fota1 platformblk_device:blk_file { read write open };
+allow fota1 block_device:dir search;
 allow fota1 recovery_device:chr_file { read write open };

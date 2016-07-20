@@ -29,4 +29,6 @@ allow wmt_loader self:capability { chown dac_override };
 allow wmt_loader wmtdetect_device:chr_file { read write ioctl open };
 allow wmt_loader stpwmt_device:chr_file { read write ioctl open };
 allow wmt_loader devpts:chr_file { read write getattr ioctl };
+allow wmt_loader device:dir { write remove_name };
+allow wmt_loader device:file unlink;
 init_daemon_domain(wmt_loader)

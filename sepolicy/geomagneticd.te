@@ -13,7 +13,6 @@ type geomagneticd ,domain;
 # MTK Policy Rule
 # ==============================================
 
-#permissive geomagneticd;
 init_daemon_domain(geomagneticd)
 #unconfined_domain(geomagneticd)
 
@@ -23,5 +22,6 @@ init_daemon_domain(geomagneticd)
 allow geomagneticd input_device:chr_file { read ioctl open };
 allow geomagneticd input_device:dir { read search open };
 allow geomagneticd sysfs:file write;
+file_type_auto_trans(geomagneticd, system_data_file, msensor_data_file)
 allow geomagneticd system_data_file:dir { write remove_name add_name };
-allow geomagneticd system_data_file:file { rename write setattr create unlink open };
+allow geomagneticd msensor_data_file:file { rename write setattr create unlink open };

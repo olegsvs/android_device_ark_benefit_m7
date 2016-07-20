@@ -41,6 +41,7 @@ allow mtkrild proc_net:file write;
 allow mtkrild eemcs_device:chr_file { read write };
 allow mtkrild eemcs_device:chr_file open;
 allow mtkrild eemcs_device:chr_file ioctl;
+allow mtkrild para_block_device:blk_file { read write open};
 
 # property service
 allow mtkrild radio_prop:property_service set;
@@ -72,7 +73,7 @@ allow mtkrild self:capability dac_override;
 allow mtkrild ccci_device:chr_file { read write ioctl open };
 allow mtkrild devpts:chr_file ioctl;
 allow mtkrild misc_device:chr_file { read write open };
-allow mtkrild platformblk_device:blk_file { read write open };
+#allow mtkrild platformblk_device:blk_file { read write open };
 allow mtkrild proc_lk_env:file rw_file_perms;
 allow mtkrild sysfs_vcorefs_pwrctrl:file { open write };
 allow mtkrild ril_active_md_prop:property_service set;
@@ -80,11 +81,18 @@ allow mtkrild ril_mux_report_case_prop:property_service set;
 allow mtkrild ctl_muxreport-daemon_prop:property_service set;
 allow mtkrild persist_service_atci_prop:property_service set;
 allow mtkrild block_device:dir search;
-allow mtkrild platformblk_device:dir search;
+#allow mtkrild platformblk_device:dir search;
 allow mtkrild platform_app:fd use;
 allow mtkrild radio:fd use;
 allow mtkrild radio_tmpfs:file write;
+allow mtkrild mmcblk0_block_device:blk_file { read write open };
 
 # For emulator
 allow mtkrild qemu_pipe_device:chr_file rw_file_perms;
 allow mtkrild socket_device:sock_file write;
+
+# For MAL MFI
+allow mtkrild mtkmal:unix_stream_socket connectto;
+allow mtkrild mal_mfi_socket:sock_file write;
+
+
