@@ -1,0 +1,70 @@
+From 65e91bd94274023f8f3ae6ca6d77ae62dc5137f6 Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Wed, 20 Jul 2016 16:31:37 -0400
+Subject: [PATCH] patch
+
+Change-Id: Id2604637d4272156b896e9493f5f14d3a6e458b8
+---
+ res/values-ja/cm_strings.xml                           |  2 +-
+ .../android/server/telecom/ProximitySensorManager.java | 18 +++++++++++++++++-
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/res/values-ja/cm_strings.xml b/res/values-ja/cm_strings.xml
+index 7e91d34..6afc84d 100644
+--- a/res/values-ja/cm_strings.xml
++++ b/res/values-ja/cm_strings.xml
+@@ -19,7 +19,7 @@
+   <!-- Blacklist preferences -->
+   <string name="blacklist_title">着信拒否リスト</string>
+   <string name="blacklist_summary_disabled">無効</string>
+-  <string name="blacklist_summary">着信拒否リストにある電話番号からの着信やメッセージを受け取らないようにする</string>
++  <string name="blacklist_summary">着信拒否リストにある電話番号からの着信やメッセージを受け取らないようにします</string>
+   <!-- Blacklist notifications -->
+   <string name="blacklist_call_notification">%sからの着信を拒否しました</string>
+   <string name="blacklist_call_notification_private_number">非通知番号からの着信を拒否しました</string>
+diff --git a/src/com/android/server/telecom/ProximitySensorManager.java b/src/com/android/server/telecom/ProximitySensorManager.java
+index 5fddb89..952c8f4 100644
+--- a/src/com/android/server/telecom/ProximitySensorManager.java
++++ b/src/com/android/server/telecom/ProximitySensorManager.java
+@@ -18,6 +18,7 @@ package com.android.server.telecom;
+ 
+ import android.content.Context;
+ import android.os.PowerManager;
++import android.os.SystemProperties;
+ 
+ /**
+  * This class manages the proximity sensor and allows callers to turn it on and off.
+@@ -28,6 +29,9 @@ public class ProximitySensorManager extends CallsManagerListenerBase {
+     private final PowerManager.WakeLock mProximityWakeLock;
+     private final CallsManager mCallsManager;
+ 
++    // MTK/Meizu workaround
++    private static final boolean mIsMTKHardware = !(SystemProperties.get("ro.mediatek.platform", "").equals(""));
++
+     public ProximitySensorManager(Context context, CallsManager callsManager) {
+         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+ 
+@@ -46,7 +50,19 @@ public class ProximitySensorManager extends CallsManagerListenerBase {
+     public void onCallRemoved(Call call) {
+         if (mCallsManager.getCalls().isEmpty()) {
+             Log.i(this, "All calls removed, resetting proximity sensor to default state");
+-            turnOff(true);
++
++            // MTK has screenOnImmediately set to false, at least on Meizu MX4
++            // passing true would result in tap-to-wake or proximity sensor
++            // stopping working if remote hung up.
++            turnOff(!mIsMTKHardware);
++
++            // Seems only calling turnOff with false can't eliminate all cases
++            // of malfunctioning... will have to re-calibrate then.
++            if (mIsMTKHardware) {
++                // call into calibration service if one exists
++                // hopefully none will run into namespace collision with me...
++                SystemProperties.set("ctl.start", "ps_calibrate");
++            }
+         }
+         super.onCallRemoved(call);
+     }
+-- 
+1.9.1
+
