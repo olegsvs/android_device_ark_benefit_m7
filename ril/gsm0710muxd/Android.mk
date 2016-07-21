@@ -34,12 +34,12 @@
  
 LOCAL_PATH:= $(call my-dir)
 ifneq ($(filter 6752, $(TARGET_DEVICE)),)
-
-include $(CLEAR_VARS)
  
+include $(CLEAR_VARS)
+   
 LOCAL_MODULE:= gsm0710muxd
 LOCAL_MULTILIB := 32
-
+   
 LOCAL_SRC_FILES_32:= \
 	src/gsm0710muxd.c \
 	src/gsm0710muxd_fc.c \

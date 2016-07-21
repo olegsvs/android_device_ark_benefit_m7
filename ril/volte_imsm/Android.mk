@@ -12,4 +12,4 @@ LOCAL_MULTILIB := 32
 LOCAL_SRC_FILES_32 = volte_imsm.so
 include $(BUILD_PREBUILT)
 endif
- 
+  

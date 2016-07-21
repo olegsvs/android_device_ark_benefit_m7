@@ -11,4 +11,4 @@ LOCAL_MULTILIB := 32
 LOCAL_SRC_FILES_32 = librilmtk-prop-md1.a
 include $(BUILD_PREBUILT)
 endif
- 
+  

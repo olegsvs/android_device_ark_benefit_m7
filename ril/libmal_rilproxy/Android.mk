@@ -12,4 +12,4 @@ LOCAL_MULTILIB := 32
 LOCAL_SRC_FILES_32 = libmal_rilproxy.so
 include $(BUILD_PREBUILT)
 endif
- 
+  

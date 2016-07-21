@@ -11,4 +11,4 @@ LOCAL_MULTILIB := 32
 LOCAL_SRC_FILES_32 = mtk-ril-prop-md2.a
 include $(BUILD_PREBUILT)
 endif
- 
+  

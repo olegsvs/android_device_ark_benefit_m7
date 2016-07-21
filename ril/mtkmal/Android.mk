@@ -15,4 +15,4 @@ LOCAL_MULTILIB = 32
 LOCAL_SRC_FILES_32 = mtkmal
 include $(BUILD_PREBUILT)
 endif
- 
+  
