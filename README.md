@@ -4,11 +4,8 @@ not work :
 ril ;
 camer's ;
 healthd ;
-cm's su(wtf);
-crash Settings on Settings/Security activity
-temporary to fix Unknown sources :
-adb shell settings put secure install_non_market_apps 1
-
+codecs ;
+FMRadio ;
 ....
 
 Thanks :
