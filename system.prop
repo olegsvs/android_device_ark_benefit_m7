@@ -1,5 +1,5 @@
 #
-# system.prop for mt6752
+# system.prop for mt6735
 #
 ro.hardware=mt6735
 service.adb.root=1

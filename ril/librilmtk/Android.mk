@@ -9,7 +9,7 @@
   
 ifneq ($(GOOGLE_RELEASE_RIL), yes)
 LOCAL_PATH:= $(call my-dir)
-ifneq ($(filter 6752, $(TARGET_DEVICE)),)
+ifneq ($(filter benefit_m7, $(TARGET_DEVICE)),)
     
 include $(CLEAR_VARS)
    

@@ -1,4 +1,4 @@
-LOCAL_PATH := device/6752
+LOCAL_PATH := device/ark/benefit_m7
 
 MKIMAGE :=  $(LOCAL_PATH)/tools/mkimage
 MKBOOTFS := $(LOCAL_PATH)/tools/mkbootfs
