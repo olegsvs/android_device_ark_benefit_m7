@@ -5,6 +5,7 @@ ril ;
 camer's ;
 codecs ;
 FMRadio ;
+init binary is broken ;
 ....
 
 Thanks :
