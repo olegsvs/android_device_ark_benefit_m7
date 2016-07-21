@@ -1,6 +1,6 @@
 # MTK project .rc configure
 
-import init.mt6752.usb.rc
+import init.mt6735.usb.rc
 
 on init
     mkdir /mnt/media_rw/usbotg 0700 media_rw media_rw
@@ -52,25 +52,13 @@ on post-fs-data
     chmod 0660 /dev/SUBAF
     chown system camera /dev/SUBAF
 
-    chmod 0660 /dev/GAF001AF
-    chown system camera /dev/GAF001AF
-   
     chmod 0660 /dev/DW9714AF
     chown system camera /dev/DW9714AF
-
-	chmod 0660 /dev/LC898122AF
-    chown system camera /dev/LC898122AF
-    
-    chmod 0660 /dev/AD5820AF
-    chown system camera /dev/AD5820AF
-    
-	chmod 0660 /dev/BU64745GWZAF
-    chown system camera /dev/BU64745GWZAF
 
 #SMB
     chown system system /proc/smb/ScreenComm
     chmod 0660 /proc/smb/ScreenComm
- 
+
 # BT
 #    chmod 0660 /dev/stpbt
 #    chown bluetooth radio /dev/stpbt
@@ -90,64 +78,10 @@ on post-fs-data
     mkdir /data/misc/wpa_supplicant 0770 wifi wifi
     chown wifi wifi /data/misc/wifi
 
- # Sensor
- #lenovo-sw molg1 add 20140912 begin
-    chmod 0664 /sys/class/misc/m_mag_misc/maggsactive
-    chmod 0664 /sys/class/misc/m_mag_misc/maggsdelay
-    chmod 0664 /sys/class/misc/m_mag_misc/maggsbatch
-    chmod 0664 /sys/class/misc/m_mag_misc/maggsflush
-    chmod 0664 /sys/class/misc/m_mag_misc/maglaactive
-    chmod 0664 /sys/class/misc/m_mag_misc/magladelay
-    chmod 0664 /sys/class/misc/m_mag_misc/maglabatch
-    chmod 0664 /sys/class/misc/m_mag_misc/maglaflush
-    chmod 0664 /sys/class/misc/m_mag_misc/maggractive
-    chmod 0664 /sys/class/misc/m_mag_misc/maggrdelay
-    chmod 0664 /sys/class/misc/m_mag_misc/maggrbatch
-    chmod 0664 /sys/class/misc/m_mag_misc/maggrflush
-    chmod 0664 /sys/class/misc/m_mag_misc/magrvactive
-    chmod 0664 /sys/class/misc/m_mag_misc/magrvdelay
-    chmod 0664 /sys/class/misc/m_mag_misc/magrvbatch
-    chmod 0664 /sys/class/misc/m_mag_misc/magrvflush
-    chmod 0664 /sys/class/misc/m_mag_misc/magdevnum
-    chown system system /sys/class/misc/m_mag_misc/maggsactive
-    chown system system /sys/class/misc/m_mag_misc/maggsdelay
-    chown system system /sys/class/misc/m_mag_misc/maggsbatch
-    chown system system /sys/class/misc/m_mag_misc/maggsflush
-    chown system system /sys/class/misc/m_mag_misc/maglaactive
-    chown system system /sys/class/misc/m_mag_misc/magladelay
-    chown system system /sys/class/misc/m_mag_misc/maglabatch
-    chown system system /sys/class/misc/m_mag_misc/maglaflush
-    chown system system /sys/class/misc/m_mag_misc/maggractive
-    chown system system /sys/class/misc/m_mag_misc/maggrdelay
-    chown system system /sys/class/misc/m_mag_misc/maggrbatch
-    chown system system /sys/class/misc/m_mag_misc/maggrflush
-    chown system system /sys/class/misc/m_mag_misc/magrvactive
-    chown system system /sys/class/misc/m_mag_misc/magrvdelay
-    chown system system /sys/class/misc/m_mag_misc/magrvbatch
-    chown system system /sys/class/misc/m_mag_misc/magrvflush
-    chown system system /sys/class/misc/m_mag_misc/magdevnum
-
-    chmod 0644 /sys/class/misc/m_alsps_misc/alsdevnum
-    chown system system /sys/class/misc/m_alsps_misc/alsdevnum
-    chmod 0644 /sys/class/misc/m_alsps_misc/psdevnum
-    chown system system /sys/class/misc/m_alsps_misc/psdevnum
-    chmod 0644 /sys/class/misc/m_alsps_misc/accdevnum
-    chown system system /sys/class/misc/m_alsps_misc/accdevnum
-
-#lenovo-sw molg1 add 20140912 end
-#lenovo-sw molg1 add 20141031 begin
-    chmod 0664 /sys/bus/platform/drivers/als_ps/ps_cali_close
-    chmod 0664 /sys/bus/platform/drivers/als_ps/ps_cali_far
-    chown system system /sys/bus/platform/drivers/als_ps/ps_cali_close
-    chown system system /sys/bus/platform/drivers/als_ps/ps_cali_far
-#lenovo-sw molg1 add 20141031 end
-#lenovo-sw wengjun1 add 20141105 begin
-    chown system system /sys/board_properties/tpd_suspend_status
-#lenovo-sw wengjun1 add 20141105 end
 #Define device for ATCID
-    chmod 660 /dev/ttyGS0 
-    chown system /dev/ttyGS0 
-    chmod 660 /dev/ttyGS1 
+    chmod 660 /dev/ttyGS0
+    chown system /dev/ttyGS0
+    chmod 660 /dev/ttyGS1
     chown system /dev/ttyGS1
 
 #Disable for one Single loader
@@ -162,6 +96,7 @@ on post-fs-data
 #
 # Connectivity related device nodes & configuration (end)
 #
+
 
 on init
     # Refer to http://source.android.com/devices/tech/storage/index.html
@@ -181,12 +116,13 @@ service fuse_usbotg /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/
 # Connectivity related services (Begin)
 #
 
-service atci_service /system/bin/atci_service 
-	socket atci-service stream 660 radio system 
-	socket atci-serv-fw stream 660 radio system 
-	user root 
+service atci_service /system/bin/atci_service
+	socket atci-service stream 660 radio system
+	socket atci-serv-fw stream 660 radio system
+	user root
         disabled
-	group radio system                         
+	group radio system
+
 service atcid-daemon-u /system/bin/atcid
 	user system
 	group radio system media
@@ -222,8 +158,14 @@ service conn_launcher /system/bin/6620_launcher -p /system/etc/firmware/
     group system
     class core
 
-
 #
 # Connectivity related services (End)
 #
+
+# launch init.d scripts
+service sysinit /system/bin/logwrapper /system/xbin/busybox run-parts /system/etc/init.d
+    class late_start
+    user root
+    group root
+    oneshot
 

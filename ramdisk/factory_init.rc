@@ -113,7 +113,7 @@ on fs
 
 #INTERNAL_START
     write /proc/bootprof "INIT:Mount_START"
-    mount_all /fstab.mt6752
+    mount_all /fstab.mt6735
     write /proc/bootprof "INIT:Mount_END"
 #INTERNAL_END
 

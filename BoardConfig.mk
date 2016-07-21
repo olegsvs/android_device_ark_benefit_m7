@@ -61,7 +61,7 @@ TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_2ND_CPU_VARIANT := cortex-a53
-BOARD_KERNEL_CMDLINE := bootopt=64S3,32S1,32S1 androidboot.hardware=mt6735m androidboot.selinux=permissive androidboot.selinux=disabled 
+BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,32N2 androidboot.hardware=mt6735m androidboot.selinux=permissive androidboot.selinux=disabled 
 BOARD_KERNEL_OFFSET := 0x00008000
 else
 ARCH := arm64
