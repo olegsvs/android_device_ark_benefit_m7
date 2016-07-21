@@ -76,6 +76,9 @@ PRODUCT_PACKAGES += \
     libtinycompress
 
 PRODUCT_PACKAGES += \
+    su
+
+PRODUCT_PACKAGES += \
     lib_driver_cmd_mt66xx    
     
  PRODUCT_PACKAGES += \

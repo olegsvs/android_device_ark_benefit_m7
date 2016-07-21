@@ -1,1 +1,1 @@
-add_lunch_combo full_benefit_m7-userdebug
+add_lunch_combo cm_benefit_m7-userdebug
