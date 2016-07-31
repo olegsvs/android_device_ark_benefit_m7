@@ -83,7 +83,7 @@ ro.mtk_audio_tuning_tool_ver=V1
 ro.mtk_dual_mic_support=1
 
 # Telephony
-rild.libpath=/system/lib/mtk-ril.so
+rild.libpath=mtk-ril.so
 rild.libargs=-d /dev/ttyC0
 
 persist.radio.fd.counter=15
@@ -99,8 +99,7 @@ ril.flightmode.poweroffMD=0
 ril.telephony.mode=0
 ril.radiooff.poweroffMD=0
 ro.telephony.sim.count=2
-ro.telephony.ril.config=fakeiccid
-ro.telephony.default_network=0,1
+ro.telephony.default_network=9
 ro.mediatek.gemini_support=false
 ro.gemini.smart_sim_switch=false
 ro.sim_refresh_reset_by_modem=1
