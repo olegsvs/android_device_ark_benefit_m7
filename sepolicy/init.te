@@ -81,8 +81,3 @@ allow init socket_device:sock_file { create unlink setattr };
 # Purpose : enable mtd device for ubi ioctl
 allow init mtd_device:chr_file { ioctl getattr };
 
-# Date : W15.49
-# Operation : Migration
-# Purpose : enable rawfs file getattr
-allow init rawfs:file getattr;
-

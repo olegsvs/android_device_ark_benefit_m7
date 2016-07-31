@@ -9,19 +9,6 @@ Change-Id: Id2604637d4272156b896e9493f5f14d3a6e458b8
  .../android/server/telecom/ProximitySensorManager.java | 18 +++++++++++++++++-
  2 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/res/values-ja/cm_strings.xml b/res/values-ja/cm_strings.xml
-index 7e91d34..6afc84d 100644
---- a/res/values-ja/cm_strings.xml
-+++ b/res/values-ja/cm_strings.xml
-@@ -19,7 +19,7 @@
-   <!-- Blacklist preferences -->
-   <string name="blacklist_title">着信拒否リスト</string>
-   <string name="blacklist_summary_disabled">無効</string>
--  <string name="blacklist_summary">着信拒否リストにある電話番号からの着信やメッセージを受け取らないようにする</string>
-+  <string name="blacklist_summary">着信拒否リストにある電話番号からの着信やメッセージを受け取らないようにします</string>
-   <!-- Blacklist notifications -->
-   <string name="blacklist_call_notification">%sからの着信を拒否しました</string>
-   <string name="blacklist_call_notification_private_number">非通知番号からの着信を拒否しました</string>
 diff --git a/src/com/android/server/telecom/ProximitySensorManager.java b/src/com/android/server/telecom/ProximitySensorManager.java
 index 5fddb89..952c8f4 100644
 --- a/src/com/android/server/telecom/ProximitySensorManager.java

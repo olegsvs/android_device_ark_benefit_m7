@@ -1,7 +1,7 @@
 # mt6735m platform boardconfig
 LOCAL_PATH := device/ark/benefit_m7
  
-MTK_K64_SUPPORT:=no
+MTK_K64_SUPPORT:=yes
 
 #USE_CCACHE:=1
 #CCACHE_DIR:=$(LOCAL_PATH)/../../.ccache

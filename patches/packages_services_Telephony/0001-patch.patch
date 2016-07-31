@@ -18,100 +18,6 @@ Change-Id: Ic40b1d102648bfb30152b34ac9e1ed058986e4c7
  create mode 100644 src/com/mediatek/phone/PhoneFeatureConstants.java
  create mode 100644 src/com/mediatek/phone/PhoneInterfaceManagerEx.java
 
-diff --git a/res/values-bg/cm_strings.xml b/res/values-bg/cm_strings.xml
-index 8f37d6a..3f68aea 100644
---- a/res/values-bg/cm_strings.xml
-+++ b/res/values-bg/cm_strings.xml
-@@ -139,13 +139,13 @@
-     <item>Всички</item>
-   </string-array>
-   <string name="call_barring_incoming">Забранени входящи разговори</string>
--  <string name="input_password">Въведете вашата парола</string>
-+  <string name="input_password">Въведете паролата си</string>
-   <string name="invalidPsw">Въведете валидна парола (4-8 цифри)</string>
-   <string name="labelCbCancelAll">Забраняване на повиквания</string>
-   <string name="labelCbChangePassword">Смяна на паролата</string>
-   <string name="psw_enter_old">Стара парола</string>
-   <string name="psw_enter_new">Нова парола</string>
--  <string name="psw_reenter_new">Въведете отново вашата парола</string>
-+  <string name="psw_reenter_new">Въведете отново паролата си</string>
-   <string name="no_call_barring">Спиране на забраната за обаждания</string>
-   <string name="cb_psw_dont_match">Паролите не съвпадат</string>
-   <!-- FDN settings: error message displayed in a popup (toast) -->
-diff --git a/res/values-cs/cm_strings.xml b/res/values-cs/cm_strings.xml
-index aa386be..79fde77 100644
---- a/res/values-cs/cm_strings.xml
-+++ b/res/values-cs/cm_strings.xml
-@@ -33,7 +33,6 @@
-   <!-- My Phone Number -->
-   <string name="phone_number_label">Moje telefonní číslo</string>
-   <string name="phone_number_summary">Nastavení telefonního čísla pro toto zařízení</string>
--  <string name="set_my_number_failed">Nepodařilo se nastavit telefonní číslo</string>
-   <!-- Toasts for various transient network events -->
-   <!-- Toast text for Unconditional Call Forwarding enabled  -->
-   <string name="call_notif_unconditionalCF">Nepodmíněné přesměrování hovorů aktivní</string>
-diff --git a/res/values-ja/cm_strings.xml b/res/values-ja/cm_strings.xml
-index b69c00c..2de468c 100644
---- a/res/values-ja/cm_strings.xml
-+++ b/res/values-ja/cm_strings.xml
-@@ -26,7 +26,7 @@
-   <!-- Blacklist preferences -->
-   <string name="blacklist_title">着信拒否リスト</string>
-   <string name="blacklist_summary_disabled">無効</string>
--  <string name="blacklist_summary">着信拒否リストにある電話番号からの着信やメッセージを受け取らないようにする</string>
-+  <string name="blacklist_summary">着信拒否リストにある電話番号からの着信やメッセージを受け取らないようになります</string>
-   <!-- Sprint MWI Quirk: Phantom message wait indicator workaround -->
-   <string name="mwi_notification_title">メッセージ待機インジケータ</string>
-   <!-- My Phone Number -->
-diff --git a/res/values-lb/cm_strings.xml b/res/values-lb/cm_strings.xml
-index b3738d3..cdec7c0 100644
---- a/res/values-lb/cm_strings.xml
-+++ b/res/values-lb/cm_strings.xml
-@@ -88,7 +88,6 @@
-   <!-- Mobile network settings, summary for preferred network mode TD-SCDMA/CDMA/EvDo/GSM/WCDMA[CHAR LIMIT=100] -->
-   <!-- Mobile network settings, summary for preferred network mode TD-SCDMA/LTE/CDMA/EvDo/GSM/WCDMA[CHAR LIMIT=100] -->
-   <string name="preferred_network_mode_td_scdma_lte_cdma_evdo_gsm_wcdma_summary">Preferéierten Netzwierktyp: TD-SCDMA/LTE/CDMA/EvDo/GSM/WCDMA</string>
--  <string name="preferred_network_mode_td_scdma_gsm_wcdma_cdma_evdo_choice">TD-SCDMA/GSM/WCDMA/CDMA/EvDo</string>
-   <string name="preferred_network_mode_td_scdma_gsm_wcdma_lte_choice">TD-SCDMA/GSM/WCDMA/LTE</string>
-   <string name="preferred_network_mode_td_scdma_wcdma_lte_choice">TD-SCDMA/WCDMA/LTE</string>
-   <string name="preferred_network_mode_td_scdma_gsm_wcdma_choice">TD-SCDMA/GSM/WCDMA</string>
-@@ -110,24 +109,6 @@
-   <string name="preferred_network_mode_wcdma_only_choice">Just WCDMA</string>
-   <string name="preferred_network_mode_gsm_only_choice">Just GSM</string>
-   <string name="preferred_network_mode_gsm_wcdma_preferred_choice">GSM/WCDMA preferéiert</string>
--  <string-array name="call_barring_outgoing_display_values">
--    <item>Aus</item>
--    <item>International roaming calls</item>
--    <item>International Uriff</item>
--    <item>Erausgoend Uriff</item>
--  </string-array>
--  <string-array name="call_barring_incoming_display_values">
--    <item>Aus</item>
--    <item>Roaming</item>
--    <item>All</item>
--  </string-array>
--  <string name="input_password">Gëff däi Passwuert an</string>
--  <string name="invalidPsw">Gëff e gëltegt Passwuert (4-8 Zifferen) an</string>
--  <string name="labelCbChangePassword">Passwuert änneren</string>
--  <string name="psw_enter_old">Aalt Passwuert</string>
--  <string name="psw_enter_new">Neit Passwuert</string>
--  <string name="psw_reenter_new">Passwuert nees aginn</string>
--  <string name="cb_psw_dont_match">D\'Passwierder stëmmen net iwwereneen</string>
-   <!-- FDN settings: error message displayed in a popup (toast) -->
-   <string name="fdn_service_unavailable">FDN-Service net disponibel.</string>
-   <!-- Title of the activity shown for Exporting contacts to SIM.  -->
-diff --git a/res/values-ru/cm_strings.xml b/res/values-ru/cm_strings.xml
-index bfcd26a..98f8e9a 100644
---- a/res/values-ru/cm_strings.xml
-+++ b/res/values-ru/cm_strings.xml
-@@ -33,7 +33,6 @@
-   <!-- My Phone Number -->
-   <string name="phone_number_label">Мой номер телефона</string>
-   <string name="phone_number_summary">Задать телефонный номер для этого устройства</string>
--  <string name="set_my_number_failed">Не удалось задать номер телефона</string>
-   <!-- Toasts for various transient network events -->
-   <!-- Toast text for Unconditional Call Forwarding enabled  -->
-   <string name="call_notif_unconditionalCF">Включена безусловная переадресация вызова</string>
 diff --git a/src/com/android/phone/PhoneGlobals.java b/src/com/android/phone/PhoneGlobals.java
 index 9c9aaea..784f41f 100644
 --- a/src/com/android/phone/PhoneGlobals.java
@@ -145,18 +51,7 @@ index 9c9aaea..784f41f 100644
  
              configLoader = CarrierConfigLoader.init(this);
  
-diff --git a/src/com/android/phone/PhoneInterfaceManager.java b/src/com/android/phone/PhoneInterfaceManager.java
-index ae7b04a..023057a 100644
---- a/src/com/android/phone/PhoneInterfaceManager.java
-+++ b/src/com/android/phone/PhoneInterfaceManager.java
-@@ -3029,7 +3029,6 @@ public class PhoneInterfaceManager extends ITelephony.Stub {
-                 // Set network selection mode to automatic
-                 setNetworkSelectionModeAutomatic(subId);
-                 // Set preferred mobile network type to the best available
--                SubscriptionController.getInstance().setUserNwMode(subId, Phone.PREFERRED_NT_MODE);
-                 setPreferredNetworkType(subId, Phone.PREFERRED_NT_MODE);
-                 // Turn off roaming
-                 SubscriptionManager.from(mApp).setDataRoaming(0, subId);
+
 diff --git a/src/com/mediatek/phone/PhoneFeatureConstants.java b/src/com/mediatek/phone/PhoneFeatureConstants.java
 new file mode 100644
 index 0000000..87f2cb6

@@ -1,0 +1,61 @@
+From f3bc192fb15b581ad5bdd560a4b8b6b4914d78df Mon Sep 17 00:00:00 2001
+From: olegsvs <oleg.texet@gmail.com>
+Date: Fri, 22 Jul 2016 18:26:23 -0400
+Subject: [PATCH] AP fix
+
+---
+ server/SoftapController.cpp | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/server/SoftapController.cpp b/server/SoftapController.cpp
+index b05118e..46c4467 100755
+--- a/server/SoftapController.cpp
++++ b/server/SoftapController.cpp
+@@ -38,6 +38,9 @@
+ #include <base/stringprintf.h>
+ #include <cutils/log.h>
+ #include <netutils/ifc.h>
++#ifdef MTK_HARDWARE
++#include <cutils/properties.h>
++#endif
+ #include <private/android_filesystem_config.h>
+ #include "wifi.h"
+ #include "wifi_fst.h"
+@@ -54,7 +57,7 @@ using android::base::WriteStringToFile;
+ #endif
+ 
+ #ifdef LIBWPA_CLIENT_EXISTS
+-static const char HOSTAPD_UNIX_FILE[]    = "/data/misc/wifi/hostapd/wlan0";
++static const char HOSTAPD_UNIX_FILE[]    = "/data/misc/wifi/hostapd/ap0";
+ static const char HOSTAPD_SOCKETS_DIR[]    = "/data/misc/wifi/sockets";
+ static const char HOSTAPD_DHCP_DIR[]    = "/data/misc/dhcp";
+ #endif
+@@ -253,6 +256,11 @@ int SoftapController::setSoftap(int argc, char *argv[]) {
+     int hidden = 0;
+     int channel = AP_CHANNEL_DEFAULT;
+ 
++#ifdef MTK_HARDWARE
++    char ifname[PROP_VALUE_MAX] = {'\0', };
++    property_get("wifi.tethering.interface", ifname, "ap0");
++#endif
++
+     if (argc < 5) {
+         ALOGE("Softap set is missing arguments. Please use:");
+         ALOGE("softap <wlan iface> <SSID> <hidden/broadcast> <channel> <wpa2?-psk|open> <passphrase>");
+@@ -277,7 +285,12 @@ int SoftapController::setSoftap(int argc, char *argv[]) {
+             "hw_mode=%c\n"
+             "ignore_broadcast_ssid=%d\n"
+             "wowlan_triggers=any\n",
+-            argv[2], argv[3], channel, (channel <= 14) ? 'g' : 'a', hidden));
++#ifndef MTK_HARDWARE
++            argv[2]
++#else
++            ifname
++#endif
++			, argv[3], channel, (channel <= 14) ? 'g' : 'a', hidden));
+ 
+     std::string fbuf;
+     if (argc > 7) {
+-- 
+1.9.1
+

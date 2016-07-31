@@ -21,10 +21,6 @@ allow debuggerd camera_isp_device:chr_file r_file_perms;
 # AED start: /dev/block/expdb
 allow debuggerd block_device:dir search;
 
-# debuggerd open/dev/mtd/mtd12 failed(expdb)
-allow debuggerd mtd_device:dir create_dir_perms;
-allow debuggerd mtd_device:chr_file { read write ioctl open };
-
 allow debuggerd userdata_block_device:blk_file create_file_perms;
 # NE flow: /dev/RT_Monitor
 allow debuggerd RT_Monitor_device:chr_file { read ioctl open };
@@ -197,9 +193,3 @@ allow debuggerd proc_lk_env:file { read write open };
 # Operation: daily build violation on branch trunk-m0.tk
 # Purpose: Allow debuggerd to find gfxinfo_service
 allow debuggerd gfxinfo_service:service_manager find;
-
-# Date : 2015/06/12
-# Operation: TEEI integration
-# Purpose: access for fp device and client device of TEEI
-allow debuggerd teei_fp_device:chr_file rw_file_perms;
-allow debuggerd teei_client_device:chr_file rw_file_perms;

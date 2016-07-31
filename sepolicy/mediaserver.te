@@ -406,12 +406,6 @@ allow mediaserver storage_file:lnk_file {read write};
 allow mediaserver mnt_user_file:dir {write read search};
 allow mediaserver mnt_user_file:lnk_file {read write};
 
-# Date : WK15.34
-# Operation : Migration
-# Purpose : subtitle feature need to w/r /mny/subt/.
-allow mediaserver subtitle_data_file:dir { create open read write search add_name };
-allow mediaserver subtitle_data_file:file { create open read write setattr };
-
 # Date : WK15.35
 # Operation : Migration
 # Purpose: Allow reador andgetattr path="/data/data/com.mediatek.voicecommand/training

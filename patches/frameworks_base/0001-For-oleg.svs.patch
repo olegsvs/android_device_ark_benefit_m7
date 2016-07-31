@@ -16,7 +16,6 @@ Change-Id: I1f2aeb1a7dc542e0cdf46454fdcb5ffa702634d7
  core/java/com/mediatek/gba/IGbaService.aidl        |  17 +
  core/java/com/mediatek/gba/NafSessionKey.aidl      |   3 +
  core/java/com/mediatek/gba/NafSessionKey.java      | 157 +++++++
- .../java/com/android/server/BatteryService.java    |   2 +-
  .../com/android/server/lights/LightsManager.java   |   4 +-
  .../android/server/policy/PhoneWindowManager.java  |   3 +-
  .../java/android/telephony/PhoneNumberUtils.java   | 280 +++++++++++
@@ -1493,19 +1492,19 @@ index 0000000..8c1783b
 +        }
 +    }
 +}
-diff --git a/services/core/java/com/android/server/BatteryService.java b/services/core/java/com/android/server/BatteryService.java
-index 839ba6e..cde6789 100644
---- a/services/core/java/com/android/server/BatteryService.java
-+++ b/services/core/java/com/android/server/BatteryService.java
-@@ -1119,7 +1119,7 @@ public final class BatteryService extends SystemService {
-                     || status == BatteryManager.BATTERY_STATUS_FULL) {
-                 mBatteryLight.setModes(mNotificationLedBrightnessLevel,
-                         mMultipleLedsEnabled);
--                if (status == BatteryManager.BATTERY_STATUS_FULL || level >= 90) {
-+                if (status == BatteryManager.BATTERY_STATUS_FULL || level == 100) {
-                     // Battery is full or charging and nearly full
-                     mBatteryLight.setColor(mBatteryFullARGB);
-                 } else {
+#diff --git a/services/core/java/com/android/server/BatteryService.java b/services/core/java/com/android/server/BatteryService.java
+#index 839ba6e..cde6789 100644
+#--- a/services/core/java/com/android/server/BatteryService.java
+#+++ b/services/core/java/com/android/server/BatteryService.java
+#@@ -1119,7 +1119,7 @@ public final class BatteryService extends SystemService {
+#                     || status == BatteryManager.BATTERY_STATUS_FULL) {
+#                 mBatteryLight.setModes(mNotificationLedBrightnessLevel,
+#                         mMultipleLedsEnabled);
+#-                if (status == BatteryManager.BATTERY_STATUS_FULL || level >= 90) {
+#+                if (status == BatteryManager.BATTERY_STATUS_FULL || level == 100) {
+#                     // Battery is full or charging and nearly full
+#                     mBatteryLight.setColor(mBatteryFullARGB);
+#                 } else {
 diff --git a/services/core/java/com/android/server/lights/LightsManager.java b/services/core/java/com/android/server/lights/LightsManager.java
 index e1e5aa3..434fff5 100644
 --- a/services/core/java/com/android/server/lights/LightsManager.java

@@ -9,6 +9,10 @@
 #allow dumpstate init:binder call;
 allow dumpstate MtkCodecService:binder call;
 allow dumpstate nvram_agent_binder:binder call;
+# Vanzo:yucheng on: Tue, 27 Jan 2015 20:53:40 +0800
+# added for nvram backup
+allow dumpstate nvram_backup_binder:binder call;
+# End of Vanzo: yucheng
 allow dumpstate ppl_agent:binder call;
 allow dumpstate GoogleOtaBinder:binder call;
 

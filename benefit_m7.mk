@@ -1,3 +1,5 @@
+# 64-bit support
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
@@ -52,10 +54,13 @@ PRODUCT_TAGS += dalvik.gc.type-precise
 
 # RAMDISK
 PRODUCT_COPY_FILES += \
-    device/ark/benefit_m7/ramdisk/init.project.rc:root/init.project.rc \
-    device/ark/benefit_m7/ramdisk/init.modem.rc:root/init.modem.rc \
+	device/ark/benefit_m7/ramdisk/meta_init.project.rc:root/meta_init.project.rc \
+    device/ark/benefit_m7/ramdisk/init.mt6735.modem.rc:root/init.mt6735.modem.rc \
+	device/ark/benefit_m7/ramdisk/meta_init.modem.rc:root/meta_init.modem.rc \
     device/ark/benefit_m7/ramdisk/factory_init.rc:root/factory_init.rc \
+    device/ark/benefit_m7/ramdisk/factory_init.project.rc:root/factory_init.project.rc \
     device/ark/benefit_m7/ramdisk/ueventd.mt6735.rc:root/ueventd.mt6735.rc \
+	device/ark/benefit_m7/ramdisk/ueventd.rc:root/ueventd.rc \
     device/ark/benefit_m7/ramdisk/init.mt6735.usb.rc:root/init.mt6735.usb.rc \
     device/ark/benefit_m7/ramdisk/init.mt6735.rc:root/init.mt6735.rc \
     device/ark/benefit_m7/ramdisk/fstab.mt6735:root/fstab.mt6735 \
@@ -110,13 +115,7 @@ PRODUCT_PACKAGES += FMRadio \
 		
 # RIL	
 PRODUCT_PACKAGES += \
-    epdg_wod \
-    gsm0710muxd \
-    gsm0710muxdmd2 \
-    mtkrild \
-    mtkrildmd2 \
-    mtk-ril \
-    mtk-rilmd2
+    epdg_wod
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 	ro.mount.fs=EXT4 \

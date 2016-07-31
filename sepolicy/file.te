@@ -21,7 +21,6 @@ type sf_rtt_file, file_type, data_file_type;
 type volte_stack_socket, file_type;
 type volte_imcb_socket, file_type;
 type volte_ua_socket, file_type;
-type volte_vt_socket, file_type;
 type dfo_socket, file_type;
 type rild2_socket, file_type;
 type rild3_socket, file_type;
@@ -67,7 +66,6 @@ type proc_mtktz, fs_type;
 type proc_slogger, fs_type;
 type proc_lk_env, fs_type;
 type sysfs_vcorefs_pwrctrl, fs_type, sysfs_type;
-type sysfs_md32, fs_type, sysfs_type;
 type sysfs_scp, fs_type, sysfs_type;
 
 type agpsd_socket, file_type;
@@ -204,16 +202,6 @@ type fuseblk,sdcard_type,fs_type,mlstrustedobject;
 # debuggerd mrdump allocfile
 #type debuggerd_data_file, file_type, data_file_type;
 
-# TEEI data file
-type teei_data_file, file_type, data_file_type;
-
 #ipoh data file
 type ipoh_data_file, file_type, data_file_type;
-
-# Operation : Migration
-# Purpose : md_monitor data file
-type md_monitor_data_file, file_type, data_file_type;
-
-#subtitle framework notify pixel data to Gallery apk  via /mnt/subt/xx.tmp file
-type subtitle_data_file, file_type,data_file_type;
 

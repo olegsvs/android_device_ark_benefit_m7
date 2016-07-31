@@ -10,7 +10,7 @@ cd ../..
 #git apply -v ../../../device/ark/benefit_m7/patches/packages_apps_Settings/0001-Patch-for-6735-mtk.patch
 #cd ../../..
 cd frameworks/opt/net/ims
-git apply -v ../../../device/ark/benefit_m7/patches/frameworks_opt_net_ims/0001-patch.patch
+git apply -v ../../../../device/ark/benefit_m7/patches/frameworks_opt_net_ims/0001-patch.patch
 cd ../../../..
 cd frameworks/opt/telephony
 git apply -v ../../../device/ark/benefit_m7/patches/frameworks_opt_telephony/0001-patch.patch
@@ -28,11 +28,10 @@ cd packages/services/Telecomm
 git apply -v ../../../device/ark/benefit_m7/patches/packages_services_Telecomm/0001-patch.patch
 cd ../../..
 cd system/core
-git apply -v ../../device/ark/benefit_m7/patches/system_core/0001-patch.patch
-git apply -v ../../device/ark/benefit_m7/patches/system_core/0002-update.patch
+git apply -v ../../device/ark/benefit_m7/patches/system_core/0001-fix-for-ril-build.patch
 cd ../..
-#cd system/netd
-#git apply -v ../../device/ark/benefit_m7/patches/system_netd/0001-Patch-#for-6735-mtk.patch
-#cd ../..
+cd system/netd
+git apply -v ../../device/ark/benefit_m7/patches/system_netd/0001-AP-fix.patch
+cd ../..
 echo Patches Applied Successfully!
 

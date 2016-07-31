@@ -164,8 +164,3 @@ allow factory factory_data_file:file { write create unlink open };
 allow factory shell_exec:file { read open };
 allow resize block_device:dir search;
 
-#Date: WK16.05
-#Purpose: For access NVRAM
-allow factory factory:capability chown;
-
-
