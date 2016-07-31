@@ -5,7 +5,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
 # Call device specific makefile
-$(call inherit-product, device/ark/benefit_m7/benefit_m7.mk)
+$(call inherit-product, device/ark/benefit_m7/device_benefit_m7.mk)
 
 LOCAL_PATH := device/ark/benefit_m7
 
