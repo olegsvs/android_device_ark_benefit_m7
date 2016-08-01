@@ -1,8 +1,9 @@
 cm13.0 WiP for benefit_m7 3.18.xx custom kernel ;
 
 not work :
-camer's ;
-codecs ;
+need test gps ;
+hotspot ;
+partially work codecs ;
 FMRadio ;
 ....
 
