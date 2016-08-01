@@ -1,8 +1,8 @@
 #!/bin/bash
 cd ../../../..
-#cd frameworks/av
-#git apply -v ../../device/ark/benefit_m7/patches/framework_av/0001-Patch-#for-6735-mtk.patch
-#cd ../..
+cd frameworks/av
+git apply -v ../../device/ark/benefit_m7/patches/framework_av/0001-Patch-#for-6735-mtk.patch
+cd ../..
 cd frameworks/base
 git apply -v ../../device/ark/benefit_m7/patches/frameworks_base/0001-For-oleg.svs.patch
 cd ../..
