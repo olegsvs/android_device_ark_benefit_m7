@@ -32,8 +32,8 @@ TARGET_SCREEN_WIDTH := 720
 
 # set locales & aapt config.
 PRODUCT_LOCALES := ru_RU en_US uk_UA
-PRODUCT_AAPT_CONFIG := normal hdpi
-PRODUCT_AAPT_PREF_CONFIG := hdpi
+PRODUCT_AAPT_CONFIG := normal xhdpi
+PRODUCT_AAPT_PREF_CONFIG := xhdpi
 
 # Inherit some common CM stuff.
 

@@ -87,14 +87,16 @@ on property:sys.usb.config=mass_storage,adb
     start adbd
     setprop sys.usb.state ${sys.usb.config}
 
+#yulong modify on 20150219 to mach pid and vid with yulong driver start.
 #6.mtp
 on property:sys.usb.config=mtp
     write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor ${sys.usb.vid}
-    write /sys/class/android_usb/android0/idProduct 2008
+    write /sys/class/android_usb/android0/idVendor 1EBF
+    write /sys/class/android_usb/android0/idProduct 70CE
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
     setprop sys.usb.state ${sys.usb.config}
+#yulong modify end.
 
 #7.mtp,acm
 on property:sys.usb.config=mtp,acm
@@ -106,15 +108,17 @@ on property:sys.usb.config=mtp,acm
     write /sys/class/android_usb/android0/enable 1
     setprop sys.usb.state ${sys.usb.config}
 
+#yulong modify on 20150219 to mach pid and vid with yulong driver start.
 #8.mtp,adb
 on property:sys.usb.config=mtp,adb
     write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor ${sys.usb.vid}
-    write /sys/class/android_usb/android0/idProduct 201D
-    write /sys/class/android_usb/android0/functions mtp,adb
+    write /sys/class/android_usb/android0/idVendor 1EBF
+    write /sys/class/android_usb/android0/idProduct 702A
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
     start adbd
     setprop sys.usb.state ${sys.usb.config}
+#yulong modify end.
 
 #9.mtp,adb,acm
 on property:sys.usb.config=mtp,adb,acm
@@ -146,14 +150,16 @@ on property:sys.usb.config=mtp,mass_storage,adb
     start adbd
     setprop sys.usb.state ${sys.usb.config}
 
+#yulong modify on 20150219 to mach pid and vid with yulong driver start.
 #12.ptp
 on property:sys.usb.config=ptp
     write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor ${sys.usb.vid}
-    write /sys/class/android_usb/android0/idProduct 200B
+    write /sys/class/android_usb/android0/idVendor 1EBF
+    write /sys/class/android_usb/android0/idProduct 6823
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
     setprop sys.usb.state ${sys.usb.config}
+#yulong modify end
 
 #13.ptp,acm
 on property:sys.usb.config=ptp,acm
@@ -165,15 +171,17 @@ on property:sys.usb.config=ptp,acm
     write /sys/class/android_usb/android0/enable 1
     setprop sys.usb.state ${sys.usb.config}
 
+#yulong modify on 20150219 to mach pid and vid with yulong driver start.
 #14.ptp,adb
 on property:sys.usb.config=ptp,adb
     write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor ${sys.usb.vid}
-    write /sys/class/android_usb/android0/idProduct 200C
+    write /sys/class/android_usb/android0/idVendor 1EBF
+    write /sys/class/android_usb/android0/idProduct 7043
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
     start adbd
     setprop sys.usb.state ${sys.usb.config}
+#yulong modify end
 
 #15.ptp,adb,acm
 on property:sys.usb.config=ptp,adb,acm
@@ -205,15 +213,17 @@ on property:sys.usb.config=ptp,mass_storage,adb
     start adbd
     setprop sys.usb.state ${sys.usb.config}
 
+#yulong modify on 20150219 to mach pid and vid with yulong driver start.
 #18.rndis
 on property:sys.usb.config=rndis
     write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor ${sys.usb.vid}
-    write /sys/class/android_usb/android0/idProduct 2004
-    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/idVendor 1EBF
+    write /sys/class/android_usb/android0/idProduct 7095
+    write /sys/class/android_usb/android0/functions rndis,acm
     write /sys/class/android_usb/android0/bDeviceClass 224
     write /sys/class/android_usb/android0/enable 1
     setprop sys.usb.state ${sys.usb.config}
+#yulong modify end
 
 #19.rndis,acm
 on property:sys.usb.config=rndis,acm
@@ -225,15 +235,17 @@ on property:sys.usb.config=rndis,acm
     write /sys/class/android_usb/android0/enable 1
     setprop sys.usb.state ${sys.usb.config}
 
+#yulong modify on 20150219 to mach pid and vid with yulong driver start.
 #20.rndis,adb
 on property:sys.usb.config=rndis,adb
     write /sys/class/android_usb/android0/enable 0
-    write /sys/class/android_usb/android0/idVendor ${sys.usb.vid}
-    write /sys/class/android_usb/android0/idProduct 2005
-    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/idVendor 1EBF
+    write /sys/class/android_usb/android0/idProduct 707F
+    write /sys/class/android_usb/android0/functions rndis,adb,acm
     write /sys/class/android_usb/android0/enable 1
     start adbd
     setprop sys.usb.state ${sys.usb.config}
+#yulong modify end
 
 #21.rndis,adb,acm
 on property:sys.usb.config=rndis,adb,acm

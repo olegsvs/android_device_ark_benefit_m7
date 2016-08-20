@@ -52,8 +52,25 @@ on post-fs-data
     chmod 0660 /dev/SUBAF
     chown system camera /dev/SUBAF
 
+    chmod 0660 /dev/GAF001AF
+    chown system camera /dev/GAF001AF
+
     chmod 0660 /dev/DW9714AF
     chown system camera /dev/DW9714AF
+
+    chmod 0660 /dev/DW9718AF
+    chown system camera /dev/DW9718AF
+
+    chmod 0660 /dev/AD5820AF
+    chown system camera /dev/AD5820AF
+
+	chmod 0660 /dev/BU64745GWZAF
+    chown system camera /dev/BU64745GWZAF
+    
+	chmod 0660 /dev/LC898122AF 
+    chown system camera /dev/LC898122AF 
+    chmod 0660 /dev/T2_CAM_CAL_DRV
+    chown system camera /dev/T2_CAM_CAL_DRV
 
 #SMB
     chown system system /proc/smb/ScreenComm
@@ -122,7 +139,6 @@ service atci_service /system/bin/atci_service
 	user root
         disabled
 	group radio system
-
 service atcid-daemon-u /system/bin/atcid
 	user system
 	group radio system media
@@ -158,14 +174,18 @@ service conn_launcher /system/bin/6620_launcher -p /system/etc/firmware/
     group system
     class core
 
+on property:service.wcn.coredump.mode=2
+start stp_dump
+
+service stp_dump /system/bin/stp_dump3
+	user root
+	group root
+	class core
+	disabled
+	oneshot
+
+#
 #
 # Connectivity related services (End)
 #
-
-# launch init.d scripts
-service sysinit /system/bin/logwrapper /system/xbin/busybox run-parts /system/etc/init.d
-    class late_start
-    user root
-    group root
-    oneshot
 

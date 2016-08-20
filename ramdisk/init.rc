@@ -7,8 +7,12 @@
 import /init.environ.rc
 import /init.usb.rc
 import /init.${ro.hardware}.rc
+import /init.usb.configfs.rc
 import /init.${ro.zygote}.rc
 import /init.trace.rc
+# Include CM's extra init file
+import /init.cm.rc
+
 
 on early-init
     # Set init and its forked children's oom_adj.
@@ -48,6 +52,7 @@ on init
     write /sys/fs/cgroup/memory/sw/memory.move_charge_at_immigrate 1
     chown root system /sys/fs/cgroup/memory/sw/tasks
     chmod 0660 /sys/fs/cgroup/memory/sw/tasks
+    chmod 0220 /sys/fs/cgroup/memory/cgroup.event_control
 
     mkdir /system
     mkdir /data 0771 system system
@@ -90,10 +95,17 @@ on init
     write /proc/sys/kernel/panic_on_oops 1
     write /proc/sys/kernel/hung_task_timeout_secs 0
     write /proc/cpu/alignment 4
+
+    # scheduler tunables
+    # Disable auto-scaling of scheduler tunables with hotplug. The tunables
+    # will vary across devices in unpredictable ways if allowed to scale with
+    # cpu cores.
+    write /proc/sys/kernel/sched_tunable_scaling 0
     write /proc/sys/kernel/sched_latency_ns 10000000
     write /proc/sys/kernel/sched_wakeup_granularity_ns 2000000
     write /proc/sys/kernel/sched_compat_yield 1
     write /proc/sys/kernel/sched_child_runs_first 0
+
     write /proc/sys/kernel/randomize_va_space 2
     write /proc/sys/kernel/kptr_restrict 2
     write /proc/sys/vm/mmap_min_addr 32768
@@ -130,7 +142,6 @@ on init
     write /dev/cpuctl/bg_non_interactive/cpu.shares 52
     write /dev/cpuctl/bg_non_interactive/cpu.rt_runtime_us 700000
     write /dev/cpuctl/bg_non_interactive/cpu.rt_period_us 1000000
-
     # sets up initial cpusets for ActivityManager
     mkdir /dev/cpuset
     mount cpuset none /dev/cpuset
@@ -177,6 +188,9 @@ on init
     # enable armv8_deprecated instruction hooks
     write /proc/sys/abi/swp 1
 
+	# ion device
+	chmod 0666 /dev/ion
+
 # Healthd can trigger a full boot from charger mode by signaling this
 # property when the power button is held.
 on property:sys.boot_from_charger_mode=1
@@ -184,8 +198,11 @@ on property:sys.boot_from_charger_mode=1
     trigger late-init
 
 # Load properties from /system/ + /factory after fs mount.
-on load_all_props_action
-    load_all_props
+on load_system_props_action
+    load_system_props
+
+on load_persist_props_action
+    load_persist_props
     start logd
     start logd-reinit
 
@@ -198,12 +215,16 @@ on late-init
     trigger early-fs
     trigger fs
     trigger post-fs
-    trigger post-fs-data
 
     # Load properties from /system/ + /factory after fs mount. Place
     # this in another action so that the load will be scheduled after the prior
     # issued fs triggers have completed.
-    trigger load_all_props_action
+    trigger load_system_props_action
+
+    # Now we can mount /data. File encryption requires keymaster to decrypt
+    # /data, which in turn can only be loaded when system properties are present
+    trigger post-fs-data
+    trigger load_persist_props_action
 
     # Remove a file to wake up anything waiting for firmware.
     trigger firmware_mounts_complete
@@ -256,6 +277,7 @@ on post-fs-data
     # We chown/chmod /data again so because mount is run as root + defaults
     chown system system /data
     chmod 0771 /data
+    mkdir /data/local/root_channel 0751 root root
     # We restorecon /data in case the userdata partition has been reset.
     restorecon /data
 
@@ -354,11 +376,16 @@ on post-fs-data
     mkdir /data/system/heapdump 0700 system system
     mkdir /data/user 0711 system system
 
+    setusercryptopolicies /data/user
+
     # Reload policy from /data/security if present.
     setprop selinux.reload_policy 1
 
     # Set SELinux security contexts on upgrade or policy update.
     restorecon_recursive /data
+    restorecon /data/data
+    restorecon /data/user
+    restorecon /data/user/0
 
     # Check any timezone data in /data is newer than the copy in /system, delete if not.
     exec - system system -- /system/bin/tzdatacheck /system/usr/share/zoneinfo /data/misc/zoneinfo
@@ -438,6 +465,7 @@ on boot
     chown system system /sys/class/timed_output/vibrator/enable
     chown system system /sys/class/leds/keyboard-backlight/brightness
     chown system system /sys/class/leds/lcd-backlight/brightness
+    chown system system /sys/class/leds/torch-light/brightness
     chown system system /sys/class/leds/button-backlight/brightness
     chown system system /sys/class/leds/jogball-backlight/brightness
     chown system system /sys/class/leds/red/brightness
@@ -456,6 +484,12 @@ on boot
     chown system system /sys/kernel/ipv4/tcp_rmem_max
     chown root radio /proc/cmdline
 
+    #lenovo wuwl10 20151123 add for led begin
+    chown system system /sys/class/leds/greenled/brightness
+    chmod 0664  /sys/class/leds/greenled/brightness
+    chown system system /sys/class/leds/greenled/trigger
+    chmod 0664  /sys/class/leds/greenled/trigger
+    #lenovo wuwl10 20151123 add for led end
     # Define default initial receive window size in segments.
     setprop net.tcp.default_init_rwnd 60
 
@@ -527,9 +561,11 @@ service logd /system/bin/logd
     socket logdr seqpacket 0666 logd logd
     socket logdw dgram 0222 logd logd
     group root system
+     writepid /dev/cpuset/system-background/tasks
 
 service logd-reinit /system/bin/logd --reinit
     oneshot
+    writepid /dev/cpuset/system-background/tasks
     disabled
 
 service healthd /sbin/healthd
@@ -543,6 +579,7 @@ service console /system/bin/sh
     console
     disabled
     user shell
+    group shell log
     seclabel u:r:shell:s0
 
 on property:ro.debuggable=1
@@ -552,7 +589,8 @@ on property:ro.debuggable=1
 service adbd /sbin/adbd --root_seclabel=u:r:su:s0
     class core
     socket adbd stream 660 system system
-    disabled
+    #disabled
+	enabled
     seclabel u:r:adbd:s0
 
 # adbd on at boot in emulator
@@ -563,6 +601,7 @@ service lmkd /system/bin/lmkd
     class core
     critical
     socket lmkd seqpacket 0660 system system
+    writepid /dev/cpuset/system-background/tasks
 
 service servicemanager /system/bin/servicemanager
     class core
@@ -592,21 +631,23 @@ service netd /system/bin/netd
 
 service debuggerd /system/bin/debuggerd
     class main
+    writepid /dev/cpuset/system-background/tasks
 
 service debuggerd64 /system/bin/debuggerd64
     class main
+    writepid /dev/cpuset/system-background/tasks
 
-service ril-daemon /system/bin/rild
-    class main
-    socket rild stream 660 root radio
-    socket sap_uim_socket1 stream 660 bluetooth bluetooth
-    socket rild-debug stream 660 radio system
-    user root
-    group radio cache inet misc audio log
+#service ril-daemon /system/bin/rild
+#    class main
+#    socket rild stream 660 root radio
+#    socket sap_uim_socket1 stream 660 bluetooth bluetooth
+#    socket rild-debug stream 660 radio system
+#    user root
+#    group radio cache inet misc audio log qcom_diag
 
 service surfaceflinger /system/bin/surfaceflinger
-    class core
-    user root
+    class main
+    user system
     group graphics drmrpc
     onrestart restart zygote
 
@@ -617,9 +658,9 @@ service drm /system/bin/drmserver
 
 service media /system/bin/mediaserver
     class main
-    user media
+    user root
+#   user media  ## yangqing2 for bootanimation on 2015-12-04
     group audio camera inet net_bt net_bt_admin net_bw_acct drmrpc mediadrm sdcard_r system net_bt_stack sdcard_rw
-
     ioprio rt 4
 
 # One shot invocation to deal with encrypted volume.
@@ -636,12 +677,19 @@ service encrypt /system/bin/vdc --wait cryptfs enablecrypto inplace default
     # vold will set vold.decrypt to trigger_restart_framework (default
     # encryption)
 
+#lenovo-sw duxu1 20151103 change form user graphics to user system
 service bootanim /system/bin/bootanimation
-    class core
-    user graphics
-    group graphics audio
+## yangqing2 for bootanimation on 2015-12-04 begin
+    class main
+    user root
+    group graphics audio media input
+#   class core
+#   user system
+#   group graphics audio
+## yangqing2 for bootanimation on 2015-12-04 end
     disabled
     oneshot
+    writepid /dev/cpuset/system-background/tasks
 
 service gatekeeperd /system/bin/gatekeeperd /data/misc/gatekeeper
     class late_start
@@ -654,6 +702,7 @@ service installd /system/bin/installd
 service flash_recovery /system/bin/install-recovery.sh
     class main
     oneshot
+    disabled
 
 service racoon /system/bin/racoon
     class main
@@ -704,17 +753,27 @@ service perfprofd /system/xbin/perfprofd
     class late_start
     user root
     oneshot
+    writepid /dev/cpuset/system-background/tasks
+
+#lenovo wuwl10 20151123 modify for led begin
+on property:sys.led.timer=timer
+    chmod 0664 /sys/class/leds/greenled/delay_off
+    chown system system /sys/class/leds/greenled/delay_off
+    chmod 0664 /sys/class/leds/greenled/delay_on
+    chown system system /sys/class/leds/greenled/delay_on
+#lenovo wuwl10 20151123 modify for led  end
 
 on property:persist.logd.logpersistd=logcatd
     # all exec/services are called with umask(077), so no gain beyond 0700
     mkdir /data/misc/logd 0700 logd log
     # logd for write to /data/misc/logd, log group for read from pstore (-L)
-    exec - logd log -- /system/bin/logcat -L -b all -v threadtime -v usec -v printable -D -f /data/misc/logd/logcat -r 64 -n 256
+    exec - logd log -- /system/bin/logcat -L -b all -v threadtime -v usec -v printable -D -f /data/misc/logd/logcat -r 1024 -n 256
     start logcatd
 
-service logcatd /system/bin/logcat -b all -v threadtime -v usec -v printable -D -f /data/misc/logd/logcat -r 64 -n 256
+service logcatd /system/bin/logcat -b all -v threadtime -v usec -v printable -D -f /data/misc/logd/logcat -r 1024 -n 256
     class late_start
     disabled
     # logd for write to /data/misc/logd, log group for read from log daemon
     user logd
     group log
+    writepid /dev/cpuset/system-background/tasks

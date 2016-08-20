@@ -502,7 +502,8 @@ on post-fs-data
     chown system camera /dev/kd_camera_hw_bus2
     chown system camera /dev/FM50AF
     chown system camera /dev/CAM_CAL_DRV
-
+    # add camerainfo
+    mkdir /dev/camerainfo 0755 system system
     #MATV
     chmod 0660 /dev/MATV
     chown system media /dev/MATV
@@ -1036,10 +1037,11 @@ service cmmb /system/bin/cmmbsp
     group system audio camera graphics inet net_bt net_bt_admin net_bw_acct media
     ioprio rt 4
 
-service enableswap /system/bin/sh /enableswap.sh
-    class late_start
-    oneshot
-    seclabel u:r:enableswap:s0
+#yulong modify by wanghongliang to disable zram for 2/3G Ram device
+#service enableswap /system/bin/sh /enableswap.sh
+#    class late_start
+#    oneshot
+#    seclabel u:r:enableswap:s0
 
 service swapoff_action /system/bin/sh /disableswap.sh
     class main
@@ -1115,7 +1117,7 @@ service wifi2agps /system/bin/wifi2agps
 service mnld /system/xbin/mnld
     class main
     user gps
-    group gps inet misc sdcard_rw sdcard_r media_rw system radio
+    group gps inet misc sdcard_rw sdcard_r media_rw system
     socket mnld stream 660 gps system
 
 service ipod /system/bin/ipod
@@ -1276,6 +1278,14 @@ service mc64xxd /system/bin/mc64xxd
     user system
     group system
     class main
+
+#liuxinyuan@yulong.com add begin for mag_sensor 20150518
+service yamaha537 /system/bin/yamaha537
+    disabled
+    user system
+    group system input
+    class main
+#liuxinyuan@yulong.com add end for mag_sensor 20150518
 #
 #sensor service (end)
 #
