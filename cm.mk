@@ -9,6 +9,10 @@ $(call inherit-product, device/ark/benefit_m7/device_benefit_m7.mk)
 
 LOCAL_PATH := device/ark/benefit_m7
 
+# Build type
+CYANOGEN_NIGHTLY=true
+CM_BUILDTYPE=NIGHTLY
+
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_FINGERPRINT=6.0.1/MOB30M/2419427:user/release-keys PRIVATE_BUILD_DESC="6735-user 6.0.1 MOB30M 2419427 release-keys"
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
@@ -32,12 +36,12 @@ TARGET_SCREEN_WIDTH := 720
 
 # set locales & aapt config.
 PRODUCT_LOCALES := ru_RU en_US uk_UA
-PRODUCT_AAPT_CONFIG := normal hdpi
-PRODUCT_AAPT_PREF_CONFIG := hdpi
+PRODUCT_AAPT_CONFIG := normal xhdpi
+PRODUCT_AAPT_PREF_CONFIG := xhdpi
 
 # Inherit some common CM stuff.
 
-CM_BUILD :=6735
+CM_BUILD :=benefit_m7
 
 ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0
 ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0

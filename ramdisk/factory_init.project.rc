@@ -10,10 +10,6 @@ service akmd8963 /system/bin/akmd8963
     user system
     group system
 
-service af7133d /system/bin/af7133d
-    disabled
-    user system
-    group system
 
 on post-fs
 #

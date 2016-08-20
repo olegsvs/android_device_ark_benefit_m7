@@ -1,10 +1,18 @@
 # mt6735m platform boardconfig
-LOCAL_PATH := device/ark/benefit_m7
- 
-MTK_K64_SUPPORT:=yes
 
-#USE_CCACHE:=1
-#CCACHE_DIR:=$(LOCAL_PATH)/../../.ccache
+# export local path's
+LOCAL_PATH := device/ark/benefit_m7
+LOCAL_DIR  := device/ark/benefit_m7
+
+# if use arm64
+MTK_K64_SUPPORT:=no
+
+# setup CCACHE
+USE_CCACHE:=1
+#CCACHE_DIR:=device/ark/benefit_m7/../../.ccache
+
+# Link against libxlog
+TARGET_LDPRELOAD += libxlog.so
 
 # Platform
 TARGET_BOARD_PLATFORM := mt6735m
@@ -12,6 +20,9 @@ MTK_BOARD_PLATFORMS += mt6735m
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_FACTORYIMAGE := true
 TARGET_BOOTLOADER_BOARD_NAME := mt6735m
+
+# use new.dat packages
+BLOCK_BASED_OTA := false
 
 # make_ext4fs requires numbers in dec format
 BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
@@ -23,18 +34,15 @@ BOARD_CACHEIMAGE_PARTITION_SIZE:=444596224
 BOARD_USERDATAIMAGE_PARTITION_SIZE:=1107296256
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 
-BLOCK_BASED_OTA :=true
-
 BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_USERIMAGES_USE_EXT4 := true
 
 TARGET_KERNEL_HAVE_EXFAT := true
 TARGET_KERNEL_HAVE_NTFS := true
 
-#TARGET_LDPRELOAD += libxlog.so
-
+# setup platform & project
 MTK_PLATFORM := mt6735m
-MTK_PROJECT := 6735
+MTK_PROJECT := benefit_m7
 
 # Use custom init.rc
 TARGET_PROVIDES_INIT_RC := true
@@ -53,6 +61,7 @@ TARGET_PREBUILT_KERNEL := device/ark/benefit_m7/prebuild/kernel
 endif
 BOARD_CUSTOM_BOOTIMG := true
 
+# setup bootimg
 ifneq ($(MTK_K64_SUPPORT),yes)
 ARCH := arm
 TARGET_ARCH := arm
@@ -61,7 +70,7 @@ TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_2ND_CPU_VARIANT := cortex-a53
-BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,32N2 androidboot.selinux=permissive androidboot.selinux=disabled
+BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,32N2 androidboot.selinux=permissive androidboot.selinux=disabled selinux=0
 BOARD_KERNEL_OFFSET := 0x00008000
 else
 ARCH := arm64
@@ -91,6 +100,7 @@ TARGET_CPU_CORTEX_A53 := true
 ARCH_ARM_HAVE_TLS_REGISTER := true
 TARGET_CPU_SMP := true
 
+# setup ramdisk
 BOARD_RAMDISK_OFFSET := 0x04000000
 BOARD_TAGS_OFFSET := 0x0e000000
 BOARD_KERNEL_BASE := 0x40000000
@@ -106,7 +116,7 @@ TARGET_CPU_MEMCPY_OPT_DISABLE := true
 
 # Display
 USE_OPENGL_RENDERER := true
-BOARD_EGL_CFG := /vendor/ark/benefit_m7/lib/egl/egl.cfg
+BOARD_EGL_CFG := device/ark/benefit_m7/configs/egl.cfg
 BOARD_EGL_WORKAROUND_BUG_10194508 := true
 
 # MTK Hardware
@@ -125,7 +135,7 @@ COMMON_GLOBAL_CFLAGS += -DNO_SECURE_DISCARD
 COMMON_GLOBAL_CFLAGS += -DDISABLE_HW_ID_MATCH_CHECK
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 BOARD_USES_MTK_AUDIO := true
-USE_CAMERA_STUB := true
+#USE_CAMERA_STUB := true
 
 # LightHAL
 #TARGET_PROVIDES_LIBLIGHT := true
@@ -136,6 +146,8 @@ DISABLE_DEXPREOPT := true
 
 # Enable Minikin text layout engine (will be the default soon)
 USE_MINIKIN := true
+
+# now use dlmalloc
 MALLOC_IMPL := dlmalloc
 
 # Charger
@@ -143,6 +155,7 @@ BOARD_CHARGER_SHOW_PERCENTAGE := true
 
 # Fonts
 EXTENDED_FONT_FOOTPRINT := true
+
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
 BOARD_HAVE_BLUETOOTH_MTK := true
@@ -249,9 +262,43 @@ endif
 
 
 # SELinux
-BOARD_SEPOLICY_DIRS += \
-    device/ark/benefit_m7/sepolicy
+# BOARD_SEPOLICY_DIRS += \
+    #device/ark/benefit_m7/sepolicy
 
 # Hack for build
 $(shell mkdir -p $(OUT)/obj/KERNEL_OBJ/usr)
     
+# ________________________________________________TWRP_________________________________________________
+# RECOVERY_VARIANT := twrp
+
+TW_THEME := portrait_hdpi
+# brightness settings (needs verification)
+TW_BRIGHTNESS_PATH := /sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness/
+TW_MAX_BRIGHTNESS := 255
+# may be useful if we get graphical glitches
+RECOVERY_GRAPHICS_USE_LINELENGTH := true
+# in case of wrong color this needs modification
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
+# if sdcard0 is a /data/media emulated one
+RECOVERY_SDCARD_ON_DATA := true
+# ntfs support? (needs much space..)
+TW_INCLUDE_NTFS_3G := true
+# we may need that if sdcard0 dont work
+TW_FLASH_FROM_STORAGE := true
+TW_EXTERNAL_STORAGE_PATH := "/external_sd"
+TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
+TW_DEFAULT_EXTERNAL_STORAGE := true
+# name backup folders 'benefit_m7' and not after MTK's fake hardware ID '1234567...'
+TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
+# we have it and it's enforcing!
+TWHAVE_SELINUX := true
+#only add if kernel supports
+#TW_INCLUDE_FUSE_EXFAT := true
+#F2FS support (only activate if kernel supports)
+#TARGET_USERIMAGES_USE_F2FS:=true
+# encryption
+TW_INCLUDE_CRYPTO := true
+# Antiforensic wipe
+BOARD_SUPPRESS_SECURE_ERASE :=  true
+# CPU temp
+TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp

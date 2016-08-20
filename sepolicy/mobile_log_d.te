@@ -37,9 +37,10 @@ allow mobile_log_d platform_app_tmpfs:file write;
 dontaudit mobile_log_d untrusted_app:fd use;
 dontaudit mobile_log_d isolated_app:fd use;
 
-#md32 
-#sysfs label need to be changed later
+#md32
 allow mobile_log_d sysfs:file write;
+allow mobile_log_d sysfs_md32:file { open write };
+allow mobile_log_d sysfs_md32:dir search;
 allow mobile_log_d md32_device:chr_file { read open };
 
 #scp

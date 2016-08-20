@@ -1,0 +1,11 @@
+on property:hotknot.hotknot_native=1
+    start hotknot_native
+
+on property:hotknot.hotknot_native=0
+    stop hotknot_native
+
+service hotknot_native /system/bin/hotknot_native_service
+    class late_start
+    user system
+    group system
+    oneshot

@@ -167,10 +167,6 @@ allow system_server qemu_pipe_device:chr_file rw_file_perms;
 # Purpose : for sensorhubservice
 allow system_server shf_device:chr_file rw_file_perms;
 
-# Vanzo:yinjun on: Tue, 31 Mar 2015 19:46:11 +0800
-# add remoteir
-allow system_server remote_ctrl_dev_device:chr_file { read write ioctl open };
-# End of Vanzo: yinjun
 # Date: W14.46
 # Operation : Migration
 # Purpose : for GpsLocationProvider.java to check ESUPL status
@@ -257,6 +253,12 @@ allow system_server dhcp6c:process signal;
 # Operation : Bug fix
 # Purpose : Allow P2P framework to read MAC via nvram_agent_service
 allow system_server nvram_agent_service:service_manager find;
+
+# Date : 2015/06/12
+# Operation: TEEI integration
+# Purpose: access for fp device 
+allow system_server teei_fp_device:chr_file rw_file_perms;
+allow system_server teei_client_device:chr_file r_file_perms;
 
 # Date : 2015/10/27
 # Operation : Feature Developing

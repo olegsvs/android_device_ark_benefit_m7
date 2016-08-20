@@ -40,7 +40,6 @@ unix_socket_connect(msensord,property,init)
 
 allow msensord ctl_akmd8963_prop:property_service set;
 allow msensord ctl_akmd09911_prop:property_service set;
-allow msensord ctl_qmc6983d_prop:property_service set;
 allow msensord ctl_akmd09912_prop:property_service set;
 allow msensord ctl_bmm050d_prop:property_service set;
 allow msensord ctl_s62xd_prop:property_service set;

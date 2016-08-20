@@ -177,4 +177,6 @@ allow meta_tst mnt_user_file:lnk_file read;
 allow meta_tst storage_file:lnk_file read;
 allow meta_tst fuse:file read;
 
-
+# Date: WK16.02
+# Purpose : for clear nand data
+allow meta_tst mtd_device:chr_file ioctl;
